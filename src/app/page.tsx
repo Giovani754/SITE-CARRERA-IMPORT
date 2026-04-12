@@ -1,3 +1,5 @@
+"use client";
+
 import { PremiumHeader } from "@/components/premium/premium-header";
 import { HeroSection } from "@/components/premium/hero-section";
 import { SectionTitle } from "@/components/premium/section-title";
@@ -8,6 +10,8 @@ import { PremiumFooter } from "@/components/premium/premium-footer";
 import { vehicles } from "@/data/vehicles";
 import { Shield, Target, Award, Gem, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import Image from "next/image";
 
 const mainServices = [
   {
