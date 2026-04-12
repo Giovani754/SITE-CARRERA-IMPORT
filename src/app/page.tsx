@@ -13,22 +13,22 @@ const mainServices = [
   {
     title: "Consultoria Estratégica",
     description: "Assessoria especializada para vender seu veículo com posicionamento correto e máxima valorização.",
-    icon: Target
+    iconName: "Target"
   },
   {
     title: "Venda e Intermediação",
     description: "Cuidamos de todo o processo, da divulgação à negociação final, com total discrição e profissionalismo.",
-    icon: Shield
+    iconName: "Shield"
   },
   {
     title: "Curadoria de Oportunidades",
     description: "Encontramos o veículo ideal que atenda às suas exigências de performance, história e exclusividade.",
-    icon: Gem
+    iconName: "Gem"
   },
   {
     title: "Serviços Automotivos",
     description: "Apoio completo: blindagem, estética, funilaria e revisão executados por especialistas parceiros.",
-    icon: Award
+    iconName: "Award"
   }
 ];
 
@@ -98,7 +98,7 @@ export default function Home() {
                 index={idx}
                 title={service.title}
                 description={service.description}
-                icon={service.icon}
+                iconName={service.iconName}
               />
             ))}
           </div>

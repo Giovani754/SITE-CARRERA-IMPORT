@@ -2,17 +2,20 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { LucideIcon } from "lucide-react";
+import * as Icons from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ServiceCardProps {
   title: string;
   description: string;
-  icon: LucideIcon;
+  iconName: string;
   index: number;
 }
 
-export function ServiceCard({ title, description, icon: Icon, index }: ServiceCardProps) {
+export function ServiceCard({ title, description, iconName, index }: ServiceCardProps) {
+  // @ts-ignore
+  const Icon = Icons[iconName] || Icons.HelpCircle;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
