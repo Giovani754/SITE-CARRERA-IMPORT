@@ -3,10 +3,10 @@
 @theme {
   --color-brand-gold: #D4AF37;
   --color-brand-copper: #B87333;
-  --color-background: #050505;
+  --color-background-base: #050505;
   --color-surface-base: #111111;
   --color-surface-elevated: #1a1a1a;
-  --color-foreground: #FFFFFF;
+  --color-foreground-base: #FFFFFF;
   --color-muted-foreground: #A1A1AA;
   
   --font-serif: "Playfair Display", serif;
@@ -17,6 +17,7 @@
   --background: #050505;
   --foreground: #FFFFFF;
   --muted-foreground: #A1A1AA;
+  --brand-gold: #D4AF37;
 }
 
 body {
@@ -32,20 +33,24 @@ body {
   color: #000000;
 }
 
-@layer utilities {
-  .text-luxury {
-    @apply font-serif italic;
-  }
-  
-  .glass-header {
-    @apply bg-background/80 backdrop-blur-md border-b border-white/10;
-  }
-  
-  .gold-gradient {
-    background: linear-gradient(135deg, #D4AF37 0%, #B87333 100%);
-  }
+.text-luxury {
+  font-family: "Playfair Display", serif;
+  font-style: italic;
+}
 
-  .gold-text-gradient {
-    @apply bg-clip-text text-transparent gold-gradient;
-  }
+.glass-header {
+  background-color: rgba(5, 5, 5, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gold-gradient {
+  background: linear-gradient(135deg, #D4AF37 0%, #B87333 100%);
+}
+
+.gold-text-gradient {
+  background: linear-gradient(135deg, #D4AF37 0%, #B87333 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
