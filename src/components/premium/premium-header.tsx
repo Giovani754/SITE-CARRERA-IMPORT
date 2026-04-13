@@ -34,14 +34,14 @@ export function PremiumHeader() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out px-6 lg:px-12",
         isScrolled 
-          ? "py-4 glass-header" 
-          : "py-8 bg-transparent"
+          ? "py-3 glass-header" 
+          : "py-6 bg-transparent"
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="transition-transform hover:scale-105 duration-300">
-          <LogoCarrera className="w-40 lg:w-48" />
+        <Link href="/" className="transition-all hover:opacity-80 duration-300">
+          <LogoCarrera className="w-32 lg:w-40" />
         </Link>
 
         {/* Desktop Navigation */}

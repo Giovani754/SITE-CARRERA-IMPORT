@@ -12,19 +12,19 @@ interface HeroProps {
 }
 
 export function HeroSection({ 
-  headline = "Venda ou encontre seu veículo premium com estratégia, discrição e máxima valorização.",
-  subheadline = "Intermediação inteligente para veículos que exigem posicionamento, curadoria e confiança absoluta."
+  headline = "Intermediação Inteligente para Veículos Extraordinários", 
+  subheadline = "Consultoria automotiva premium focada em discrição, valorização estratégica e curadoria de ativos para clientes que não podem perder tempo."
 }: HeroProps) {
   return (
-    <section className="relative h-screen w-full flex items-center justify-start overflow-hidden bg-[#050505]">
+    <section className="relative h-screen w-full flex items-center justify-start overflow-hidden bg-[#050505] pt-20 lg:pt-0">
       {/* Cinematic Background Layer */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/60 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/70 to-transparent z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050505]/20 to-[#050505] z-10" />
         <motion.div 
-          initial={{ scale: 1.1, opacity: 0 }}
+          initial={{ scale: 1.05, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 2, ease: "easeOut" }}
+          transition={{ duration: 2.5, ease: [0.16, 1, 0.3, 1] }}
           className="relative w-full h-full"
         >
           <Image
@@ -38,45 +38,45 @@ export function HeroSection({
       </div>
 
       {/* Content Layer */}
-      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 lg:px-12">
-        <div className="max-w-3xl">
+      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 lg:px-12 mt-12 lg:mt-0">
+        <div className="max-w-4xl">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
+            initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, delay: 0.5 }}
+            transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
           >
-            <span className="flex items-center gap-4 text-brand-gold text-[10px] lg:text-xs uppercase tracking-[0.5em] font-bold mb-8 block font-sans">
-              <span className="h-[1px] w-8 bg-brand-gold/50" />
+            <span className="flex items-center gap-6 text-brand-gold text-[10px] lg:text-[11px] uppercase tracking-[0.6em] font-bold mb-10 block font-sans opacity-80">
+              <span className="h-[1px] w-12 bg-brand-gold/40" />
               Boutique Automotiva de Alto Padrão
             </span>
             
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif italic text-foreground leading-[1] mb-10 tracking-tight">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif italic text-foreground leading-[1.1] mb-12 tracking-tight max-w-4xl">
               {headline}
             </h1>
 
-            <p className="text-muted-foreground text-base md:text-xl max-w-2xl leading-relaxed mb-12 font-sans font-light tracking-wide border-l border-brand-gold/20 pl-8">
+            <p className="text-muted-foreground text-base md:text-lg max-w-2xl leading-[1.8] mb-16 font-sans font-light tracking-wide border-l-[0.5px] border-brand-gold/30 pl-10 opacity-90">
               {subheadline}
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center gap-8">
+            <div className="flex flex-col sm:flex-row items-center gap-10">
               <Link
                 href="https://wa.me/YOUR_NUMBER"
-                className="group relative bg-brand-gold text-black px-12 py-6 text-xs uppercase tracking-[0.3em] font-bold transition-all hover:bg-[#C5A030] shadow-2xl shadow-brand-gold/10 overflow-hidden"
+                className="group relative bg-brand-gold text-black px-14 py-7 text-[11px] uppercase tracking-[0.4em] font-bold transition-all hover:bg-[#C5A030] shadow-2xl shadow-brand-gold/10 overflow-hidden"
               >
-                <span className="relative z-10 flex items-center gap-3">
+                <span className="relative z-10 flex items-center gap-4">
                   Consultoria Exclusiva
-                  <ArrowRight size={16} className="transition-transform group-hover:translate-x-2" />
+                  <ArrowRight size={14} className="transition-transform group-hover:translate-x-2" />
                 </span>
                 <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
               </Link>
 
               <Link
                 href="/estoque"
-                className="text-[10px] lg:text-xs uppercase tracking-[0.4em] font-bold text-foreground/70 hover:text-brand-gold transition-all flex items-center gap-6 group"
+                className="text-[10px] uppercase tracking-[0.5em] font-bold text-foreground/60 hover:text-brand-gold transition-all flex items-center gap-8 group"
               >
-                Conhecer Curadoria
+                Curadoria Carrera
                 <div className="flex items-center">
-                  <div className="h-[1px] w-8 bg-white/20 group-hover:bg-brand-gold transition-all group-hover:w-16" />
+                  <div className="h-[0.5px] w-10 bg-white/20 group-hover:bg-brand-gold transition-all group-hover:w-20" />
                   <div className="w-1 h-1 rounded-full bg-brand-gold scale-0 group-hover:scale-100 transition-transform delay-100" />
                 </div>
               </Link>

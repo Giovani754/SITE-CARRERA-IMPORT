@@ -12,17 +12,17 @@
   --font-serif: "Playfair Display", serif;
   --font-sans: var(--font-inter);
 
-  --animate-reveal: reveal 1s cubic-bezier(0.16, 1, 0.3, 1);
-  --animate-float: float 6s ease-in-out infinite;
+  --animate-reveal: reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-float: float 8s ease-in-out infinite;
 
   @keyframes reveal {
-    0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+    0% { opacity: 0; transform: translateY(40px) scale(0.98); }
     100% { opacity: 1; transform: translateY(0) scale(1); }
   }
 
   @keyframes float {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-15px); }
   }
 }
 
@@ -31,6 +31,8 @@
   --foreground: #FFFFFF;
   --muted-foreground: #A1A1AA;
   --brand-gold: #D4AF37;
+  --line-height-tight: 1.1;
+  --line-height-relaxed: 1.8;
 }
 
 body {
@@ -38,6 +40,13 @@ body {
   color: var(--foreground);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: var(--line-height-relaxed);
+  letter-spacing: 0.01em;
+}
+
+h1, h2, h3, h4 {
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
 }
 
 /* Luxury Scissor-style selection */
@@ -52,9 +61,9 @@ body {
 }
 
 .glass-header {
-  background-color: rgba(5, 5, 5, 0.6);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: rgba(5, 5, 5, 0.4);
+  backdrop-filter: blur(16px);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
 }
 
 .gold-gradient {
@@ -69,9 +78,13 @@ body {
 }
 
 .editorial-shadow {
-  box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.5), 0 30px 60px -30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 40px 120px -20px rgba(0, 0, 0, 0.7), 0 20px 60px -30px rgba(0, 0, 0, 0.5);
 }
 
 .cinematic-glow {
-  filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.3));
+  filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.25));
+}
+
+.tracking-boutique {
+  letter-spacing: 0.6em;
 }
