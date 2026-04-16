@@ -1,152 +1,295 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { PremiumHeader } from "@/components/premium/premium-header";
-import { PremiumFooter } from "@/components/premium/premium-footer";
-import { vehicles } from "@/data/vehicles";
-import { Gauge, Calendar, Zap, Fuel, MessageSquare, ChevronLeft, ShieldCheck, MapPin } from "lucide-react";
+import {
+  Gauge,
+  Calendar,
+  Zap,
+  Fuel,
+  MessageCircle,
+  ChevronLeft,
+  ShieldCheck,
+  MapPin,
+  Palette,
+  Activity,
+} from "lucide-react";
+import { getVehicleBySlug, getRelatedVehicles } from "@/lib/vehicles";
+import { Breadcrumb } from "@/components/premium/breadcrumb";
+import { CarCard } from "@/components/premium/car-card";
+import { VehicleJsonLd } from "@/components/seo/json-ld";
+import { LeadForm } from "@/components/premium/lead-form";
+import { SITE_CONFIG } from "@/data/constants";
 
-interface PageProps {
-  params: { slug: string };
+// Next.js 16: params is a Promise
+type PageProps = {
+  params: Promise<{ slug: string }>;
+};
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const vehicle = await getVehicleBySlug(slug);
+
+  if (!vehicle) {
+    return { title: "Veículo não encontrado" };
+  }
+
+  const mainImage = vehicle.images?.[0] || "";
+
+  return {
+    title: `${vehicle.brand} ${vehicle.model} ${vehicle.year}`,
+    description: `${vehicle.brand} ${vehicle.model} ${vehicle.year} — ${vehicle.mileage}, ${vehicle.transmission}. Consultoria automotiva premium em São Paulo.`,
+    openGraph: {
+      title: `${vehicle.brand} ${vehicle.model} ${vehicle.year} | Carrera Imports`,
+      description: vehicle.description?.substring(0, 160),
+      images: [{ url: mainImage, alt: vehicle.model }],
+    },
+  };
 }
 
-export default function VehiclePage({ params }: PageProps) {
-  const vehicle = vehicles.find((v) => v.slug === params.slug);
+export default async function VehiclePage({ params }: PageProps) {
+  const { slug } = await params;
+  const vehicle = await getVehicleBySlug(slug);
 
   if (!vehicle) {
     notFound();
   }
 
-  return (
-    <main className="flex flex-col min-h-screen bg-background text-foreground">
-      <PremiumHeader />
-      
-      <div className="h-32 lg:h-48" />
+  const relatedVehicles = await getRelatedVehicles(vehicle, 3);
 
-      <section className="px-6 lg:px-12 mb-32">
+  return (
+    <>
+      <VehicleJsonLd 
+        vehicle={{
+          ...vehicle,
+          image: vehicle.images?.[0] || '',
+        }} 
+      />
+
+      <div className="pt-28 lg:pt-36 px-6 lg:px-12 pb-24">
         <div className="max-w-7xl mx-auto">
-          <Link 
+          <Breadcrumb
+            items={[
+              { name: "Estoque", href: "/estoque" },
+              {
+                name: `${vehicle.brand} ${vehicle.model}`,
+                href: `/estoque/${vehicle.slug}`,
+              },
+            ]}
+          />
+
+          <Link
             href="/estoque"
-            className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-muted-foreground hover:text-brand-gold transition-colors mb-12"
+            className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] font-bold text-white/30 hover:text-brand-gold transition-colors mb-10"
           >
             <ChevronLeft size={14} />
             Voltar ao Acervo
           </Link>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 xl:gap-24">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-20">
             {/* Gallery Column */}
-            <div className="lg:col-span-8 flex flex-col gap-8">
-              <div className="relative aspect-[16/9] bg-surface-base border border-white/5 overflow-hidden">
-                <Image 
-                  src={vehicle.image} 
-                  alt={vehicle.model} 
-                  fill 
-                  className="object-cover" 
-                />
+            <div className="lg:col-span-8 flex flex-col gap-4">
+              <div className="relative aspect-[16/9] bg-[#080808] border border-white/5 overflow-hidden rounded-sm">
+                {vehicle.images?.[0] ? (
+                  <Image
+                    src={vehicle.images[0]}
+                    alt={`${vehicle.brand} ${vehicle.model}`}
+                    fill
+                    priority
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-white/10 uppercase tracking-widest text-xs">Sem Imagem Principal</div>
+                )}
               </div>
-              <div className="grid grid-cols-3 gap-8">
-                 {[1, 2, 3].map(i => (
-                   <div key={i} className="aspect-[4/3] bg-surface-base border border-white/5 relative overflow-hidden group">
-                      <Image 
-                        src={vehicle.image} 
-                        alt="Gallery" 
-                        fill 
-                        className="object-cover opacity-60 scale-110 blur-[2px] grayscale transition-all duration-700 group-hover:scale-100 group-hover:blur-0 group-hover:grayscale-0 group-hover:opacity-100" 
-                      />
-                   </div>
-                 ))}
+              <div className="grid grid-cols-3 gap-4">
+                {vehicle.images?.slice(1, 4).map((img, i) => (
+                  <div
+                    key={i}
+                    className="aspect-[4/3] bg-[#080808] border border-white/5 relative overflow-hidden group rounded-sm"
+                  >
+                    <Image
+                      src={img}
+                      alt={`${vehicle.model} - foto ${i + 1}`}
+                      fill
+                      className="object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                    />
+                  </div>
+                ))}
               </div>
 
               {/* Description */}
-              <div className="py-12 border-t border-white/5 mt-8">
-                <h3 className="text-2xl font-serif italic mb-8">Sobre este exemplar</h3>
-                <div className="space-y-6 text-muted-foreground leading-relaxed font-sans max-w-3xl">
-                  <p>
-                    Este {vehicle.brand} {vehicle.model} representa o ápice da engenharia automotiva em seu ano, combinando performance bruta com um refinamento estético impecável. Cada detalhe foi preservado sob os mais altos padrões de manutenção.
-                  </p>
-                  <p>
-                    O proprietário atual, assessorado pela Carrera Imports, manteve um histórico documental completo e todas as revisões em concessionário oficial. Um veículo para colecionadores e entusiastas que não abrem mão da perfeição técnica e estética.
-                  </p>
-                </div>
+              <div className="py-10 border-t border-white/5 mt-4">
+                <h2 className="text-xl font-serif italic mb-6 text-white/90">
+                  Sobre este exemplar
+                </h2>
+                <p className="text-white/45 leading-[1.8] font-sans font-light text-sm max-w-3xl">
+                  {vehicle.description}
+                </p>
               </div>
+
+              {/* Highlights */}
+              {vehicle.highlights && vehicle.highlights.length > 0 && (
+                <div className="py-8 border-t border-white/5">
+                  <h3 className="text-[10px] uppercase tracking-[0.4em] font-bold text-brand-gold/60 mb-6">
+                    Destaques
+                  </h3>
+                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {vehicle.highlights.map((h) => (
+                      <li
+                        key={h}
+                        className="flex items-center gap-3 text-sm text-white/60"
+                      >
+                        <div className="w-1 h-1 bg-brand-gold/50 rounded-full shrink-0" />
+                        {h}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
 
-            {/* Sticky Sidebar Info */}
+            {/* Sticky Sidebar */}
             <div className="lg:col-span-4">
-              <div className="sticky top-32 space-y-10">
+              <div className="sticky top-28 space-y-8">
                 <div>
-                  <span className="text-brand-gold text-[10px] uppercase tracking-[0.4em] font-bold mb-4 block">{vehicle.brand}</span>
-                  <h1 className="text-4xl xl:text-5xl font-serif italic mb-6 leading-tight">{vehicle.model}</h1>
-                  <p className="text-3xl font-sans tracking-tight text-white/90">{vehicle.price}</p>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-brand-gold text-[9px] uppercase tracking-[0.4em] font-bold opacity-60">
+                      {vehicle.brand}
+                    </span>
+                    {vehicle.status !== 'available' && (
+                      <span className="bg-white/5 text-white/40 text-[8px] uppercase tracking-[0.2em] px-2 py-1 rounded-[2px] font-bold">
+                        {vehicle.status === 'sold' ? 'Vendido' : 'Reservado'}
+                      </span>
+                    )}
+                  </div>
+                  <h1 className="text-3xl xl:text-4xl font-serif italic mb-4 leading-tight text-white/90">
+                    {vehicle.model}
+                  </h1>
+                  <p className="text-2xl font-sans tracking-tight text-white/80">
+                    {vehicle.price}
+                  </p>
                 </div>
 
                 {/* Specs List */}
-                <div className="grid grid-cols-1 gap-6 py-10 border-y border-white/5">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4 text-white/40">
-                      <Calendar size={18} />
-                      <span className="text-xs uppercase tracking-widest">Ano</span>
+                <div className="grid grid-cols-1 gap-4 py-8 border-y border-white/5">
+                  {[
+                    {
+                      icon: Calendar,
+                      label: "Ano",
+                      value: String(vehicle.year),
+                    },
+                    { icon: Gauge, label: "Km", value: vehicle.mileage },
+                    {
+                      icon: Zap,
+                      label: "Câmbio",
+                      value: vehicle.transmission || 'N/A',
+                    },
+                    { icon: Fuel, label: "Combustível", value: vehicle.fuel || 'N/A' },
+                    { icon: Palette, label: "Cor", value: vehicle.color || 'N/A' },
+                    {
+                      icon: Activity,
+                      label: "Versão",
+                      value: vehicle.version || 'Premium',
+                    },
+                  ].map((spec) => (
+                    <div
+                      key={spec.label}
+                      className="flex items-center justify-between"
+                    >
+                      <div className="flex items-center gap-3 text-white/30">
+                        <spec.icon size={15} strokeWidth={1.5} />
+                        <span className="text-[10px] uppercase tracking-[0.2em]">
+                          {spec.label}
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/70">
+                        {spec.value}
+                      </span>
                     </div>
-                    <span className="text-xs font-bold tracking-widest uppercase">{vehicle.year}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4 text-white/40">
-                      <Gauge size={18} />
-                      <span className="text-xs uppercase tracking-widest">Quilometragem</span>
-                    </div>
-                    <span className="text-xs font-bold tracking-widest uppercase">{vehicle.mileage}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4 text-white/40">
-                      <Zap size={18} />
-                      <span className="text-xs uppercase tracking-widest">Câmbio</span>
-                    </div>
-                    <span className="text-xs font-bold tracking-widest uppercase">{vehicle.transmission}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4 text-white/40">
-                      <Fuel size={18} />
-                      <span className="text-xs uppercase tracking-widest">Combustível</span>
-                    </div>
-                    <span className="text-xs font-bold tracking-widest uppercase">{vehicle.fuel}</span>
-                  </div>
+                  ))}
                 </div>
 
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4">
                   <Link
-                    href="https://wa.me/YOUR_NUMBER"
-                    className="bg-brand-gold text-black py-5 text-center text-xs uppercase tracking-widest font-bold shadow-xl shadow-brand-gold/20 hover:scale-[1.02] transition-transform"
+                    href={`${SITE_CONFIG.whatsapp.urlClean}?text=${encodeURIComponent(`Olá! Tenho interesse no ${vehicle.brand} ${vehicle.model} ${vehicle.year}. Gostaria de mais informações.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-brand-gold text-black py-5 text-center text-[10px] uppercase tracking-[0.3em] font-bold shadow-xl shadow-brand-gold/10 hover:scale-[1.02] transition-transform rounded-sm flex items-center justify-center gap-2"
                   >
-                    Agendar Visita / Falar com Consultor
+                    <MessageCircle size={14} />
+                    Tenho Interesse
                   </Link>
-                  <p className="text-[10px] text-muted-foreground/50 text-center uppercase tracking-widest">
-                    Disponível para visualização em São Paulo/SP sob agendamento prévio.
+                  <p className="text-[9px] text-white/20 text-center uppercase tracking-[0.3em]">
+                    Disponível para visualização em {vehicle.city || SITE_CONFIG.location.label}{" "}
+                    sob agendamento.
                   </p>
                 </div>
 
-                <div className="p-8 bg-surface-base border border-white/5 flex flex-col gap-6">
-                   <div className="flex items-start gap-4">
-                      <ShieldCheck className="text-brand-gold shrink-0" size={20} />
-                      <div>
-                        <h4 className="text-[10px] uppercase tracking-widest font-bold mb-1">Garantia de Procedência</h4>
-                        <p className="text-[9px] text-muted-foreground leading-normal uppercase tracking-widest">Veículo rigorosamente inspecionado pela equipe Carrera.</p>
-                      </div>
-                   </div>
-                   <div className="flex items-start gap-4">
-                      <MapPin className="text-brand-gold shrink-0" size={20} />
-                      <div>
-                        <h4 className="text-[10px] uppercase tracking-widest font-bold mb-1">Localização</h4>
-                        <p className="text-[9px] text-muted-foreground leading-normal uppercase tracking-widest">Showroom Privado - São Paulo/SP</p>
-                      </div>
-                   </div>
+                <div className="p-6 bg-[#080808] border border-white/5 flex flex-col gap-5 rounded-sm">
+                  <div className="flex items-start gap-3">
+                    <ShieldCheck
+                      className="text-brand-gold/60 shrink-0"
+                      size={18}
+                    />
+                    <div>
+                      <h4 className="text-[10px] uppercase tracking-[0.2em] font-bold mb-0.5 text-white/70">
+                        Garantia de Procedência
+                      </h4>
+                      <p className="text-[9px] text-white/30 leading-normal uppercase tracking-[0.2em]">
+                        Veículo inspecionado pela equipe Carrera.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <MapPin
+                      className="text-brand-gold/60 shrink-0"
+                      size={18}
+                    />
+                    <div>
+                      <h4 className="text-[10px] uppercase tracking-[0.2em] font-bold mb-0.5 text-white/70">
+                        Localização
+                      </h4>
+                      <p className="text-[9px] text-white/30 leading-normal uppercase tracking-[0.2em]">
+                        {SITE_CONFIG.location.full}
+                      </p>
+                    </div>
+                  </div>
                 </div>
+
+                {/* Inline Lead Form */}
+                <LeadForm
+                  variant="default"
+                  title="Solicite mais informações"
+                />
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      <PremiumFooter />
-    </main>
+      {/* Related Vehicles */}
+      {relatedVehicles.length > 0 && (
+        <section className="py-20 px-6 lg:px-12 bg-[#050505] border-t border-white/5">
+          <div className="max-w-7xl mx-auto">
+            <header className="mb-14 text-center">
+              <span className="text-brand-gold text-[9px] uppercase tracking-[0.8em] font-medium mb-6 block opacity-50">
+                Veja Também
+              </span>
+              <h2 className="text-2xl md:text-3xl font-serif italic tracking-tight text-white/90">
+                Veículos Relacionados
+              </h2>
+            </header>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+              {relatedVehicles.map((rv, idx) => (
+                <CarCard key={rv.id} vehicle={rv} index={idx} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+    </>
   );
 }

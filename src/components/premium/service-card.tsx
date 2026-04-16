@@ -18,29 +18,29 @@ export function ServiceCard({ title, description, iconName, index }: ServiceCard
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1, duration: 0.8 }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
-      className="group relative bg-surface-base border border-white/5 p-8 lg:p-12 transition-all duration-500 hover:bg-surface-elevated overflow-hidden"
+      transition={{ duration: 1.2, delay: index * 0.1 }}
+      className="group relative bg-[#080808] border-[0.5px] border-white/5 p-12 lg:p-14 transition-all duration-700 hover:bg-[#0A0A0A] overflow-hidden"
     >
-      {/* Hover Background Accent */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-brand-gold/5 blur-[80px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+      {/* Subtle Hover Gradient */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-brand-gold/[0.02] blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
       
       <div className="relative z-10">
-        <div className="mb-10 text-brand-gold bg-brand-gold/5 w-16 h-16 flex items-center justify-center rounded-sm transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
-          <Icon size={32} strokeWidth={1.5} />
+        <div className="mb-12 text-brand-gold/40 group-hover:text-brand-gold transition-colors duration-700">
+          <Icon size={28} strokeWidth={1} />
         </div>
         
-        <h3 className="text-2xl font-serif italic mb-6 group-hover:text-brand-gold transition-colors">
+        <h3 className="text-xl font-serif italic mb-6 text-white/90 group-hover:text-white transition-colors duration-500">
           {title}
         </h3>
         
-        <p className="text-muted-foreground text-sm leading-relaxed mb-10 group-hover:text-foreground transition-colors">
+        <p className="text-white/40 text-sm leading-[1.8] font-sans font-light mb-12 group-hover:text-white/60 transition-colors duration-500">
           {description}
         </p>
 
-        <div className="h-[1px] w-full bg-white/5 relative overflow-hidden">
+        <div className="h-[0.5px] w-8 bg-brand-gold/20 relative overflow-hidden transition-all duration-700 group-hover:w-16 group-hover:bg-brand-gold">
           <div className="absolute top-0 left-0 w-0 h-full bg-brand-gold transition-all duration-700 group-hover:w-full" />
         </div>
       </div>

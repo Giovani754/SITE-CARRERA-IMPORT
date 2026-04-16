@@ -25,7 +25,7 @@ export function SectionTitle({
           {subtitle}
         </span>
       )}
-      <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif italic tracking-tight leading-tight">
+      <h2 className="text-2xl md:text-5xl lg:text-6xl font-serif italic tracking-tight leading-[1.1]">
         {title}
       </h2>
       <div className={cn(
