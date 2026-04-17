@@ -1,9 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import { LogoCarrera } from '@/components/premium/logo-carrera'
-import { LayoutDashboard, Car, LogOut, Globe } from 'lucide-react'
+import { LogOut, Globe } from 'lucide-react'
 import { logout } from './actions'
+import { SidebarNav } from '@/components/admin/sidebar-nav'
+import Link from 'next/link'
 
 export default async function AdminLayout({
   children,
@@ -12,11 +12,6 @@ export default async function AdminLayout({
 }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-
-  // The middleware also checks this, but extra safety
-  if (!user && (children as any).type?.name !== 'LoginPage') {
-    // This is handled by the middleware, but we need session for layout links
-  }
 
   return (
     <div className="min-h-screen bg-[#030303] flex">
@@ -27,21 +22,7 @@ export default async function AdminLayout({
             <LogoCarrera />
           </div>
           
-          <nav className="flex-1 p-6 space-y-2">
-            {[
-              { label: 'Dashboard', href: '/adm/dashboard', icon: LayoutDashboard },
-              { label: 'Veículos', href: '/adm/veiculos', icon: Car },
-            ].map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex items-center gap-4 px-4 py-3 text-[10px] uppercase tracking-[0.3em] font-bold text-white/40 hover:text-brand-gold hover:bg-white/[0.02] transition-all rounded-sm"
-              >
-                <item.icon size={15} strokeWidth={1.5} />
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <SidebarNav />
 
           <div className="p-6 border-t border-white/5 space-y-4">
             <Link

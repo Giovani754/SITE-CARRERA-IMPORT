@@ -184,10 +184,45 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16">
-            {featuredVehicles.slice(0, 3).map((vehicle, idx) => (
-              <CarCard key={vehicle.id} vehicle={vehicle} index={idx} />
-            ))}
+          <div className="relative group/carousel">
+            <div 
+              id="featured-vehicles-scroll"
+              className="flex overflow-x-auto gap-8 pb-12 no-scrollbar snap-x snap-mandatory scroll-smooth"
+            >
+              {featuredVehicles.slice(0, 9).map((vehicle, idx) => (
+                <div key={vehicle.id} className="min-w-[85vw] md:min-w-[400px] lg:min-w-[440px] snap-center">
+                  <CarCard vehicle={vehicle} index={idx} />
+                </div>
+              ))}
+            </div>
+
+            {/* Navigation Buttons for Desktop */}
+            <div className="hidden lg:flex absolute top-1/2 -left-6 -right-6 -translate-y-1/2 justify-between pointer-events-none">
+              <button 
+                onClick={() => {
+                  const el = document.getElementById('featured-vehicles-scroll');
+                  if (el) el.scrollLeft -= 500;
+                }}
+                className="w-12 h-12 rounded-full border border-white/10 bg-black/50 backdrop-blur-md flex items-center justify-center text-white/40 hover:text-brand-gold hover:border-brand-gold/30 transition-all pointer-events-auto"
+              >
+                <ArrowRight size={20} className="rotate-180" />
+              </button>
+              <button 
+                onClick={() => {
+                  const el = document.getElementById('featured-vehicles-scroll');
+                  if (el) el.scrollLeft += 500;
+                }}
+                className="w-12 h-12 rounded-full border border-white/10 bg-black/50 backdrop-blur-md flex items-center justify-center text-white/40 hover:text-brand-gold hover:border-brand-gold/30 transition-all pointer-events-auto"
+              >
+                <ArrowRight size={20} />
+              </button>
+            </div>
+          </div>
+
+          <div className="flex justify-center mt-8">
+            <span className="text-[9px] uppercase tracking-[0.4em] text-white/20 font-bold animate-pulse">
+              Arraste para explorar o acervo
+            </span>
           </div>
         </div>
       </section>
@@ -208,13 +243,27 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
       </section>
 
       {/* ================ 7. PROVA SOCIAL ================ */}
-      <TestimonialsSection />
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <TestimonialsSection />
+      </motion.div>
 
       {/* ================ 8. CTA FINAL ================ */}
-      <CTASection
-        headline="Pronto para dar o próximo passo?"
-        subheadline="Fale com um consultor e descubra como podemos ajudar na compra ou venda do seu veículo premium."
-      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <CTASection
+          headline="Pronto para dar o próximo passo?"
+          subheadline="Fale com um consultor e descubra como podemos ajudar na compra ou venda do seu veículo premium."
+        />
+      </motion.div>
     </>
   );
 }

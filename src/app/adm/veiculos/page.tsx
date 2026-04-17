@@ -1,7 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Plus, Edit2, Trash2, ExternalLink, Filter } from 'lucide-react'
+import { Plus, Edit2, ExternalLink, Filter } from 'lucide-react'
 import Image from 'next/image'
+import { StatusQuickAction, FeaturedQuickAction } from './quick-actions'
+import { DeleteVehicleButton } from './delete-button'
 
 export default async function VeiculosListPage() {
   const supabase = await createClient()
@@ -97,7 +99,11 @@ export default async function VeiculosListPage() {
                     </span>
                   </td>
                   <td className="px-8 py-6">
-                    <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <StatusQuickAction id={v.id} currentStatus={v.status} />
+                  </td>
+                  <td className="px-8 py-6">
+                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <FeaturedQuickAction id={v.id} isFeatured={v.featured} />
                       <Link
                         href={`/estoque/${v.slug}`}
                         target="_blank"
@@ -113,12 +119,7 @@ export default async function VeiculosListPage() {
                       >
                         <Edit2 size={14} />
                       </Link>
-                      <button
-                        className="p-2 text-white/20 hover:text-red-500/60 transition-colors"
-                        title="Excluir"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                      <DeleteVehicleButton id={v.id} model={`${v.brand} ${v.model}`} />
                     </div>
                   </td>
                 </tr>

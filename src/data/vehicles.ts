@@ -16,7 +16,7 @@ export interface Vehicle {
   featured: boolean;
   slug: string;
   category: string;
-  engine?: string;
   power?: string;
   city?: string;
+  armor?: string;
 }

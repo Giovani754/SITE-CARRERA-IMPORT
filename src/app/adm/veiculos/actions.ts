@@ -26,6 +26,7 @@ export async function upsertVehicle(formData: FormData) {
     status: formData.get('status') as 'available' | 'sold' | 'reserved',
     featured: formData.get('featured') === 'on',
     slug: slug,
+    armor: formData.get('armor') as string,
     images: (formData.get('images_json') as string)?.split(',').map(i => i.trim()).filter(Boolean) || [],
     highlights: (formData.get('highlights_json') as string)?.split(',').map(i => i.trim()).filter(Boolean) || [],
   }
@@ -55,6 +56,34 @@ export async function upsertVehicle(formData: FormData) {
   revalidatePath('/')
   
   redirect('/adm/veiculos')
+}
+
+export async function updateVehicleStatus(id: string, status: 'available' | 'sold' | 'reserved') {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('vehicles')
+    .update({ status })
+    .eq('id', id)
+
+  if (error) return { error: 'Falha ao atualizar status.' }
+
+  revalidatePath('/adm/veiculos')
+  revalidatePath('/adm/dashboard')
+  revalidatePath('/estoque')
+}
+
+export async function toggleVehicleFeatured(id: string, currentStatus: boolean) {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('vehicles')
+    .update({ featured: !currentStatus })
+    .eq('id', id)
+
+  if (error) return { error: 'Falha ao atualizar destaque.' }
+
+  revalidatePath('/adm/veiculos')
+  revalidatePath('/adm/dashboard')
+  revalidatePath('/')
 }
 
 export async function deleteVehicle(id: string) {
