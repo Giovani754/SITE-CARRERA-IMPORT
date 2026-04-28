@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
-import { vehicles } from "@/data/vehicles";
+import { getAllVehicles } from "@/lib/vehicles";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://carreraimports.com.br";
 
   const staticPages: MetadataRoute.Sitemap = [
@@ -36,6 +36,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
   ];
+
+  const vehicles = await getAllVehicles();
 
   const vehiclePages: MetadataRoute.Sitemap = vehicles.map((vehicle) => ({
     url: `${baseUrl}/estoque/${vehicle.slug}`,

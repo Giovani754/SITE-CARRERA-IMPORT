@@ -105,7 +105,7 @@ export default async function VehiclePage({ params }: PageProps) {
                 )}
               </div>
               <div className="grid grid-cols-3 gap-4">
-                {vehicle.images?.slice(1, 4).map((img, i) => (
+                {vehicle.images?.slice(1, 4).map((img: string, i: number) => (
                   <div
                     key={i}
                     className="aspect-[4/3] bg-[#080808] border border-white/5 relative overflow-hidden group rounded-sm"
@@ -137,7 +137,7 @@ export default async function VehiclePage({ params }: PageProps) {
                     Destaques
                   </h3>
                   <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {vehicle.highlights.map((h) => (
+                    {vehicle.highlights.map((h: string) => (
                       <li
                         key={h}
                         className="flex items-center gap-3 text-sm text-white/60"

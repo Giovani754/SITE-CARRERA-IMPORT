@@ -17,6 +17,7 @@ export interface Vehicle {
   slug: string;
   category: string;
   power?: string;
-  city?: string;
-  armor?: string;
+  engine?: string;
+  city: string;
+  blindagem?: string;
 }

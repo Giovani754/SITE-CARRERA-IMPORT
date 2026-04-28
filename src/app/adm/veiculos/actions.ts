@@ -8,14 +8,21 @@ export async function upsertVehicle(formData: FormData) {
   const supabase = await createClient()
 
   const id = formData.get('id') as string | null
+  const brand = formData.get('brand') as string
+  const model = formData.get('model') as string
+  const year = formData.get('year') as string
+  
   const slug = (formData.get('slug') as string) || 
-    `${formData.get('brand')}-${formData.get('model')}-${formData.get('year')}`.toLowerCase().replace(/\s+/g, '-')
+    `${brand}-${model}-${year}`.toLowerCase().replace(/\s+/g, '-')
+
+  // Get image URLs from formData
+  const images = (formData.get('images_json') as string)?.split(',').filter(Boolean) || []
 
   const vehicleData = {
-    brand: formData.get('brand') as string,
-    model: formData.get('model') as string,
+    brand: brand,
+    model: model,
     version: formData.get('version') as string,
-    year: parseInt(formData.get('year') as string),
+    year: parseInt(year),
     mileage: formData.get('mileage') as string,
     color: formData.get('color') as string,
     category: formData.get('category') as string,
@@ -26,36 +33,44 @@ export async function upsertVehicle(formData: FormData) {
     status: formData.get('status') as 'available' | 'sold' | 'reserved',
     featured: formData.get('featured') === 'on',
     slug: slug,
-    armor: formData.get('armor') as string,
-    images: (formData.get('images_json') as string)?.split(',').map(i => i.trim()).filter(Boolean) || [],
+    blindagem: formData.get('blindagem') as string,
+    city: formData.get('city') as string,
+    images: images,
     highlights: (formData.get('highlights_json') as string)?.split(',').map(i => i.trim()).filter(Boolean) || [],
   }
 
   let error
-  if (id) {
-    const { error: updateError } = await supabase
-      .from('vehicles')
-      .update(vehicleData)
-      .eq('id', id)
-    error = updateError
-  } else {
-    const { error: insertError } = await supabase
-      .from('vehicles')
-      .insert([vehicleData])
-    error = insertError
+  try {
+    if (id) {
+      const { error: updateError } = await supabase
+        .from('vehicles')
+        .update(vehicleData)
+        .eq('id', id)
+      error = updateError
+    } else {
+      const { error: insertError } = await supabase
+        .from('vehicles')
+        .insert([vehicleData])
+      error = insertError
+    }
+  } catch (err: any) {
+    console.error('Critical Database Error:', err);
+    return { error: `Erro crítico: ${err.message}` }
   }
 
   if (error) {
-    console.error('Error saving vehicle:', error)
-    return { error: 'Falha ao salvar veículo.' }
+    console.error('Supabase Error:', error)
+    return { error: `Erro no Supabase: ${error.message} - ${error.details}` }
   }
 
+  // Revalidate everything
   revalidatePath('/adm/veiculos')
+  revalidatePath('/adm/dashboard')
   revalidatePath('/estoque')
   revalidatePath(`/estoque/${slug}`)
   revalidatePath('/')
   
-  redirect('/adm/veiculos')
+  return { success: true, slug };
 }
 
 export async function updateVehicleStatus(id: string, status: 'available' | 'sold' | 'reserved') {
@@ -70,6 +85,7 @@ export async function updateVehicleStatus(id: string, status: 'available' | 'sol
   revalidatePath('/adm/veiculos')
   revalidatePath('/adm/dashboard')
   revalidatePath('/estoque')
+  revalidatePath('/')
 }
 
 export async function toggleVehicleFeatured(id: string, currentStatus: boolean) {
@@ -95,6 +111,7 @@ export async function deleteVehicle(id: string) {
   }
 
   revalidatePath('/adm/veiculos')
+  revalidatePath('/adm/dashboard')
   revalidatePath('/estoque')
   revalidatePath('/')
 }

@@ -21,45 +21,49 @@ const detailedServices = [
   {
     title: "Consultoria Automotiva",
     description:
-      "Assessoria completa para quem deseja comprar ou vender um veículo premium. Analisamos o mercado, definimos o posicionamento correto e conduzimos a estratégia com foco em resultado.",
+      "Comprar ou vender um veículo premium exige mais do que gosto pessoal. Exige comparação correta, leitura de preço, entendimento de momento e clareza sobre o que realmente vale avançar. A Carrera Imports orienta sua decisão com base em mercado, objetivo e viabilidade, para que cada movimento tenha fundamento.",
     icon: Target,
+    ctaLabel: "SOLICITAR CONSULTORIA",
     features: [
-      "Análise de mercado personalizada",
-      "Definição de preço estratégico",
-      "Orientação para compra e venda",
+      "Análise comparativa de mercado",
+      "Definição de faixa ideal de negociação",
+      "Orientação para compra ou venda",
     ],
   },
   {
     title: "Intermediação da Venda",
     description:
-      "Intermediação profissional de ponta a ponta. Filtramos curiosos, conduzimos as visitas e garantimos uma negociação segura e discreta.",
+      "Colocar um carro premium à venda sem estratégia atrai curioso, proposta baixa e conversa que não leva a lugar nenhum. Nós organizamos a apresentação, filtramos interessados e conduzimos o contato até chegar em quem tem perfil real de compra. Menos exposição. Mais controle. Melhor condução.",
     icon: Shield,
+    ctaLabel: "SOLICITAR INTERMEDIAÇÃO",
     features: [
-      "Filtro rigoroso de interessados",
-      "Segurança em todas as etapas",
-      "Discrição total no processo",
+      "Filtro qualificado de interessados",
+      "Condução segura das tratativas",
+      "Discrição durante todo o processo",
     ],
   },
   {
     title: "Curadoria de Veículos Premium",
     description:
-      "Encontramos o veículo ideal para você. Nossa curadoria foca em procedência, estado de conservação e histórico impecável.",
+      "Nem toda boa oportunidade aparece em anúncio aberto. Buscamos veículos alinhados ao seu perfil, avaliando histórico, conservação, configuração, preço e coerência com o momento de mercado. Você não perde tempo garimpando. Recebe apenas o que merece ser considerado.",
     icon: Gem,
+    ctaLabel: "SOLICITAR CURADORIA",
     features: [
-      "Busca personalizada",
-      "Verificação técnica rigorosa",
-      "Acesso a veículos exclusivos",
+      "Busca direcionada por perfil",
+      "Avaliação criteriosa de histórico e estado",
+      "Acesso a oportunidades selecionadas",
     ],
   },
   {
     title: "Apoio Estratégico Comercial",
     description:
-      "Suporte completo em blindagem, estética automotiva, documentação e revisão, com parceiros de confiança do mercado premium.",
+      "Algumas decisões exigem mais do que opinião. Apoiamos clientes, parceiros e operações automotivas com análise, revisão comercial, precificação e direcionamento para negociações de maior valor. É suporte para quem precisa decidir com mais clareza antes de colocar dinheiro, carro ou reputação em jogo.",
     icon: Award,
+    ctaLabel: "SOLICITAR APOIO",
     features: [
       "Rede de parceiros qualificados",
-      "Blindagem e estética premium",
-      "Manutenção especializada",
+      "Revisão comercial e precificação",
+      "Suporte para decisões estratégicas",
     ],
   },
 ];
@@ -75,41 +79,44 @@ export default function ServicesPage() {
   return (
     <>
       <PageHero
-        eyebrow="Nossos Serviços"
-        title="Soluções inteligentes para quem valoriza seu patrimônio automotivo."
-        description="Da consultoria à intermediação, atuamos com eficácia e profissionalismo em cada etapa."
+        eyebrow="NOSSOS SERVIÇOS"
+        title="Estrutura completa para comprar, vender e cuidar do seu veículo premium."
+        description="Da avaliação inicial ao pós-negócio, conduzimos cada etapa com critério, discrição e leitura prática do mercado automotivo de alto padrão."
+        backgroundImage="https://images.unsplash.com/photo-1619405399517-d7fce0f13302?q=80&w=1920&auto=format&fit=crop"
+        backgroundAlt="Interior premium de veículo - Carrera Imports"
+        accentPosition="center"
       />
 
       <section className="px-6 lg:px-12 pb-24">
         <div className="max-w-6xl mx-auto">
           <Breadcrumb items={[{ name: "Serviços", href: "/servicos" }]} />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {detailedServices.map((service) => {
               const Icon = service.icon;
               return (
                 <div
                   key={service.title}
-                  className="bg-[#080808] border border-white/5 p-10 lg:p-12 relative group h-full flex flex-col rounded-sm hover:border-white/[0.08] transition-colors duration-700"
+                  className="bg-[#080808] border border-white/5 p-12 lg:p-14 relative group h-full flex flex-col rounded-sm hover:border-white/[0.12] transition-all duration-700 hover:shadow-2xl hover:shadow-brand-gold/[0.02]"
                 >
-                  <div className="mb-8 text-brand-gold/50 group-hover:text-brand-gold transition-colors duration-500">
-                    <Icon size={36} strokeWidth={1} />
+                  <div className="mb-10 text-brand-gold/40 group-hover:text-brand-gold transition-colors duration-500">
+                    <Icon size={42} strokeWidth={1} />
                   </div>
 
-                  <h3 className="text-2xl font-serif italic mb-4 text-white/90">
+                  <h3 className="text-2xl lg:text-3xl font-serif italic mb-6 text-white/95">
                     {service.title}
                   </h3>
-                  <p className="text-white/40 leading-relaxed mb-8 flex-grow font-sans font-light text-sm">
+                  <p className="text-white/60 leading-relaxed mb-10 flex-grow font-sans font-light text-[15px]">
                     {service.description}
                   </p>
 
-                  <ul className="space-y-3 mb-8">
+                  <ul className="space-y-4 mb-12">
                     {service.features.map((feature) => (
                       <li
                         key={feature}
-                        className="flex items-center gap-3 text-sm text-white/60"
+                        className="flex items-center gap-4 text-sm text-white/80"
                       >
-                        <div className="w-1 h-1 bg-brand-gold/60 rounded-full shrink-0" />
+                        <div className="w-1.5 h-1.5 bg-brand-gold/40 rounded-full shrink-0" />
                         {feature}
                       </li>
                     ))}
@@ -119,10 +126,10 @@ export default function ServicesPage() {
                     href={SITE_CONFIG.whatsapp.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[10px] uppercase tracking-[0.3em] font-bold text-brand-gold/70 hover:text-brand-gold transition-colors flex items-center gap-4 group/btn"
+                    className="text-[10px] uppercase tracking-[0.4em] font-bold text-brand-gold/60 hover:text-brand-gold transition-all flex items-center gap-5 group/btn border-t border-white/5 pt-8"
                   >
-                    Solicitar Consultoria
-                    <div className="h-[1px] w-10 bg-brand-gold/20 group-hover/btn:w-16 group-hover/btn:bg-brand-gold transition-all" />
+                    {service.ctaLabel}
+                    <div className="h-[1px] w-8 bg-brand-gold/10 group-hover/btn:w-16 group-hover/btn:bg-brand-gold transition-all" />
                   </Link>
                 </div>
               );
@@ -131,19 +138,20 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Complementary */}
-      <section className="py-24 px-6 lg:px-12 bg-[#050505] border-y border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <header className="mb-16 text-center">
-            <span className="text-brand-gold text-[9px] uppercase tracking-[0.8em] font-medium mb-6 block opacity-50">
-              Complementares
+      {/* Complementares */}
+      <section className="py-32 px-6 lg:px-12 bg-[#050505] border-y border-white/5 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.015),transparent)] pointer-events-none" />
+        <div className="max-w-6xl mx-auto relative z-10">
+          <header className="mb-20 text-center">
+            <span className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-8 block opacity-50">
+              COMPLEMENTARES
             </span>
-            <h2 className="text-2xl md:text-3xl font-serif italic tracking-tight text-white/90">
-              Suporte completo em todas as frentes automotivas
+            <h2 className="text-3xl md:text-4xl font-serif italic tracking-tight text-white/95">
+              Tudo que sustenta uma negociação bem conduzida.
             </h2>
           </header>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
             {complementaryServices.map((item) => {
               const Icon = item.icon;
               return (
@@ -151,10 +159,10 @@ export default function ServicesPage() {
                   key={item.name}
                   className="flex flex-col items-center text-center group"
                 >
-                  <div className="w-14 h-14 border border-white/[0.08] rounded-sm flex items-center justify-center mb-5 text-brand-gold/40 group-hover:text-brand-gold group-hover:border-brand-gold/30 transition-all duration-500">
-                    <Icon size={22} strokeWidth={1.5} />
+                  <div className="w-16 h-16 border border-white/[0.08] rounded-sm flex items-center justify-center mb-6 text-brand-gold/30 group-hover:text-brand-gold group-hover:border-brand-gold/30 group-hover:bg-brand-gold/[0.02] transition-all duration-700">
+                    <Icon size={24} strokeWidth={1} />
                   </div>
-                  <span className="text-[10px] uppercase tracking-[0.3em] font-medium text-white/40 group-hover:text-white/60 transition-colors">
+                  <span className="text-[10px] uppercase tracking-[0.4em] font-bold text-white/40 group-hover:text-white/80 transition-colors">
                     {item.name}
                   </span>
                 </div>
@@ -166,8 +174,8 @@ export default function ServicesPage() {
 
       <CTASection
         variant="compact"
-        headline="Precisa de uma consultoria personalizada?"
-        subheadline="Nossa equipe está pronta para entender sua necessidade."
+        headline="Precisa de uma condução sob medida?"
+        subheadline="Fale com a Carrera Imports e entenda qual serviço faz sentido para o seu momento: compra, venda, curadoria ou suporte estratégico."
       />
     </>
   );

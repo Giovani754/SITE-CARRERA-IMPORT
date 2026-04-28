@@ -12,7 +12,7 @@ interface InventoryContentProps {
 
 export default function InventoryContent({ vehicles }: InventoryContentProps) {
   const [activeBrand, setActiveBrand] = useState("Todos");
-  const [activeArmor, setActiveArmor] = useState("Todos");
+  const [activeBlindagem, setActiveBlindagem] = useState("Todos");
   const [searchQuery, setSearchQuery] = useState("");
   const [priceRange, setPriceRange] = useState("Todos");
   const [activeYear, setActiveYear] = useState("Todos");
@@ -25,7 +25,7 @@ export default function InventoryContent({ vehicles }: InventoryContentProps) {
 
   const armors = useMemo(() => {
     if (!vehicles) return ["Todos"];
-    const unique = [...new Set(vehicles.map((v) => v.armor))].filter(Boolean);
+    const unique = [...new Set(vehicles.map((v) => v.blindagem))].filter(Boolean);
     return ["Todos", "Blindados", "Não Blindados", ...unique];
   }, [vehicles]);
 
@@ -41,12 +41,12 @@ export default function InventoryContent({ vehicles }: InventoryContentProps) {
       const matchesBrand = activeBrand === "Todos" || v.brand === activeBrand;
       const matchesYear = activeYear === "Todos" || v.year.toString() === activeYear;
       
-      const isBlindado = !!v.armor;
+      const isBlindado = !!v.blindagem;
       const matchesArmor = 
-        activeArmor === "Todos" || 
-        (activeArmor === "Blindados" && isBlindado) || 
-        (activeArmor === "Não Blindados" && !isBlindado) ||
-        v.armor === activeArmor;
+        activeBlindagem === "Todos" || 
+        (activeBlindagem === "Blindados" && isBlindado) || 
+        (activeBlindagem === "Não Blindados" && !isBlindado) ||
+        v.blindagem === activeBlindagem;
 
       const matchesSearch =
         searchQuery === "" ||
@@ -69,20 +69,23 @@ export default function InventoryContent({ vehicles }: InventoryContentProps) {
 
   const clearFilters = () => {
     setActiveBrand("Todos");
-    setActiveArmor("Todos");
+    setActiveBlindagem("Todos");
     setActiveYear("Todos");
     setPriceRange("Todos");
     setSearchQuery("");
   };
 
-  const hasActiveFilters = activeBrand !== "Todos" || activeArmor !== "Todos" || activeYear !== "Todos" || priceRange !== "Todos" || searchQuery !== "";
+  const hasActiveFilters = activeBrand !== "Todos" || activeBlindagem !== "Todos" || activeYear !== "Todos" || priceRange !== "Todos" || searchQuery !== "";
 
   return (
     <>
       <PageHero
-        eyebrow="Acervo Carrera Imports"
-        title="O mercado premium de São Paulo em sua melhor curadoria."
-        description="Seleção rigorosa de ativos automotivos com procedência garantida e laudo aprovado."
+        eyebrow="ACERVO CARRERA IMPORTS"
+        title="Veículos premium selecionados antes de chegarem até você."
+        description="Cada modelo do acervo passa por análise de histórico, conservação, documentação e coerência de mercado. Aqui, o carro bonito precisa provar que também é uma boa escolha."
+        backgroundImage="https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1920&auto=format&fit=crop"
+        backgroundAlt="Veículo premium em exposição - Carrera Imports"
+        accentPosition="left"
       />
 
       <section className="px-6 lg:px-12 pb-24">
@@ -153,8 +156,8 @@ export default function InventoryContent({ vehicles }: InventoryContentProps) {
               {/* Armor Select */}
               <div className="w-full lg:w-1/6 relative">
                 <select
-                  value={activeArmor}
-                  onChange={(e) => setActiveArmor(e.target.value)}
+                  value={activeBlindagem}
+                  onChange={(e) => setActiveBlindagem(e.target.value)}
                   className="w-full bg-transparent py-6 px-8 text-[10px] uppercase tracking-[0.3em] font-bold focus:outline-none appearance-none cursor-pointer hover:bg-white/[0.01]"
                 >
                   <option value="Todos">BLINDAGEM</option>
@@ -207,35 +210,35 @@ export default function InventoryContent({ vehicles }: InventoryContentProps) {
       </section>
 
       {/* Local SEO Text Section */}
-      <section className="py-24 px-6 lg:px-12 bg-[#050505] border-t border-white/5 overflow-hidden">
+      <section className="py-32 px-6 lg:px-12 bg-[#050505] border-t border-white/5 overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-20 items-center text-center lg:text-left">
           <div className="lg:w-1/2">
-            <span className="text-brand-gold text-[9px] uppercase tracking-[0.6em] font-bold mb-8 block opacity-40">
-              Presença São Paulo
+            <span className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-10 block opacity-50">
+              PRESENÇA SÃO PAULO
             </span>
-            <h2 className="text-3xl lg:text-4xl font-serif italic mb-8 leading-tight tracking-tight text-white/90">
-              Intermediação de elite para ativos de alto padrão.
+            <h2 className="text-4xl lg:text-5xl font-serif italic mb-10 leading-[1.1] tracking-tight text-white/95">
+              O estoque certo não começa na vitrine.
             </h2>
-            <p className="text-white/40 text-sm font-light leading-relaxed max-w-xl mx-auto lg:mx-0">
-              A Carrera Imports atua em São Paulo com discrição e profundo conhecimento de mercado, garantindo que cada transação seja conduzida com segurança jurídica e transparência absoluta.
+            <p className="text-white/60 text-[15px] lg:text-base font-light leading-relaxed max-w-xl mx-auto lg:mx-0">
+              Antes de um veículo entrar no acervo, ele passa por análise, validação e posicionamento. Trabalhamos com uma rede selecionada em São Paulo para apresentar carros com origem clara, preço coerente e negociação conduzida sem ruído.
             </p>
           </div>
           <div className="lg:w-1/2 w-full">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-6 md:gap-8">
               {[
-                { label: "Procedência", value: "Laudo Aprovado" },
-                { label: "Mercado", value: "Prime São Paulo" },
-                { label: "Negociação", value: "Direct & Safe" },
-                { label: "Posicionamento", value: "Curadoria Premium" },
+                { label: "PROCEDÊNCIA", value: "Histórico verificado" },
+                { label: "MERCADO", value: "Preço com leitura real" },
+                { label: "NEGOCIAÇÃO", value: "Tratativa conduzida com critério" },
+                { label: "POSICIONAMENTO", value: "Seleção por perfil e oportunidade" },
               ].map((item) => (
                 <div
                   key={item.label}
-                  className="p-8 border border-white/5 bg-[#080808] rounded-sm group hover:border-brand-gold/20 transition-all duration-500"
+                  className="p-10 border border-white/5 bg-[#080808] rounded-sm group hover:border-brand-gold/20 transition-all duration-700 hover:shadow-2xl hover:shadow-brand-gold/[0.01]"
                 >
-                  <span className="text-brand-gold/40 text-[9px] uppercase tracking-[0.4em] font-bold block mb-2">
+                  <span className="text-brand-gold text-[9px] uppercase tracking-[0.5em] font-bold block mb-4 opacity-40 group-hover:opacity-100 transition-opacity">
                     {item.label}
                   </span>
-                  <span className="text-white/70 text-sm font-serif italic">
+                  <span className="text-white/80 text-sm md:text-base font-serif italic group-hover:text-white transition-colors leading-tight block">
                     {item.value}
                   </span>
                 </div>

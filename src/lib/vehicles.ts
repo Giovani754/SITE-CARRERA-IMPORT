@@ -15,23 +15,23 @@ export async function getAllVehicles(): Promise<Vehicle[]> {
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error || !dbVehicles || dbVehicles.length === 0) {
-      if (error) console.warn("Supabase Fetch Error (getAllVehicles), using mocks:", error.message);
+    if (error) {
+      console.error("Supabase Error (getAllVehicles):", error.message);
       return MOCK_VEHICLES;
     }
 
-    return dbVehicles as Vehicle[];
+    // Se houver dados no banco, use eles. Caso contrário, use os mocks como fallback inicial.
+    return (dbVehicles && dbVehicles.length > 0) ? (dbVehicles as Vehicle[]) : MOCK_VEHICLES;
   } catch (err) {
-    console.error("Critical error in getAllVehicles, using mocks:", err);
+    console.error("Critical error in getAllVehicles:", err);
     return MOCK_VEHICLES;
   }
 }
 
 /**
  * Retorna veículos em destaque para a Home.
- * Se não houver itens com 'featured' no banco, usa os mocks filtrados.
  */
-export async function getFeaturedVehicles(limit = 3): Promise<Vehicle[]> {
+export async function getFeaturedVehicles(limit = 6): Promise<Vehicle[]> {
   const supabase = await createClient();
 
   try {
@@ -42,21 +42,25 @@ export async function getFeaturedVehicles(limit = 3): Promise<Vehicle[]> {
       .eq("status", "available")
       .limit(limit);
 
-    if (error || !dbFeatured || dbFeatured.length === 0) {
-      if (error) console.warn("Supabase Fetch Error (getFeaturedVehicles), using mocks:", error.message);
+    if (error) {
+      console.error("Supabase Error (getFeaturedVehicles):", error.message);
       return MOCK_VEHICLES.filter(v => v.featured).slice(0, limit);
     }
 
-    return dbFeatured as Vehicle[];
+    if (dbFeatured && dbFeatured.length > 0) {
+      return dbFeatured as Vehicle[];
+    }
+
+    // Se não houver nada no banco, retorna os mocks marcados como featured
+    return MOCK_VEHICLES.filter(v => v.featured).slice(0, limit);
   } catch (err) {
-    console.error("Critical error in getFeaturedVehicles, using mocks:", err);
+    console.error("Critical error in getFeaturedVehicles:", err);
     return MOCK_VEHICLES.filter(v => v.featured).slice(0, limit);
   }
 }
 
 /**
  * Busca um veículo individual pelo slug.
- * Verifica no Supabase e, se não encontrar, tenta nos mocks.
  */
 export async function getVehicleBySlug(slug: string): Promise<Vehicle | null> {
   const supabase = await createClient();
@@ -66,24 +70,26 @@ export async function getVehicleBySlug(slug: string): Promise<Vehicle | null> {
       .from("vehicles")
       .select("*")
       .eq("slug", slug)
-      .single();
+      .maybeSingle();
 
-    if (error || !dbVehicle) {
-      // Tenta encontrar nos mocks
-      const mock = MOCK_VEHICLES.find(v => v.slug === slug);
-      return mock || null;
+    if (error) {
+      console.error("Supabase Error (getVehicleBySlug):", error.message);
     }
 
-    return dbVehicle as Vehicle;
+    if (dbVehicle) {
+      return dbVehicle as Vehicle;
+    }
+
+    // Tenta encontrar nos mocks se não houver no banco
+    return MOCK_VEHICLES.find(v => v.slug === slug) || null;
   } catch (err) {
-    console.error("Critical error in getVehicleBySlug, searching mocks:", err);
-    const mock = MOCK_VEHICLES.find(v => v.slug === slug);
-    return mock || null;
+    console.error("Critical error in getVehicleBySlug:", err);
+    return MOCK_VEHICLES.find(v => v.slug === slug) || null;
   }
 }
 
 /**
- * Retorna veículos relacionados (mesma marca ou aleatórios).
+ * Retorna veículos relacionados.
  */
 export async function getRelatedVehicles(currentVehicle: Vehicle, limit = 3): Promise<Vehicle[]> {
   const supabase = await createClient();
@@ -97,16 +103,23 @@ export async function getRelatedVehicles(currentVehicle: Vehicle, limit = 3): Pr
       .eq("status", "available")
       .limit(limit);
 
-    // Se no DB não houver da mesma marca, tenta qualquer um disponível
-    if (error || !dbRelated || dbRelated.length === 0) {
-      const mockRelated = MOCK_VEHICLES.filter(
-        v => v.slug !== currentVehicle.slug && (v.brand === currentVehicle.brand || true)
-      ).slice(0, limit);
-      
-      return mockRelated;
+    if (!error && dbRelated && dbRelated.length > 0) {
+      return dbRelated as Vehicle[];
     }
 
-    return dbRelated as Vehicle[];
+    // Fallback para marcas diferentes se não houver da mesma marca
+    const { data: dbAny, error: errorAny } = await supabase
+      .from("vehicles")
+      .select("*")
+      .neq("slug", currentVehicle.slug)
+      .eq("status", "available")
+      .limit(limit);
+
+    if (!errorAny && dbAny && dbAny.length > 0) {
+      return dbAny as Vehicle[];
+    }
+    
+    return MOCK_VEHICLES.filter(v => v.slug !== currentVehicle.slug).slice(0, limit);
   } catch (err) {
     return MOCK_VEHICLES.filter(v => v.slug !== currentVehicle.slug).slice(0, limit);
   }

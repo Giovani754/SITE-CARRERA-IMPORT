@@ -15,101 +15,139 @@ interface CarCardProps {
 export function CarCard({ vehicle, index }: CarCardProps) {
   if (!vehicle) return null;
   const mainImage = vehicle.images?.[0] || vehicle.image || "";
-  const displayTags = vehicle.category ? [vehicle.category] : (vehicle.tags || []);
+  
+  // Strict consultation check
+  const priceValue = vehicle.price || "";
+  const isConsultation = !priceValue || 
+                         priceValue.toLowerCase().includes("consulta") || 
+                         priceValue === "0" || 
+                         priceValue.toLowerCase() === "sob consulta";
+  
+  // Tag Superior - Category or status if special
+  const categoryTag = vehicle.blindagem ? "BLINDADO" : (vehicle.category || "EXCLUSIVO").toUpperCase();
+  
+  // Trust Seals - We'll take the most relevant from highlights or use defaults
+  const trustSeals = vehicle.highlights?.filter((h: string) => 
+    h.toLowerCase().includes("laudo") || 
+    h.toLowerCase().includes("procedência") || 
+    h.toLowerCase().includes("revisões") ||
+    h.toLowerCase().includes("único dono") ||
+    h.toLowerCase().includes("blindagem") ||
+    h.toLowerCase().includes("garantia")
+  ).slice(0, 2) || [];
+
+  // If no specific trust seals found, use first two highlights
+  const finalSeals = trustSeals.length > 0 ? trustSeals : (vehicle.highlights?.slice(0, 2) || ["Procedência verificada", "Laudo aprovado"]);
 
   return (
     <Link href={`/estoque/${vehicle.slug}`} className="block group">
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
         transition={{
-          delay: index * 0.1,
-          duration: 1,
+          delay: index * 0.05,
+          duration: 1.2,
           ease: [0.16, 1, 0.3, 1],
         }}
-        viewport={{ once: true }}
-        className="relative flex flex-col bg-[#080808] border-[0.5px] border-white/5 overflow-hidden rounded-sm hover:border-white/10 transition-colors duration-500"
+        className="relative flex flex-col bg-[#080808] border-[0.5px] border-white/5 overflow-hidden rounded-sm hover:border-brand-gold/30 transition-all duration-700 shadow-2xl hover:shadow-brand-gold/[0.03] group-hover:-translate-y-2"
       >
         {/* Image Container */}
         <div className="relative aspect-[16/10] overflow-hidden">
           {mainImage ? (
-            <Image
-              src={mainImage}
-              alt={`${vehicle.brand} ${vehicle.model}`}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className="object-cover transition-transform duration-[1.5s] group-hover:scale-105"
-            />
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full h-full"
+            >
+              <Image
+                src={mainImage}
+                alt={`${vehicle.brand} ${vehicle.model}`}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover brightness-[0.85] group-hover:brightness-100 transition-all duration-1000"
+              />
+            </motion.div>
           ) : (
             <div className="w-full h-full bg-white/5 flex items-center justify-center text-[10px] text-white/10 uppercase tracking-widest">
               Sem Imagem
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80" />
+          
+          {/* Subtle Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-transparent to-transparent opacity-80" />
 
-          {/* Tags / Badges */}
-          <div className="absolute top-6 left-6 flex flex-wrap gap-2">
-            {vehicle.status !== "available" && (
-              <span className="bg-white/10 backdrop-blur-md px-3 py-1 text-[8px] uppercase tracking-widest text-white/90 border border-white/10 rounded-[2px] font-bold">
-                {vehicle.status === "sold" ? "Vendido" : "Reservado"}
-              </span>
-            )}
-            {displayTags.slice(0, 2).map((tag: string) => (
-              <span
-                key={tag}
-                className="bg-black/60 backdrop-blur-md px-3 py-1 text-[8px] uppercase tracking-widest text-white/70 border border-white/10 rounded-[2px]"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-
-          {/* Price Overlay */}
-          <div className="absolute bottom-6 left-6">
-            <span className="text-brand-gold text-lg font-sans font-medium tracking-tight">
-              {vehicle.price}
+          {/* Top Tag */}
+          <div className="absolute top-5 left-5">
+            <span className="bg-black/60 backdrop-blur-md px-3 py-1.5 text-[8px] uppercase tracking-[0.3em] text-white/70 border border-white/10 rounded-[2px] font-bold">
+              {categoryTag}
             </span>
           </div>
+          
+          {/* Status Overlay (Sold/Reserved) */}
+          {vehicle.status !== "available" && (
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center z-10">
+              <span className="bg-brand-gold text-black px-6 py-2 text-[10px] font-bold uppercase tracking-[0.4em] shadow-2xl">
+                {vehicle.status === "sold" ? "Vendido" : "Reservado"}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Content */}
-        <div className="p-8 lg:p-10 flex flex-col">
-          <div className="mb-6">
-            <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-white/30 mb-2 block">
-              {vehicle.brand}
+        <div className="p-7 lg:p-10 flex flex-col">
+          {/* Price */}
+          <div className="mb-5">
+            <span className={cn(
+              "text-xl lg:text-2xl font-serif italic tracking-tight block transition-colors duration-500",
+              isConsultation ? "text-white/30" : "text-brand-gold"
+            )}>
+              {isConsultation ? "Sob consulta" : priceValue}
             </span>
-            <h3 className="text-xl font-serif italic tracking-tight text-white/90">
+          </div>
+
+          {/* Brand & Model */}
+          <div className="mb-6">
+            <span className="text-[10px] uppercase tracking-[0.5em] font-bold text-white/20 mb-2.5 block group-hover:text-brand-gold/40 transition-colors">
+              {vehicle.brand.toUpperCase()}
+            </span>
+            <h3 className="text-xl lg:text-2xl font-serif italic tracking-tight text-white/90 leading-tight group-hover:text-white transition-colors duration-500">
               {vehicle.model}
             </h3>
           </div>
 
-          {/* Specs */}
-          <div className="flex items-center gap-6 mb-8 pt-6 border-t border-white/5">
-            <div className="flex items-center gap-2.5 text-white/30">
-              <Calendar size={13} strokeWidth={1.5} />
-              <span className="text-[10px] uppercase tracking-widest font-medium">
-                {vehicle.year}
-              </span>
-            </div>
-            <div className="flex items-center gap-2.5 text-white/30">
-              <Gauge size={13} strokeWidth={1.5} />
-              <span className="text-[10px] uppercase tracking-widest font-medium">
-                {vehicle.mileage}
-              </span>
-            </div>
+          {/* Info Quick (Year · KM) */}
+          <div className="flex items-center gap-4 mb-8 text-white/40 font-sans text-xs font-light">
+            <span>{vehicle.year}</span>
+            <span className="text-white/10">·</span>
+            <span>{vehicle.mileage}</span>
           </div>
 
-          <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.4em] font-bold text-white/20 group-hover:text-brand-gold transition-all duration-500">
-            Explorar Ativo
-            <MoveRight
-              size={14}
-              className="transition-transform duration-500 group-hover:translate-x-2"
-            />
+          {/* Trust Seals */}
+          <div className="flex flex-col gap-3 mb-10 pt-8 border-t border-white/5">
+            {finalSeals.map((seal: string) => (
+              <div key={seal} className="flex items-center gap-3 text-[10px] text-white/40 group-hover:text-white/60 transition-colors">
+                <div className="w-1.5 h-1.5 bg-brand-gold/30 rounded-full" />
+                <span className="truncate">{seal}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.4em] font-bold text-white/20 group-hover:text-brand-gold transition-all duration-700 mt-auto">
+            <span>{isConsultation ? "Consultar Disponibilidade" : "Ver Detalhes"}</span>
+            <div className="flex items-center">
+              <div className="h-[0.5px] w-0 bg-brand-gold transition-all duration-700 group-hover:w-8 mr-4" />
+              <MoveRight
+                size={14}
+                className="transition-transform duration-700 group-hover:translate-x-1"
+              />
+            </div>
           </div>
         </div>
 
         {/* Accent Line */}
-        <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-brand-gold group-hover:w-full transition-all duration-700" />
+        <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-gradient-to-r from-brand-gold to-transparent group-hover:w-full transition-all duration-1000" />
       </motion.div>
     </Link>
   );

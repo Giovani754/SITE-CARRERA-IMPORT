@@ -2,10 +2,8 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, MessageCircle } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import { SITE_CONFIG } from "@/data/constants";
+import { usePathname } from "next/navigation";
+import { HeroAnimation } from "./hero-animation";
 
 interface HeroProps {
   headline: string;
@@ -16,96 +14,91 @@ export function HeroSection({
   headline = "Consultoria Premium para Veículos Extraordinários",
   subheadline = "Intermediação inteligente, procedência garantida e atendimento personalizado para quem valoriza tempo e confiança.",
 }: HeroProps) {
+  const pathname = usePathname();
+
   return (
-    <section className="relative min-h-screen w-full flex items-center justify-start overflow-hidden bg-[#030303]">
+    <section className="relative min-h-screen w-full flex items-end overflow-hidden bg-[#030303]">
       {/* Cinematic Background Layer */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#030303] via-[#030303]/80 to-transparent z-10" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#030303]/30 to-[#030303] z-10" />
+      <HeroAnimation />
+
+      {/* Content Layer — key forces re-animation on route change */}
+      <motion.div
+        key={`hero-content-${pathname}`}
+        className="relative z-20 w-full max-w-7xl mx-auto px-6 lg:px-12 pb-32 md:pb-40"
+      >
+        <div className="max-w-2xl">
+          {/* Eyebrow */}
+          <motion.span
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 0.5, x: 0 }}
+            transition={{ duration: 1.4, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="flex items-center gap-6 text-brand-gold text-[9px] uppercase tracking-[0.7em] font-medium mb-8 font-sans"
+          >
+            <span className="h-[0.5px] w-12 bg-brand-gold/40" />
+            Boutique Automotiva de Alto Padrão
+          </motion.span>
+
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.5, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="text-3xl md:text-5xl lg:text-[3.8rem] font-serif italic text-white/95 leading-[1.06] mb-8 tracking-tight md:max-w-none max-w-[280px]"
+          >
+            {headline}
+          </motion.h1>
+
+          {/* Subheadline */}
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.5, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            className="text-white/35 text-[15px] md:text-base max-w-lg leading-[1.9] font-sans font-light"
+          >
+            {subheadline}
+          </motion.p>
+        </div>
+      </motion.div>
+
+      {/* ─── Scroll Indicator ─── */}
+      <motion.div
+        key={`scroll-${pathname}`}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 3, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+        className="absolute bottom-10 right-8 md:right-auto md:left-1/2 md:-translate-x-1/2 z-20 flex flex-col items-end md:items-center gap-3 md:gap-4"
+      >
+        {/* Mouse icon - hidden on small mobile to stay clean */}
         <motion.div
-          initial={{ scale: 1.05, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 3, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-full h-full"
+          animate={{ y: [0, 4, 0] }}
+          transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+          className="w-[18px] h-[28px] rounded-full border border-white/15 hidden md:flex items-start justify-center pt-[5px]"
         >
-          <Image
-            src="/images/hero_car.png"
-            alt="Veículo premium em ambiente sofisticado"
-            fill
-            priority
-            className="object-cover object-right lg:object-center brightness-[0.8]"
+          <motion.div
+            animate={{ y: [0, 6, 0], opacity: [0.6, 0.15, 0.6] }}
+            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+            className="w-[2px] h-[6px] bg-brand-gold/50 rounded-full"
           />
         </motion.div>
-      </div>
 
-      {/* Content Layer */}
-      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 lg:px-12 pt-28 lg:pt-32">
-        <div className="max-w-3xl">
+        {/* Label */}
+        <div className="flex items-center gap-3 md:gap-4">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
-          >
-            <span className="flex items-center gap-6 text-brand-gold text-[9px] uppercase tracking-[0.7em] font-medium mb-10 font-sans opacity-60">
-              <span className="h-[0.5px] w-10 bg-brand-gold/30" />
-              Boutique Automotiva de Alto Padrão
-            </span>
-
-            <h1 className="text-3xl md:text-5xl lg:text-[3.5rem] font-serif italic text-foreground/90 leading-[1.08] mb-10 tracking-tight">
-              {headline}
-            </h1>
-
-            <p className="text-white/45 text-[15px] md:text-base max-w-xl leading-[1.8] mb-14 font-sans font-light border-l-[0.5px] border-brand-gold/20 pl-8">
-              {subheadline}
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-              <Link
-                href={SITE_CONFIG.whatsapp.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative bg-brand-gold text-black px-12 py-6 text-[10px] uppercase tracking-[0.4em] font-bold transition-all hover:bg-[#C5A030] shadow-2xl shadow-brand-gold/10 overflow-hidden rounded-sm"
-              >
-                <span className="relative z-10 flex items-center gap-3">
-                  <MessageCircle size={14} />
-                  Falar com Consultor
-                  <ArrowRight
-                    size={14}
-                    className="transition-transform group-hover:translate-x-1"
-                  />
-                </span>
-                <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-              </Link>
-
-              <Link
-                href="/estoque"
-                className="text-[10px] uppercase tracking-[0.4em] font-bold text-foreground/50 hover:text-brand-gold transition-all flex items-center gap-6 group"
-              >
-                Ver Estoque
-                <div className="flex items-center">
-                  <div className="h-[0.5px] w-8 bg-white/20 group-hover:bg-brand-gold transition-all group-hover:w-16" />
-                  <div className="w-1 h-1 rounded-full bg-brand-gold scale-0 group-hover:scale-100 transition-transform delay-100 ml-1" />
-                </div>
-              </Link>
-            </div>
-          </motion.div>
+            animate={{ scaleX: [0.5, 1, 0.5], opacity: [0.2, 0.5, 0.2] }}
+            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+            className="w-6 h-[0.5px] bg-brand-gold/60 md:hidden"
+          />
+          <span className="text-[8px] md:text-[9px] uppercase tracking-[0.6em] text-white/30 md:text-white/15 font-bold select-none">
+            <span className="md:inline hidden">Role para explorar</span>
+            <span className="md:hidden inline">Explorar</span>
+          </span>
         </div>
-      </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2.5, duration: 1 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-3 text-white/15"
-      >
-        <span className="text-[9px] uppercase tracking-[0.5em] font-bold">
-          Explore
-        </span>
+        {/* Drop line - visible on md+ */}
         <motion.div
-          animate={{ y: [0, 8, 0] }}
+          animate={{ scaleY: [0.3, 1, 0.3], opacity: [0.1, 0.3, 0.1] }}
           transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-          className="w-px h-10 bg-gradient-to-b from-brand-gold/30 to-transparent"
+          className="w-px h-8 bg-gradient-to-b from-brand-gold/20 to-transparent origin-top hidden md:block"
         />
       </motion.div>
     </section>

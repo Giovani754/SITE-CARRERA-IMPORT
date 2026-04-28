@@ -8,6 +8,8 @@ import {
   OrganizationJsonLd,
   WebSiteJsonLd,
 } from "@/components/seo/json-ld";
+import { AnimationSequenceProvider } from "@/contexts/animation-sequence";
+import { IntroAnimation } from "@/components/premium/intro-animation";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -78,14 +80,18 @@ export default function RootLayout({
     <html
       lang="pt-BR"
       className={`${inter.variable} ${playfair.variable} h-full antialiased dark`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans bg-[#030303] text-[#FAFAFA]">
-        <OrganizationJsonLd />
-        <WebSiteJsonLd />
-        <PremiumHeader />
-        <main className="flex-1">{children}</main>
-        <PremiumFooter />
-        <WhatsAppButton />
+        <AnimationSequenceProvider>
+          <IntroAnimation />
+          <OrganizationJsonLd />
+          <WebSiteJsonLd />
+          <PremiumHeader />
+          <main className="flex-1">{children}</main>
+          <PremiumFooter />
+          <WhatsAppButton />
+        </AnimationSequenceProvider>
       </body>
     </html>
   );

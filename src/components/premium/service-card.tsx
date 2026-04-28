@@ -12,6 +12,10 @@ interface ServiceCardProps {
   index: number;
 }
 
+/**
+ * Editorial Expertise Item - Optimized with pronounced horizontal "entrance" animation.
+ * Abandons the "card" concept for a clean, horizontal/editorial list layout.
+ */
 export function ServiceCard({
   title,
   description,
@@ -24,48 +28,63 @@ export function ServiceCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      initial={{ opacity: 0, x: -120 }} // More pronounced horizontal offset
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, margin: "-15% 0px" }} // Triggers when 15% into viewport
       transition={{
-        duration: 1.2,
-        delay: index * 0.15,
+        duration: 1.6, // Slower, more cinematic entrance
+        delay: index * 0.15, // Better stagger
         ease: [0.16, 1, 0.3, 1],
       }}
-      className="group relative bg-[#080808] p-10 lg:p-14 border-[0.5px] border-white/5 overflow-hidden transition-all duration-700 hover:bg-[#0A0A0A]"
+      className="group relative flex flex-col md:flex-row items-start md:items-center py-14 md:py-20 border-b border-white/[0.05] last:border-0 transition-all duration-700"
     >
-      {/* Background Number (Editorial style) */}
-      <span className="absolute -top-6 -right-2 text-[120px] font-serif italic text-white/[0.02] select-none transition-all duration-1000 group-hover:text-brand-gold/[0.05] group-hover:-translate-y-4">
-        {displayNumber}
-      </span>
-
-      {/* Decorative Light Spot */}
-      <div className="absolute -top-24 -left-24 w-48 h-48 bg-brand-gold/[0.03] blur-[80px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-
-      <div className="relative z-10 flex flex-col h-full">
-        <div className="mb-10 w-12 h-12 flex items-center justify-center rounded-full border border-white/5 bg-white/[0.02] text-brand-gold/40 group-hover:text-brand-gold group-hover:border-brand-gold/20 transition-all duration-700">
-          <Icon size={20} strokeWidth={1} />
-        </div>
-
-        <h3 className="text-xl font-serif italic mb-6 text-white/90 group-hover:text-white transition-colors duration-500">
-          {title}
-        </h3>
-
-        <p className="text-white/40 text-[13px] leading-[1.8] font-sans font-light mb-auto group-hover:text-white/60 transition-colors duration-500">
-          {description}
-        </p>
-
-        {/* Learn More Link (Subtle) */}
-        <div className="mt-12 flex items-center gap-4 group/link">
-          <div className="h-[1px] w-6 bg-brand-gold/20 group-hover/link:w-12 group-hover/link:bg-brand-gold transition-all duration-700" />
-          <span className="text-[9px] uppercase tracking-[0.4em] text-white/20 group-hover/link:text-white/50 font-bold transition-colors">
-            Descobrir Detalhes
-          </span>
-        </div>
+      {/* 01. Number & Icon Section */}
+      <div className="flex items-center gap-10 md:w-1/3 mb-8 md:mb-0">
+        <motion.span 
+          initial={{ opacity: 0, scale: 0.7, x: -20 }}
+          whileInView={{ opacity: 1, scale: 1, x: 0 }}
+          transition={{ duration: 1.2, delay: index * 0.15 + 0.4 }}
+          className="text-5xl md:text-6xl font-serif italic text-white/[0.05] group-hover:text-brand-gold/20 transition-colors duration-1000 select-none"
+        >
+          {displayNumber}
+        </motion.span>
+        <motion.div 
+          initial={{ opacity: 0, rotate: -20, scale: 0.8 }}
+          whileInView={{ opacity: 1, rotate: 0, scale: 1 }}
+          transition={{ duration: 1.2, delay: index * 0.15 + 0.6 }}
+          className="text-brand-gold/20 group-hover:text-brand-gold group-hover:scale-110 transition-all duration-1000"
+        >
+          <Icon size={28} strokeWidth={1} />
+        </motion.div>
       </div>
 
-      {/* Edge accent */}
-      <div className="absolute bottom-0 left-0 w-0 h-[1px] bg-gradient-to-r from-brand-gold/50 to-transparent transition-all duration-1000 group-hover:w-full" />
+      {/* 02. Title & Description Section */}
+      <div className="flex flex-col md:w-2/3">
+        <div className="overflow-hidden">
+          <motion.h3 
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1.2, delay: index * 0.15 + 0.5 }}
+            className="text-2xl md:text-4xl font-serif italic mb-5 text-white/95 group-hover:text-brand-gold transition-colors duration-1000 tracking-tight"
+          >
+            {title}
+          </motion.h3>
+        </div>
+        <motion.p 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 1, delay: index * 0.15 + 0.8 }}
+          className="text-white/40 text-sm md:text-lg leading-[1.9] font-sans font-light max-w-2xl group-hover:text-white/70 transition-colors duration-1000"
+        >
+          {description}
+        </motion.p>
+      </div>
+
+      {/* 03. Hover Accent (Subtle Line) */}
+      <div className="absolute bottom-0 left-0 w-0 h-[1px] bg-gradient-to-r from-brand-gold/40 via-brand-gold/10 to-transparent transition-all duration-1000 group-hover:w-full" />
+      
+      {/* 04. Minimalist Glow (Desktop Only) */}
+      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-48 h-48 bg-brand-gold/[0.03] blur-[80px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none hidden md:block" />
     </motion.div>
   );
 }

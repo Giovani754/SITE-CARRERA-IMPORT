@@ -31,6 +31,9 @@ export default function ContactPage() {
         eyebrow="Consultoria em São Paulo"
         title="Estamos prontos para conduzir o seu próximo passo na capital."
         description="Fale com nossa equipe estratégica em São Paulo. Atendimento personalizado para o mercado de alto desempenho."
+        backgroundImage="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1920&auto=format&fit=crop"
+        backgroundAlt="Arquitetura urbana premium - São Paulo"
+        accentPosition="right"
       />
 
       <section className="px-6 lg:px-12 pb-24">

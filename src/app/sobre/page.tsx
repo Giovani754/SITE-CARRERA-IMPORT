@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Breadcrumb } from "@/components/premium/breadcrumb";
 import { PageHero } from "@/components/premium/page-hero";
 import { CTASection } from "@/components/premium/cta-section";
+import { AboutCinematicBanner } from "@/components/premium/about-cinematic-banner";
 
 export const metadata: Metadata = {
   title: "Sobre",
@@ -19,9 +20,12 @@ export default function AboutPage() {
   return (
     <>
       <PageHero
-        eyebrow="Quem Somos"
+        eyebrow="QUEM SOMOS"
         title="Referência em consultoria automotiva premium em São Paulo."
-        description="A Carrera Imports nasceu para transformar o mercado de veículos de alto padrão na capital paulista, unindo procedência e exclusividade."
+        description="A Carrera Imports nasceu da união entre visão estratégica, experiência comercial e uma obsessão simples: proteger o cliente em um mercado onde aparência nem sempre significa procedência."
+        backgroundImage="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1920&auto=format&fit=crop"
+        backgroundAlt="Porsche em estúdio - Carrera Imports"
+        accentPosition="right"
       />
 
       <section className="px-6 lg:px-12 pb-24">
@@ -29,35 +33,45 @@ export default function AboutPage() {
           <Breadcrumb items={[{ name: "Sobre", href: "/sobre" }]} />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
-            <div className="space-y-6 text-white/50 text-[15px] leading-[1.8] font-sans font-light">
-              <p>
-                De um lado, uma trajetória construída no universo dos carros de
-                alto padrão, com atuação nos bastidores em marketing,
-                posicionamento e análise de veículos, sempre em busca das
-                melhores oportunidades do mercado.
-              </p>
-              <p>
-                Do outro, mais de 12 anos de experiência no setor automotivo,
-                com atuação comercial e gerencial, desenvolvendo uma visão
-                estratégica orientada a resultados e negociações de alto nível.
-              </p>
-              <p>
-                A Carrera Imports atua como uma{" "}
-                <span className="text-white/80 font-medium">
-                  boutique de consultoria e intermediação em São Paulo
-                </span>{" "}
-                para quem busca veículos premium com procedência ou deseja
-                vender seu patrimônio automotivo com apoio profissional,
-                rapidez e a discrição que o mercado paulistano exige.
-              </p>
-              <blockquote className="text-foreground/70 italic font-serif text-lg py-6 border-y border-white/5 mt-4">
-                &ldquo;Não vendemos carros. Conectamos pessoas a oportunidades
-                com procedência, confiança e inteligência de mercado.&rdquo;
+            <div className="space-y-8 text-white/60 text-[15px] lg:text-base leading-[1.8] font-sans font-light">
+              <div className="space-y-6">
+                <p>
+                  De um lado, uma trajetória construída no universo dos veículos de alto padrão, com atuação nos bastidores de marketing, posicionamento e análise de mercado.
+                </p>
+                <p>
+                  Do outro, mais de 12 anos de experiência no setor automotivo, com atuação comercial e gerencial, conduzindo negociações, avaliando oportunidades e entendendo de perto como o mercado realmente funciona.
+                </p>
+                <p className="text-white/90 font-medium text-lg">
+                  A Carrera Imports nasceu desse encontro.
+                </p>
+                <p>
+                  Uma boutique de consultoria e intermediação automotiva criada em São Paulo para atender quem não quer depender de anúncio bonito, promessa de vendedor ou negociação conduzida no escuro.
+                </p>
+                <p>
+                  Aqui, cada veículo passa por filtro. Cada oportunidade é analisada com critério. Cada negociação é tratada com a discrição que um patrimônio exige.
+                </p>
+                <div className="pt-4 space-y-2">
+                  <p className="text-brand-gold/80 italic">Porque no mercado premium, o erro quase nunca aparece na primeira conversa.</p>
+                  <p className="text-white/80 font-medium">Ele aparece depois.</p>
+                  <ul className="space-y-1 text-white/40 text-sm">
+                    <li>• No histórico mal contado.</li>
+                    <li>• Na documentação ignorada.</li>
+                    <li>• No preço que parecia oportunidade.</li>
+                    <li>• No detalhe que ninguém fez questão de mostrar.</li>
+                  </ul>
+                </div>
+                <p className="text-white/90 font-medium pt-4">
+                  A Carrera Imports existe para entrar antes desse erro.
+                </p>
+              </div>
+              
+              <blockquote className="text-foreground/90 italic font-serif text-xl md:text-2xl py-10 border-y border-white/10 mt-12 leading-relaxed">
+                &ldquo;Não vendemos carros. Protegemos decisões, conectamos pessoas a oportunidades reais e conduzimos negociações com inteligência de mercado.&rdquo;
               </blockquote>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="aspect-[3/4] bg-surface-base relative overflow-hidden group rounded-sm">
+            <div className="grid grid-cols-2 gap-4 sticky top-32">
+              <div className="aspect-[3/4] bg-surface-base relative overflow-hidden group rounded-sm shadow-2xl">
                 <Image
                   src="https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=800&auto=format&fit=crop"
                   alt="Veículo premium em consultoria"
@@ -65,7 +79,7 @@ export default function AboutPage() {
                   className="object-cover grayscale transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-105"
                 />
               </div>
-              <div className="aspect-[3/4] bg-surface-base relative overflow-hidden mt-10 group rounded-sm">
+              <div className="aspect-[3/4] bg-surface-base relative overflow-hidden mt-10 group rounded-sm shadow-2xl">
                 <Image
                   src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop"
                   alt="Curadoria automotiva de alto padrão"
@@ -78,72 +92,54 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Valores */}
-      <section className="py-24 px-6 lg:px-12 bg-[#050505] border-y border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-            <div>
-              <span className="text-brand-gold text-[9px] uppercase tracking-[0.4em] font-bold mb-5 block opacity-60">
-                Posicionamento
+      {/* Valores / Pilares */}
+      <section className="py-32 px-6 lg:px-12 bg-[#050505] border-y border-white/5 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.02),transparent)] pointer-events-none" />
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 lg:gap-24">
+            <div className="space-y-6">
+              <span className="text-brand-gold text-[10px] uppercase tracking-[0.5em] font-bold block opacity-60">
+                POSICIONAMENTO
               </span>
-              <h3 className="text-xl font-serif italic mb-4 text-white/90">
-                Atendimento Personalizado
+              <h3 className="text-2xl font-serif italic text-white/95">
+                Atendimento sob medida
               </h3>
-              <p className="text-white/40 text-sm leading-relaxed font-light">
-                Cada cliente é único. Entendemos suas necessidades específicas e
-                oferecemos soluções sob medida com total discrição e agilidade.
+              <p className="text-white/50 text-[15px] leading-relaxed font-light">
+                Cada cliente chega com um objetivo diferente. Alguns querem comprar melhor. Outros querem vender sem se expor. Outros precisam sair de um ativo com segurança, sem abrir espaço para curioso ou negociação mal conduzida.
               </p>
             </div>
-            <div>
-              <span className="text-brand-gold text-[9px] uppercase tracking-[0.4em] font-bold mb-5 block opacity-60">
-                Abordagem
+            <div className="space-y-6">
+              <span className="text-brand-gold text-[10px] uppercase tracking-[0.5em] font-bold block opacity-60">
+                ABORDAGEM
               </span>
-              <h3 className="text-xl font-serif italic mb-4 text-white/90">
-                Consultoria Estratégica
+              <h3 className="text-2xl font-serif italic text-white/95">
+                Consultoria estratégica
               </h3>
-              <p className="text-white/40 text-sm leading-relaxed font-light">
-                Não somos vendedores de carros. Somos consultores que analisam o
-                mercado, posicionam seu veículo corretamente e conduzem
-                negociações inteligentes.
+              <p className="text-white/50 text-[15px] leading-relaxed font-light">
+                Não somos vendedores tentando empurrar o carro da vez. Analisamos mercado, histórico, preço, conservação e margem de negociação para posicionar cada decisão com clareza, revelando o que o mercado tenta esconder.
               </p>
             </div>
-            <div>
-              <span className="text-brand-gold text-[9px] uppercase tracking-[0.4em] font-bold mb-5 block opacity-60">
-                Compromisso
+            <div className="space-y-6">
+              <span className="text-brand-gold text-[10px] uppercase tracking-[0.5em] font-bold block opacity-60">
+                COMPROMISSO
               </span>
-              <h3 className="text-xl font-serif italic mb-4 text-white/90">
-                Procedência Garantida
+              <h3 className="text-2xl font-serif italic text-white/95">
+                Procedência verificada
               </h3>
-              <p className="text-white/40 text-sm leading-relaxed font-light">
-                Verificação rigorosa de histórico, documentação e estado de
-                conservação. Seu patrimônio automotivo merece esse cuidado.
+              <p className="text-white/50 text-[15px] leading-relaxed font-light">
+                Foto bonita não prova nada. Anúncio bem escrito não garante nada. Por isso, avaliamos histórico e estado real do veículo antes de qualquer avanço, impedindo que um patrimônio entre em um risco disfarçado de oportunidade.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Banner */}
-      <section className="h-[50vh] relative overflow-hidden">
-        <Image
-          src="https://images.unsplash.com/photo-1621993202323-eb4ed813e4ce?q=80&w=2000&auto=format&fit=crop"
-          alt="Experiência premium Carrera Imports"
-          fill
-          className="object-cover grayscale brightness-40"
-        />
-        <div className="absolute inset-0 flex items-center justify-center px-6">
-          <p className="text-3xl md:text-4xl lg:text-5xl font-serif italic text-white/15 select-none tracking-wide text-center leading-tight">
-            Procedência. Confiança.
-            <br />
-            Resultado.
-          </p>
-        </div>
-      </section>
+      <AboutCinematicBanner />
 
       <CTASection
         variant="compact"
         headline="Quer saber mais sobre a Carrera Imports?"
-        subheadline="Fale com nossa equipe e descubra como podemos ajudar."
+        subheadline="Fale com nossa equipe e entenda como podemos conduzir sua próxima compra ou venda com segurança, discrição e critério."
       />
     </>
   );
