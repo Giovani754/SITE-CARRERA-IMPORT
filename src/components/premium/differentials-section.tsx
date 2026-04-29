@@ -55,37 +55,10 @@ const containerVariants: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.6,
+      staggerChildren: 0.1,
+      delayChildren: 0.3,
     },
   },
-};
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 30, filter: "blur(6px)" },
-  visible: {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-    transition: {
-      duration: 1.5,
-      ease: [0.16, 1, 0.3, 1],
-    },
-  },
-};
-
-const letterVariants: Variants = {
-  hidden: { opacity: 0, y: 15, filter: "blur(4px)" },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-    transition: {
-      delay: 0.3 + i * 0.04,
-      duration: 1.2,
-      ease: [0.16, 1, 0.3, 1] as any,
-    },
-  }),
 };
 
 export function DifferentialsSection() {
@@ -97,30 +70,18 @@ export function DifferentialsSection() {
   }, []);
 
   const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 30, filter: isMobile ? "none" : "blur(6px)" },
+    hidden: { 
+      opacity: 0, 
+      y: isMobile ? 15 : 25,
+    },
     visible: {
       opacity: 1,
       y: 0,
-      filter: "none",
       transition: {
-        duration: isMobile ? 0.6 : 1,
+        duration: 0.8,
         ease: [0.16, 1, 0.3, 1],
       },
     },
-  };
-
-  const letterVariants: Variants = {
-    hidden: { opacity: 0, y: 15, filter: isMobile ? "none" : "blur(4px)" },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      filter: "none",
-      transition: {
-        delay: 0.3 + i * 0.04,
-        duration: 1.2,
-        ease: [0.16, 1, 0.3, 1] as any,
-      },
-    }),
   };
 
   return (
@@ -132,45 +93,26 @@ export function DifferentialsSection() {
 
       <div className="max-w-6xl mx-auto relative z-10">
         <header className="mb-16 md:mb-28 text-center">
-          <motion.span 
-            initial={{ opacity: 0, letterSpacing: "0.2em", filter: isMobile ? "none" : "blur(4px)" }}
-            whileInView={{ opacity: 0.5, letterSpacing: isMobile ? "0.4em" : "0.8em", filter: "none" }}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 2.2, ease: [0.16, 1, 0.3, 1] }}
-            className="text-brand-gold text-[10px] md:text-[11px] uppercase font-bold mb-10 block"
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           >
-            Por que nos escolher
-          </motion.span>
-          
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif italic tracking-tight text-white/95 leading-[1.2] flex flex-wrap justify-center gap-x-[0.3em] gap-y-1 overflow-hidden py-2">
-            {title.split(" ").map((word, wordIdx) => (
-              <span key={wordIdx} className="inline-block whitespace-nowrap overflow-hidden">
-                {Array.from(word).map((char, charIdx) => {
-                  const absoluteIdx = title.split(" ").slice(0, wordIdx).join(" ").length + (wordIdx > 0 ? 1 : 0) + charIdx;
-                  return (
-                    <motion.span
-                      key={charIdx}
-                      custom={absoluteIdx}
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true }}
-                      variants={letterVariants}
-                      className="inline-block"
-                    >
-                      {char}
-                    </motion.span>
-                  );
-                })}
-              </span>
-            ))}
-          </h2>
+            <span className="text-brand-gold text-[10px] md:text-[11px] uppercase font-bold mb-10 block opacity-50 tracking-[0.8em]">
+              Por que nos escolher
+            </span>
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif italic tracking-tight text-white/95 leading-[1.2]">
+              {title}
+            </h2>
+          </motion.div>
         </header>
 
         <motion.div 
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: isMobile ? "-20px" : "-100px" }}
+          viewport={{ once: true, margin: isMobile ? "0px" : "-100px" }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-24"
         >
           {differentials.map((item) => (

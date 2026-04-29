@@ -75,7 +75,7 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
                     fill
                     sizes="(max-width: 768px) 100vw, 600px"
                     priority
-                    className="object-cover brightness-[0.8] transition-transform duration-[2s] ease-out"
+                    className="object-cover brightness-[0.8]"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
                 </div>

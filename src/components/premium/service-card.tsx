@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import * as Icons from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,26 +22,36 @@ export function ServiceCard({
   iconName,
   index,
 }: ServiceCardProps) {
-  // @ts-ignore
-  const Icon = Icons[iconName] || Icons.HelpCircle;
+  const Icon = (Icons as any)[iconName] || Icons.HelpCircle;
   const displayNumber = (index + 1).toString().padStart(2, "0");
-
   const [isMobile, setIsMobile] = React.useState(false);
+
   React.useEffect(() => {
     setIsMobile(window.innerWidth < 768);
   }, []);
 
+  const cardVariants: Variants = {
+    hidden: { 
+      opacity: 0, 
+      y: isMobile ? 15 : 25,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    },
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0, x: isMobile ? -30 : -120 }} // Less offset on mobile
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true, margin: isMobile ? "-5%" : "-15% 0px" }}
-      transition={{
-        duration: isMobile ? 0.8 : 1.6, // Faster on mobile
-        delay: isMobile ? 0.05 * index : index * 0.15,
-        ease: [0.16, 1, 0.3, 1],
-      }}
-      className="group relative flex flex-col md:flex-row items-start md:items-center py-14 md:py-20 border-b border-white/[0.05] last:border-0 transition-all duration-700"
+      variants={cardVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: isMobile ? "0px" : "-50px" }}
+      className="group relative py-12 md:py-20 border-b border-white/[0.03] flex flex-col md:flex-row items-start md:items-center hover:bg-white/[0.01] transition-colors duration-1000"
     >
       {/* 01. Number & Icon Section */}
       <div className="flex items-center gap-10 md:w-1/3 mb-8 md:mb-0">
@@ -64,10 +74,7 @@ export function ServiceCard({
       </div>
 
       {/* 03. Hover Accent */}
-      <div className="absolute bottom-0 left-0 w-0 h-[1px] bg-gradient-to-r from-brand-gold/40 via-brand-gold/10 to-transparent transition-all duration-1000 group-hover:w-full" />
-      
-      {/* 04. Minimalist Glow */}
-      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-48 h-48 bg-brand-gold/[0.03] blur-[80px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none hidden md:block" />
+      <div className="absolute left-0 bottom-0 w-0 h-[1px] bg-brand-gold/30 group-hover:w-full transition-all duration-1000 ease-in-out" />
     </motion.div>
   );
 }

@@ -40,14 +40,14 @@ export function ProcessSteps() {
         {steps.map((step, index) => (
           <motion.div
             key={step.number}
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{
-              duration: 1.5,
-              delay: index * 0.15,
+              duration: 0.8,
+              delay: index * 0.1,
               ease: [0.16, 1, 0.3, 1],
             }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: "-50px" }}
             className={`group relative bg-[#080808] p-12 lg:p-24 overflow-hidden transition-all duration-1000 hover:bg-[#0A0A0A] ${
               index % 2 === 1 ? "lg:border-l-[0.5px] lg:border-white/5" : ""
             }`}
@@ -57,42 +57,19 @@ export function ProcessSteps() {
             
             <div className="relative z-10">
               <div className="flex items-center gap-8 mb-12">
-                <motion.span 
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  className="text-5xl lg:text-7xl font-serif italic text-brand-gold/20 group-hover:text-brand-gold group-hover:scale-110 transition-all duration-1000 select-none"
-                >
+                <span className="text-5xl lg:text-7xl font-serif italic text-brand-gold/20 group-hover:text-brand-gold group-hover:scale-110 transition-all duration-1000 select-none">
                   {step.number}
-                </motion.span>
-                <motion.div 
-                  initial={{ width: 0 }}
-                  whileInView={{ width: "100%" }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.5, duration: 1.5 }}
-                  className="h-[0.5px] bg-white/5 group-hover:bg-brand-gold/20 transition-all" 
-                />
+                </span>
+                <div className="h-[0.5px] bg-white/5 group-hover:bg-brand-gold/20 transition-all w-full" />
               </div>
 
-              <motion.h3 
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.3, duration: 1 }}
-                className="text-2xl lg:text-3xl font-serif italic mb-8 text-white/90 group-hover:text-white transition-colors tracking-tight"
-              >
+              <h3 className="text-2xl lg:text-3xl font-serif italic mb-8 text-white/90 group-hover:text-white transition-colors tracking-tight">
                 {step.title}
-              </motion.h3>
+              </h3>
 
-              <motion.p 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.5, duration: 1 }}
-                className="text-white/60 text-[14px] lg:text-[15px] leading-[1.8] font-sans font-light max-w-sm group-hover:text-white transition-colors duration-700"
-              >
+              <p className="text-white/60 text-[14px] lg:text-[15px] leading-[1.8] font-sans font-light max-w-sm group-hover:text-white transition-colors duration-700">
                 {step.description}
-              </motion.p>
+              </p>
             </div>
 
             {/* Corner Accent */}

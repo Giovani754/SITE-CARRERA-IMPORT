@@ -42,12 +42,11 @@ export function CarCard({ vehicle, index }: CarCardProps) {
   return (
     <Link href={`/estoque/${vehicle.slug}`} className="block group">
       <motion.div
-        initial={{ opacity: 0, y: isMobile ? 10 : 25 }}
+        initial={{ opacity: 0, y: isMobile ? 0 : 15 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: isMobile ? "0px" : "-50px" }}
+        viewport={{ once: true, margin: "0px" }}
         transition={{
-          delay: isMobile ? (index % 2) * 0.03 : index * 0.05,
-          duration: isMobile ? 0.4 : 0.8,
+          duration: isMobile ? 0.3 : 0.6,
           ease: [0.16, 1, 0.3, 1],
         }}
         className={cn(

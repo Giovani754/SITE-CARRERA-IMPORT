@@ -9,6 +9,10 @@ interface HeroAnimationProps {
   waitForIntro?: boolean;
 }
 
+// ─── Global Cache for Hero Frames ───
+// This persists across component mounts/unmounts during the application lifecycle.
+let globalHeroFrames: HTMLImageElement[] = [];
+
 export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
   const { phase, introStarted, signalHeroComplete } = useAnimationSequence();
   const pathname = usePathname();
@@ -19,7 +23,6 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
   const [ready, setReady] = useState(false);
   const [played, setPlayed] = useState(false);
   
-  const imagesRef = useRef<HTMLImageElement[]>([]);
   const currentFrameRef = useRef<number>(0);
   const rafRef = useRef<number | null>(null);
 
@@ -34,33 +37,29 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
 
   // ─── Reset on mount ───
   useEffect(() => {
-    // HARD RESET everything on mount to avoid stale states
+    // HARD RESET local states on mount
     setPlayed(false);
-    setReady(false);
+    setReady(globalHeroFrames.length > 0);
     setFailed(false);
     currentFrameRef.current = 0;
     
-    // Cleanup function to clear canvas and stop any ongoing animation
+    // Cleanup function
     return () => {
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
       }
-      const canvas = canvasRef.current;
-      if (canvas) {
-        const ctx = canvas.getContext("2d");
-        ctx?.clearRect(0, 0, canvas.width, canvas.height);
-      }
     };
   }, []);
 
-  // ─── Draw logic with Cover + DPR + Mobile Focus ───
+  // ─── Draw logic ───
   const drawFrame = useCallback((idx: number) => {
     const canvas = canvasRef.current;
-    if (!canvas || imagesRef.current.length === 0) return;
+    const images = globalHeroFrames;
+    if (!canvas || images.length === 0) return;
     
-    const img = imagesRef.current[idx] || imagesRef.current[imagesRef.current.length - 1];
-    if (!img || img.naturalWidth === 0) return;
+    const img = images[idx] || images[images.length - 1];
+    if (!img || !img.complete || img.naturalWidth === 0) return;
 
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
@@ -79,7 +78,6 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
       dx = 0;
       dy = (ch - dh) / 2;
     } else {
-      // Improved Mobile Framing
       const mobileScale = isMobile ? 1.4 : 1.05; 
       dh = ch;
       dw = ch * imageAspect * mobileScale;
@@ -107,7 +105,6 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
       canvasRef.current.width = width * dpr;
       canvasRef.current.height = height * dpr;
 
-      // Draw immediately on resize to prevent flicker
       drawFrame(currentFrameRef.current);
     });
 
@@ -115,19 +112,19 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
     return () => observer.disconnect();
   }, [drawFrame, isMobile]);
 
-  // ─── Preload frames with Staggered Priority ───
+  // ─── Preload frames logic ───
   useEffect(() => {
     if (typeof window === "undefined") return;
     
-    // If images are already in ref (e.g. from a previous mount that stayed in memory),
-    // and we are returning to the page, we should be ready almost instantly.
-    if (imagesRef.current.length > 0) {
-      setReady(true);
-      setTimeout(() => drawFrame(0), 10);
-      return;
+    // Check if we already have the frames in global cache
+    if (globalHeroFrames.length > 0) {
+      if (!ready) setReady(true);
+      // Force initial frame draw after a micro-delay for canvas readiness
+      const t = setTimeout(() => drawFrame(0), 50);
+      return () => clearTimeout(t);
     }
 
-    // We only wait for introStarted if waitForIntro is true
+    // Wait for intro if needed
     if (waitForIntro && !introStarted) return;
 
     const frameCount = isMobile ? 20 : 40;
@@ -138,16 +135,15 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
     const checkDone = () => {
       const threshold = isMobile ? 8 : 12;
       if (loaded >= threshold && !ready) {
-        imagesRef.current = imgs.filter(Boolean);
+        globalHeroFrames = imgs.filter(Boolean);
         setReady(true);
-        // DRAW FIRST FRAME IMMEDIATELY
         setTimeout(() => drawFrame(0), 10);
       }
       
       if (loaded + errored >= frameCount) {
         const valid = imgs.filter((i) => i && i.complete && i.naturalWidth > 0);
         if (valid.length > 0) {
-          imagesRef.current = valid;
+          globalHeroFrames = valid;
           setReady(true);
         } else {
           setFailed(true);
@@ -156,14 +152,13 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
     };
 
     const loadFrames = async () => {
-      const batchSize = isMobile ? 4 : 8; // Slightly larger batches if not initial load
+      const batchSize = isMobile ? 4 : 8;
       for (let i = 1; i <= frameCount; i += batchSize) {
         const batch = [];
         for (let j = i; j < i + batchSize && j <= frameCount; j++) {
           const img = new Image();
           // @ts-ignore
           img.fetchPriority = (j === 1) ? 'high' : 'low';
-          
           const frameIdx = isMobile ? (j * 2) - 1 : j;
           const frameNum = Math.min(frameIdx, 40).toString().padStart(3, "0");
           img.src = `/animations/hero/ezgif-frame-${frameNum}.jpg`;
@@ -181,7 +176,6 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
           batch.push(promise);
         }
         await Promise.all(batch);
-        // Minimal delay to keep UI snappy
         await new Promise(resolve => setTimeout(resolve, isMobile ? 50 : 20));
       }
     };
@@ -189,31 +183,25 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
     loadFrames();
   }, [introStarted, waitForIntro, isMobile, ready, drawFrame]);
 
-  // ─── Animation Sequence ───
+  // ─── Animation Loop ───
   useEffect(() => {
-    let isCancelled = false;
-    
-    // Critical: only start if we are in the correct phase or intro is complete
-    if (!ready) return;
+    if (!ready || played) return;
     if (waitForIntro && (phase === "intro" || phase === "transition")) return;
-    if (played && (phase === "complete" || phase === "intro")) return;
 
-    const images = imagesRef.current;
+    const images = globalHeroFrames;
     if (images.length === 0) return;
 
     setPlayed(true);
     let frame = 0;
-    let lastTime = 0;
+    let lastTime = performance.now();
     const fps = isMobile ? 15 : 22; 
     const interval = 1000 / fps;
 
     const animate = (time: number) => {
-      if (isCancelled) return;
-      if (!lastTime) lastTime = time;
       const elapsed = time - lastTime;
 
       if (elapsed >= interval) {
-        if (frame < images.length && images[frame]?.complete) {
+        if (frame < images.length) {
           drawFrame(frame);
           frame++;
           lastTime = time - (elapsed % interval);
@@ -230,7 +218,6 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
     rafRef.current = requestAnimationFrame(animate);
     
     return () => {
-      isCancelled = true;
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
@@ -239,13 +226,9 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
   }, [ready, phase, waitForIntro, drawFrame, signalHeroComplete, played, isMobile]);
 
   return (
-    <div 
-      ref={containerRef}
-      className="absolute inset-0 z-0 overflow-hidden bg-[#030303]"
-    >
-      {/* STATIC FALLBACK: Display a static image while loading to avoid black screen and "lag" feel */}
+    <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden bg-[#030303]">
       {!ready && !failed && (
-        <div className="absolute inset-0 transition-opacity duration-1000">
+        <div className="absolute inset-0">
           <img 
             src="/animations/hero/ezgif-frame-001.jpg" 
             alt="Hero Background"
