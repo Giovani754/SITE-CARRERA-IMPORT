@@ -11,7 +11,7 @@ export function TestimonialsSection() {
   const [isPaused, setIsPaused] = React.useState(false);
   const [isMobile, setIsMobile] = React.useState(false);
 
-  // Detect mobile for DOM optimization
+  // Detect mobile
   React.useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
@@ -19,15 +19,15 @@ export function TestimonialsSection() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
   
-  // Clone testimonials for seamless loop - Optimized for performance
+  // Clone testimonials - EVEN MORE AGGRESSIVE for mobile
   const displayTestimonials = React.useMemo(() => {
-    // On mobile, we use fewer items to reduce layout cost and memory
-    const base = isMobile ? testimonials.slice(0, 8) : testimonials;
+    // Mobile only needs enough to cover the screen twice. 
+    // If we have 10 testimonials, 6-8 is plenty for mobile.
+    const base = isMobile ? testimonials.slice(0, 6) : testimonials;
     return [...base, ...base];
   }, [isMobile]);
 
-  // Animation configuration
-  const DURATION = isMobile ? 40 : 120; // Adjusted duration for fewer items on mobile
+  const DURATION = isMobile ? 30 : 120;
   const marqueeDistance = "-50%";
 
   React.useEffect(() => {
@@ -58,9 +58,9 @@ export function TestimonialsSection() {
 
   return (
     <section className="py-24 md:py-52 bg-background relative overflow-hidden border-y border-white/[0.02]">
-      {/* Cinematic Ambient Glows - Optimized with less blur/size on mobile */}
-      <div className="absolute top-0 left-1/4 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-brand-gold/[0.01] rounded-full blur-[100px] md:blur-[150px] pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-brand-gold/[0.01] rounded-full blur-[100px] md:blur-[150px] pointer-events-none" />
+      {/* Cinematic Ambient Glows - Optimized */}
+      <div className="absolute top-0 left-1/4 w-[250px] md:w-[500px] h-[250px] md:h-[500px] bg-brand-gold/[0.01] rounded-full blur-[80px] md:blur-[150px] pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-[250px] md:w-[500px] h-[250px] md:h-[500px] bg-brand-gold/[0.01] rounded-full blur-[80px] md:blur-[150px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10 mb-16 md:mb-24 text-center">
         <motion.div
@@ -80,11 +80,19 @@ export function TestimonialsSection() {
 
       {/* Marquee Container */}
       <div 
-        className="relative flex overflow-hidden py-10 touch-pan-x cursor-default"
+        className="relative flex overflow-hidden py-10 touch-none md:touch-pan-x cursor-default"
         onMouseEnter={() => !isMobile && setIsPaused(true)}
         onMouseLeave={() => !isMobile && setIsPaused(false)}
-        onTouchStart={() => setIsPaused(true)}
-        onTouchEnd={() => setIsPaused(false)}
+        // Improved Mobile Handling: Explicitly use touch events for better stability
+        onTouchStart={(e) => {
+          setIsPaused(true);
+        }}
+        onTouchEnd={() => {
+          setIsPaused(false);
+        }}
+        onTouchCancel={() => {
+          setIsPaused(false);
+        }}
       >
         <motion.div 
           className="flex whitespace-nowrap gap-5 md:gap-10 px-4 will-change-transform"
@@ -92,8 +100,9 @@ export function TestimonialsSection() {
           animate={controls}
         >
           {displayTestimonials.map((testimonial, idx) => (
-            <div
+            <motion.div
               key={`${testimonial.id}-${idx}`}
+              whileTap={isMobile ? { scale: 0.98 } : {}}
               className="w-[260px] sm:w-[320px] md:w-[450px] bg-white/[0.02] border border-white/[0.05] p-6 md:p-12 rounded-2xl flex flex-col justify-between group/card hover:bg-white/[0.04] hover:border-brand-gold/20 transition-all duration-700"
             >
               <div className="mb-6 md:mb-10">
@@ -129,11 +138,11 @@ export function TestimonialsSection() {
                   </span>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </motion.div>
 
-        {/* Gradient Fades for Marquee Edges - Optimized width on mobile */}
+        {/* Gradient Fades */}
         <div className="absolute inset-y-0 left-0 w-16 md:w-48 bg-gradient-to-r from-background via-background/80 to-transparent z-10 pointer-events-none" />
         <div className="absolute inset-y-0 right-0 w-16 md:w-48 bg-gradient-to-l from-background via-background/80 to-transparent z-10 pointer-events-none" />
       </div>

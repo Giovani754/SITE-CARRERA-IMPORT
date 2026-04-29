@@ -2,7 +2,6 @@ import React from "react";
 import Link from "next/link";
 import {
   Instagram,
-  Linkedin,
   MessageCircle,
   Mail,
   MapPin,
@@ -34,15 +33,6 @@ export function PremiumFooter() {
                 className="w-10 h-10 rounded-sm border border-white/10 flex items-center justify-center text-white/30 hover:text-brand-gold hover:border-brand-gold/50 transition-all duration-500"
               >
                 <Instagram size={16} />
-              </Link>
-              <Link
-                href={SITE_CONFIG.social.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn da Carrera Imports"
-                className="w-10 h-10 rounded-sm border border-white/10 flex items-center justify-center text-white/30 hover:text-brand-gold hover:border-brand-gold/50 transition-all duration-500"
-              >
-                <Linkedin size={16} />
               </Link>
             </div>
           </div>

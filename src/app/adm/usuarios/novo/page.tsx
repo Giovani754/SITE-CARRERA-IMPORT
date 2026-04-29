@@ -77,7 +77,7 @@ export default function NewUserPage() {
                 type="email"
                 required
                 className="w-full bg-transparent border-b border-white/[0.08] py-3 focus:outline-none focus:border-brand-gold transition-colors font-sans text-sm text-white placeholder:text-white/15"
-                placeholder="email@carreiraimports.com.br"
+                placeholder="email@carreraimports.com.br"
               />
             </div>
 

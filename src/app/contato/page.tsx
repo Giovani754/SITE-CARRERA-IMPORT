@@ -14,11 +14,11 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Contato",
   description:
-    "Entre em contato com a Carreira Imports. Consultoria automotiva premium em São Paulo. WhatsApp, e-mail e atendimento personalizado para compra e venda de veículos de alto padrão.",
+    "Entre em contato com a Carrera Imports. Consultoria automotiva premium em São Paulo. WhatsApp, e-mail e atendimento personalizado para compra e venda de veículos de alto padrão.",
   openGraph: {
-    title: "Contato | Carreira Imports",
+    title: "Contato | Carrera Imports",
     description:
-      "Fale com a Carreira Imports. Atendimento personalizado para compra e venda de veículos premium em São Paulo.",
+      "Fale com a Carrera Imports. Atendimento personalizado para compra e venda de veículos premium em São Paulo.",
   },
 };
 
@@ -30,7 +30,7 @@ export default function ContactPage() {
       <PageHero
         eyebrow="CONSULTORIA EM SÃO PAULO"
         title="Antes de negociar, fale com quem entende o mercado."
-        description="Entre em contato com a Carreira Imports e receba uma condução discreta, criteriosa e alinhada ao seu objetivo: comprar, vender ou encontrar o veículo certo."
+        description="Entre em contato com a Carrera Imports e receba uma condução discreta, criteriosa e alinhada ao seu objetivo: comprar, vender ou encontrar o veículo certo."
         backgroundImage="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1920&auto=format&fit=crop"
         backgroundAlt="Arquitetura urbana premium - São Paulo"
         accentPosition="right"
@@ -47,7 +47,7 @@ export default function ContactPage() {
                 <p className="text-white/45 text-[15px] leading-[1.8] font-sans font-light max-w-lg">
                   Antes de comprar, vender ou avaliar um veículo premium, fale com quem sabe conduzir esse tipo de negociação.
                   <br /><br />
-                  A Carreira Imports atende clientes que buscam discrição, procedência e clareza para tomar decisões automotivas com mais segurança.
+                  A Carrera Imports atende clientes que buscam discrição, procedência e clareza para tomar decisões automotivas com mais segurança.
                 </p>
 
                 <div className="space-y-6 pt-6">
@@ -130,89 +130,63 @@ export default function ContactPage() {
                     allowFullScreen={true}
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    title="Localização Carreira Imports"
+                    title="Localização Carrera Imports"
                     className="grayscale hover:grayscale-0 transition-all duration-700"
                   ></iframe>
                 </div>
               </div>
             </div>
 
-            {/* Contact Form */}
+            {/* Contact Form Area */}
             <div className="bg-[#080808] border border-white/5 p-10 lg:p-14 rounded-sm h-fit">
               <h3 className="text-[10px] uppercase tracking-[0.4em] font-bold text-brand-gold/60 mb-2">
                 INICIE SUA CONSULTORIA
               </h3>
               <p className="text-white/30 text-xs mb-8 font-light">
-                Preencha seus dados e nossa equipe retorna com a condução adequada para o seu objetivo.
+                Preencha seus dados ou entre em contato diretamente via WhatsApp para um atendimento imediato.
               </p>
-              <form className="space-y-8">
+              <div className="space-y-8">
+                {/* Form fields (visual only now, or we can keep them for context before clicking) */}
                 <div className="space-y-2">
                   <label
-                    htmlFor="contact-name"
                     className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/25"
                   >
                     NOME COMPLETO
                   </label>
                   <input
-                    id="contact-name"
                     type="text"
-                    required
                     className="w-full bg-transparent border-b border-white/[0.08] py-3 focus:outline-none focus:border-brand-gold transition-colors font-sans text-sm text-white placeholder:text-white/15"
                     placeholder="Seu nome"
                   />
                 </div>
+                
                 <div className="space-y-2">
                   <label
-                    htmlFor="contact-email"
                     className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/25"
                   >
-                    E-MAIL
+                    ASSUNTO DE INTERESSE
                   </label>
                   <input
-                    id="contact-email"
-                    type="email"
-                    required
+                    type="text"
                     className="w-full bg-transparent border-b border-white/[0.08] py-3 focus:outline-none focus:border-brand-gold transition-colors font-sans text-sm text-white placeholder:text-white/15"
-                    placeholder="seu@email.com"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="contact-phone"
-                    className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/25"
-                  >
-                    TELEFONE / WHATSAPP
-                  </label>
-                  <input
-                    id="contact-phone"
-                    type="tel"
-                    required
-                    className="w-full bg-transparent border-b border-white/[0.08] py-3 focus:outline-none focus:border-brand-gold transition-colors font-sans text-sm text-white placeholder:text-white/15"
-                    placeholder="(11) 99999-9999"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="contact-message"
-                    className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/25"
-                  >
-                    MENSAGEM
-                  </label>
-                  <textarea
-                    id="contact-message"
-                    rows={3}
-                    className="w-full bg-transparent border-b border-white/[0.08] py-3 focus:outline-none focus:border-brand-gold transition-colors font-sans text-sm resize-none text-white placeholder:text-white/15"
-                    placeholder="Conte se deseja comprar, vender ou encontrar um veículo específico."
+                    placeholder="Comprar, vender ou consultoria"
                   />
                 </div>
 
-                <button
-                  type="submit"
-                  className="w-full bg-brand-gold text-black py-5 text-[10px] uppercase tracking-[0.4em] font-bold flex items-center justify-center gap-3 hover:bg-[#C5A030] transition-all hover:scale-[1.01] active:scale-[0.99] rounded-sm"
+                <Link
+                  href={SITE_CONFIG.whatsapp.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-brand-gold text-black py-5 text-[10px] uppercase tracking-[0.4em] font-bold flex items-center justify-center gap-3 hover:bg-[#C5A030] transition-all hover:scale-[1.01] active:scale-[0.99] rounded-sm mt-10"
                 >
-                  ENVIAR SOLICITAÇÃO
-                </button>
-              </form>
+                  <MessageCircle size={16} />
+                  SOLICITAR VIA WHATSAPP
+                </Link>
+                
+                <p className="text-center text-[9px] uppercase tracking-[0.2em] text-white/20 pt-4">
+                  Resposta imediata em horário comercial
+                </p>
+              </div>
             </div>
           </div>
         </div>

@@ -82,7 +82,7 @@ export function LeadForm({
             id="lead-phone"
             type="tel"
             required
-            placeholder="(11) 99999-9999"
+            placeholder="(11) 98918-9050"
             className="w-full bg-transparent border-b border-white/10 py-3 focus:outline-none focus:border-brand-gold transition-colors font-sans text-sm text-white placeholder:text-white/20"
           />
         </div>

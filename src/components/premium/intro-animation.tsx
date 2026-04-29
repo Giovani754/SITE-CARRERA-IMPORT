@@ -15,6 +15,12 @@ export function IntroAnimation() {
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const hasFinishedRef = useRef(false);
 
+  // Detect mobile
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+
   // Finish and signal parent context
   const finish = useCallback(() => {
     if (hasFinishedRef.current) return;
@@ -25,67 +31,74 @@ export function IntroAnimation() {
     setTimeout(() => {
       setInternalPhase("gone");
       signalIntroComplete();
-    }, 1000);
-  }, [signalIntroComplete]);
+    }, isMobile ? 600 : 1000); // Faster fade on mobile
+  }, [signalIntroComplete, isMobile]);
 
   // Preload frames
   useEffect(() => {
     if (!introNeeded || typeof window === "undefined") return;
 
-    // SAFETY TIMEOUT: force finish after 8 seconds (reduced from 10)
-    const safetyTimer = setTimeout(finish, 8000);
+    // SAFETY TIMEOUT: force finish after 6 seconds on mobile, 8 on desktop
+    const safetyTimer = setTimeout(finish, isMobile ? 6000 : 8000);
 
-    const frameCount = 40;
-    const imgs: HTMLImageElement[] = [];
+    const frameCount = isMobile ? 30 : 40; // Fewer frames on mobile
+    const imgs: HTMLImageElement[] = new Array(frameCount);
     let loaded = 0;
     let failed = 0;
 
     const checkDone = () => {
       const totalAttempted = loaded + failed;
       
-      // PROGRESSIVE START: Start playing as soon as we have 8 frames (reduced from 15)
-      // to give a snappier feel while the rest loads in background.
-      if (totalAttempted >= 8 && imgs[0]?.complete && internalPhase === "loading") {
-        imagesRef.current = imgs;
+      // PROGRESSIVE START: Start playing earlier on mobile
+      const startThreshold = isMobile ? 6 : 10;
+      if (totalAttempted >= startThreshold && imgs[0]?.complete && internalPhase === "loading") {
+        imagesRef.current = imgs.filter(Boolean);
         setInternalPhase("playing");
         signalIntroStarted();
       }
 
       if (totalAttempted >= frameCount) {
         clearTimeout(safetyTimer);
-        // Ensure we have a minimum set to show anything
         if (loaded < 5) finish();
       }
     };
 
-    for (let i = 1; i <= frameCount; i++) {
-      const img = new Image();
-      
-      // HIGH PRIORITY for the first 10 frames to ensure rapid startup
-      if (i <= 10) {
-        // @ts-ignore
-        img.fetchPriority = 'high';
-      } else {
-        // @ts-ignore
-        img.fetchPriority = 'low';
-      }
+    const loadBatch = async () => {
+      for (let i = 1; i <= frameCount; i++) {
+        const img = new Image();
+        
+        // High priority for startup
+        if (i <= 8) {
+          // @ts-ignore
+          img.fetchPriority = 'high';
+        } else {
+          // @ts-ignore
+          img.fetchPriority = 'low';
+        }
 
-      img.src = `/animations/intro/ezgif-frame-${i.toString().padStart(3, "0")}.jpg`;
-      img.onload = () => {
-        loaded++;
-        setProgress(Math.round(((loaded + failed) / frameCount) * 100));
-        checkDone();
-      };
-      img.onerror = () => {
-        failed++;
-        setProgress(Math.round(((loaded + failed) / frameCount) * 100));
-        checkDone();
-      };
-      imgs.push(img);
-    }
+        // On mobile, skip some frames to match frameCount
+        const frameIdx = isMobile ? Math.floor((i * 40) / 30) : i;
+        const frameNum = Math.min(frameIdx, 40).toString().padStart(3, "0");
+        
+        img.src = `/animations/intro/ezgif-frame-${frameNum}.jpg`;
+        img.onload = () => {
+          imgs[i-1] = img;
+          loaded++;
+          setProgress(Math.round(((loaded + failed) / frameCount) * 100));
+          checkDone();
+        };
+        img.onerror = () => {
+          failed++;
+          setProgress(Math.round(((loaded + failed) / frameCount) * 100));
+          checkDone();
+        };
+      }
+    };
+
+    loadBatch();
 
     return () => clearTimeout(safetyTimer);
-  }, [introNeeded, finish, internalPhase, signalIntroStarted]);
+  }, [introNeeded, finish, internalPhase, signalIntroStarted, isMobile]);
 
   // Canvas playback
   useEffect(() => {
@@ -97,12 +110,12 @@ export function IntroAnimation() {
       return;
     }
 
-    // Optimization: Cap DPR at 2 for performance, lower for mobile
-    const dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 768 ? 1.5 : 2);
+    // Optimization: Low DPR for mobile to save CPU/GPU
+    const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.0 : 2);
     canvas.width = window.innerWidth * dpr;
     canvas.height = window.innerHeight * dpr;
 
-    const ctx = canvas.getContext("2d", { alpha: false }); // Alpha false for performance
+    const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) {
       finish();
       return;
@@ -112,7 +125,7 @@ export function IntroAnimation() {
     let rafId: number;
     let lastTime = 0;
     let isCancelled = false;
-    const fps = 20; // Faster playback for more impact
+    const fps = isMobile ? 18 : 22; // Faster on desktop, slightly throttled on mobile
     const interval = 1000 / fps;
 
     const animate = (time: number) => {
@@ -123,44 +136,58 @@ export function IntroAnimation() {
       const images = imagesRef.current;
       
       if (elapsed >= interval) {
-        // Only draw if the image is actually loaded (progressive buffer)
-        if (frame < 40 && images[frame]?.complete) {
+        if (frame < images.length && images[frame]?.complete) {
           const img = images[frame];
           
-          // Cover-fit drawing with slight mobile adjustment
           const cA = canvas.width / canvas.height;
           const iA = img.naturalWidth / img.naturalHeight;
           let dw: number, dh: number, dx: number, dy: number;
 
-          if (cA > iA) {
-            dw = canvas.width;
-            dh = canvas.width / iA;
-            dx = 0;
+          // For the Logo Intro, we want the logo FULLY visible (contain) on mobile
+          // and elegantly framed on desktop.
+          if (isMobile) {
+            // Mobile: Use CONTAIN logic for the logo to avoid any cropping
+            const scale = 0.85; // Leave some safe margin
+            if (cA > iA) {
+              dh = canvas.height * scale;
+              dw = dh * iA;
+            } else {
+              dw = canvas.width * scale;
+              dh = dw / iA;
+            }
+            dx = (canvas.width - dw) / 2;
             dy = (canvas.height - dh) / 2;
           } else {
-            dh = canvas.height;
-            dw = canvas.height * iA;
-            dx = (canvas.width - dw) / 2;
-            dy = 0;
+            // Desktop: Traditional COVER logic for cinematic feel
+            if (cA > iA) {
+              dw = canvas.width;
+              dh = canvas.width / iA;
+              dx = 0;
+              dy = (canvas.height - dh) / 2;
+            } else {
+              dh = canvas.height;
+              dw = canvas.height * iA;
+              dx = (canvas.width - dw) / 2;
+              dy = 0;
+            }
           }
 
           ctx.drawImage(img, dx, dy, dw, dh);
           frame++;
           lastTime = time - (elapsed % interval);
-        } else if (frame < 40 && !images[frame]?.complete) {
-            // Buffer stall - wait for image
+        } else if (frame < images.length && !images[frame]?.complete) {
+            // Wait
         } else {
-            // End of sequence
-            frame = 40; 
+            frame = images.length;
         }
       }
 
-      if (frame < 40) {
+      if (frame < images.length) {
         rafId = requestAnimationFrame(animate);
       } else {
         setTimeout(() => {
           if (!isCancelled) finish();
-        }, 300); // Shorter hold for faster flow
+        }, isMobile ? 150 : 300);
       }
     };
 
@@ -170,7 +197,7 @@ export function IntroAnimation() {
       isCancelled = true;
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [internalPhase, finish]);
+  }, [internalPhase, finish, isMobile]);
 
   // Don't render if intro isn't needed or already gone
   if (!introNeeded || internalPhase === "gone") return null;

@@ -18,12 +18,16 @@ export function CarCard({ vehicle, index }: CarCardProps) {
   if (!vehicle) return null;
   const mainImage = vehicle.images?.[0] || vehicle.image || "";
   
+  const [isMobile, setIsMobile] = React.useState(false);
+  React.useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+
   // Format price using utility
   const priceDisplay = formatPrice(vehicle.price);
   const isConsultation = priceDisplay === "Sob Consulta";
   
-  
-  // Trust Seals - We'll take the most relevant from highlights or use defaults
+  // Trust Seals
   const trustSeals = vehicle.highlights?.filter((h: string) => 
     h.toLowerCase().includes("laudo") || 
     h.toLowerCase().includes("procedência") || 
@@ -33,21 +37,24 @@ export function CarCard({ vehicle, index }: CarCardProps) {
     h.toLowerCase().includes("garantia")
   ).slice(0, 2) || [];
 
-  // If no specific trust seals found, use first two highlights
   const finalSeals = trustSeals.length > 0 ? trustSeals : (vehicle.highlights?.slice(0, 2) || ["Procedência verificada", "Laudo aprovado"]);
 
   return (
     <Link href={`/estoque/${vehicle.slug}`} className="block group">
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: isMobile ? 15 : 40 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
+        viewport={{ once: true, margin: isMobile ? "-10px" : "-100px" }}
         transition={{
-          delay: index * 0.05,
-          duration: 1.2,
+          delay: isMobile ? (index % 2) * 0.05 : index * 0.05,
+          duration: isMobile ? 0.6 : 1.2,
           ease: [0.16, 1, 0.3, 1],
         }}
-        className="relative flex flex-col bg-[#080808] border-[0.5px] border-white/5 overflow-hidden rounded-sm hover:border-brand-gold/30 transition-all duration-700 shadow-2xl hover:shadow-brand-gold/[0.03] group-hover:-translate-y-2"
+        className={cn(
+            "relative flex flex-col bg-[#080808] border-[0.5px] border-white/5 overflow-hidden rounded-sm transition-all duration-700 shadow-2xl",
+            "hover:border-brand-gold/30 hover:shadow-brand-gold/[0.03]",
+            !isMobile && "group-hover:-translate-y-2"
+        )}
       >
         {/* Image Container */}
         <div className="relative aspect-[16/10] overflow-hidden">

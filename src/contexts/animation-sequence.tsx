@@ -54,7 +54,6 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // We only trigger animations on the root page
     if (pathname !== "/") {
       setIntroNeeded(false);
       setIntroStarted(false);
@@ -63,22 +62,27 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
     }
 
     try {
+      // Force a brief state reset to ensure child components detect a "fresh" start
+      setIntroStarted(false);
+      
       const hasSeen = sessionStorage.getItem("carrera-intro-seen");
       if (!hasSeen) {
         setIntroNeeded(true);
-        setIntroStarted(false);
         setPhase("intro");
       } else {
-        // If we returned to home after seeing the intro once, 
-        // we might still want to play the Hero drift at least.
         setIntroNeeded(false);
-        setIntroStarted(true); // Treat as started to allow hero preloading
-        setPhase("hero");
+        // Use a micro-delay to ensure the state change is propagated
+        setTimeout(() => {
+          setIntroStarted(true);
+          setPhase("hero");
+        }, 10);
       }
     } catch {
       setIntroNeeded(false);
-      setIntroStarted(true);
-      setPhase("hero");
+      setTimeout(() => {
+        setIntroStarted(true);
+        setPhase("hero");
+      }, 10);
     }
   }, [pathname]);
 

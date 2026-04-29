@@ -12,10 +12,10 @@ export const SITE_CONFIG = {
   // Domínio — substituir quando adquirido
   domain: "https://carreraimports.com.br",
 
-  // WhatsApp — substituir pelo número real do cliente
+  // WhatsApp — official number
   whatsapp: {
-    number: "5511999999999",
-    message: "Olá! Gostaria de saber mais sobre a Carrera Imports.",
+    number: "5511989189050",
+    message: "Olá! Vim pelo site da Carrera Imports e gostaria de falar com um consultor.",
     get url() {
       return `https://wa.me/${this.number}?text=${encodeURIComponent(this.message)}`;
     },
@@ -26,8 +26,8 @@ export const SITE_CONFIG = {
   },
 
   contact: {
-    email: "contato@carreiraimports.com.br",
-    phone: "(11) 99999-9999",
+    email: "carrera.imports9@gmail.com",
+    phone: "(11) 98918-9050",
   },
 
   location: {
@@ -38,8 +38,7 @@ export const SITE_CONFIG = {
   },
 
   social: {
-    instagram: "https://instagram.com/carreraimports",
-    linkedin: "https://linkedin.com/company/carreraimports",
+    instagram: "https://www.instagram.com/carreraimports_/",
   },
 
   hours: {

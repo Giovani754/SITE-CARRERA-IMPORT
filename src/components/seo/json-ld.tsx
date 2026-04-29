@@ -37,11 +37,10 @@ export function OrganizationJsonLd() {
         contactPoint: {
           "@type": "ContactPoint",
           contactType: "sales",
-          email: "contato@carreraimports.com.br",
+          email: "carrera.imports9@gmail.com",
         },
         sameAs: [
-          "https://instagram.com/carreraimports",
-          "https://linkedin.com/company/carreraimports",
+          "https://www.instagram.com/carreraimports_/",
         ],
       }}
     />
@@ -97,8 +96,8 @@ export function LocalBusinessJsonLd() {
         contactPoint: {
           "@type": "ContactPoint",
           contactType: "sales",
-          email: "contato@carreraimports.com.br",
-          telephone: "+55-11-99999-9999",
+          email: "carrera.imports9@gmail.com",
+          telephone: "+55-11-98918-9050",
         },
         priceRange: "$$$",
       }}
