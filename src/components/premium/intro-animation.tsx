@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAnimationSequence } from "@/contexts/animation-sequence";
 
 export function IntroAnimation() {
-  const { phase, introNeeded, signalIntroComplete } = useAnimationSequence();
+  const { phase, introNeeded, signalIntroStarted, signalIntroComplete } = useAnimationSequence();
 
   const [internalPhase, setInternalPhase] = useState<
     "loading" | "playing" | "fading" | "gone"
@@ -32,7 +32,7 @@ export function IntroAnimation() {
   useEffect(() => {
     if (!introNeeded || typeof window === "undefined") return;
 
-    // SAFETY TIMEOUT: force finish after 8 seconds no matter what
+    // SAFETY TIMEOUT: force finish after 8 seconds (reduced from 10)
     const safetyTimer = setTimeout(finish, 8000);
 
     const frameCount = 40;
@@ -41,26 +41,36 @@ export function IntroAnimation() {
     let failed = 0;
 
     const checkDone = () => {
-      if (loaded + failed >= frameCount) {
+      const totalAttempted = loaded + failed;
+      
+      // PROGRESSIVE START: Start playing as soon as we have 8 frames (reduced from 15)
+      // to give a snappier feel while the rest loads in background.
+      if (totalAttempted >= 8 && imgs[0]?.complete && internalPhase === "loading") {
+        imagesRef.current = imgs;
+        setInternalPhase("playing");
+        signalIntroStarted();
+      }
+
+      if (totalAttempted >= frameCount) {
         clearTimeout(safetyTimer);
-        const valid = imgs.filter(
-          (img) => img.complete && img.naturalWidth > 0
-        );
-        if (valid.length > 5) {
-          imagesRef.current = valid;
-          setInternalPhase("playing");
-        } else {
-          // Not enough frames — skip intro
-          finish();
-        }
+        // Ensure we have a minimum set to show anything
+        if (loaded < 5) finish();
       }
     };
 
     for (let i = 1; i <= frameCount; i++) {
       const img = new Image();
-      img.src = `/animations/intro/ezgif-frame-${i
-        .toString()
-        .padStart(3, "0")}.jpg`;
+      
+      // HIGH PRIORITY for the first 10 frames to ensure rapid startup
+      if (i <= 10) {
+        // @ts-ignore
+        img.fetchPriority = 'high';
+      } else {
+        // @ts-ignore
+        img.fetchPriority = 'low';
+      }
+
+      img.src = `/animations/intro/ezgif-frame-${i.toString().padStart(3, "0")}.jpg`;
       img.onload = () => {
         loaded++;
         setProgress(Math.round(((loaded + failed) / frameCount) * 100));
@@ -75,23 +85,24 @@ export function IntroAnimation() {
     }
 
     return () => clearTimeout(safetyTimer);
-  }, [introNeeded, finish]);
+  }, [introNeeded, finish, internalPhase, signalIntroStarted]);
 
   // Canvas playback
   useEffect(() => {
     if (internalPhase !== "playing") return;
 
     const canvas = canvasRef.current;
-    const images = imagesRef.current;
-    if (!canvas || images.length === 0) {
+    if (!canvas) {
       finish();
       return;
     }
 
-    canvas.width = window.innerWidth * window.devicePixelRatio;
-    canvas.height = window.innerHeight * window.devicePixelRatio;
+    // Optimization: Cap DPR at 2 for performance, lower for mobile
+    const dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 768 ? 1.5 : 2);
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: false }); // Alpha false for performance
     if (!ctx) {
       finish();
       return;
@@ -101,7 +112,7 @@ export function IntroAnimation() {
     let rafId: number;
     let lastTime = 0;
     let isCancelled = false;
-    const fps = 15; // Slightly slower for better transition to slow-motion hero
+    const fps = 20; // Faster playback for more impact
     const interval = 1000 / fps;
 
     const animate = (time: number) => {
@@ -109,14 +120,16 @@ export function IntroAnimation() {
       if (!lastTime) lastTime = time;
       const elapsed = time - lastTime;
 
+      const images = imagesRef.current;
+      
       if (elapsed >= interval) {
-        if (frame < images.length) {
+        // Only draw if the image is actually loaded (progressive buffer)
+        if (frame < 40 && images[frame]?.complete) {
           const img = images[frame];
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-          // Cover-fit drawing
+          
+          // Cover-fit drawing with slight mobile adjustment
           const cA = canvas.width / canvas.height;
-          const iA = img.width / img.height;
+          const iA = img.naturalWidth / img.naturalHeight;
           let dw: number, dh: number, dx: number, dy: number;
 
           if (cA > iA) {
@@ -134,16 +147,20 @@ export function IntroAnimation() {
           ctx.drawImage(img, dx, dy, dw, dh);
           frame++;
           lastTime = time - (elapsed % interval);
+        } else if (frame < 40 && !images[frame]?.complete) {
+            // Buffer stall - wait for image
+        } else {
+            // End of sequence
+            frame = 40; 
         }
       }
 
-      if (frame < images.length) {
+      if (frame < 40) {
         rafId = requestAnimationFrame(animate);
       } else {
-        // Sequence done — hold last frame briefly, then finish
         setTimeout(() => {
           if (!isCancelled) finish();
-        }, 600);
+        }, 300); // Shorter hold for faster flow
       }
     };
 

@@ -9,7 +9,7 @@ interface HeroAnimationProps {
 }
 
 export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
-  const { phase } = useAnimationSequence();
+  const { phase, introStarted, signalHeroComplete } = useAnimationSequence();
   const pathname = usePathname();
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -22,7 +22,7 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
   const currentFrameRef = useRef<number>(0);
   const rafRef = useRef<number | null>(null);
 
-  // ─── Draw logic with Cover + DPR ───
+  // ─── Draw logic with Cover + DPR + Mobile Focus ───
   const drawFrame = useCallback((idx: number) => {
     const canvas = canvasRef.current;
     if (!canvas || imagesRef.current.length === 0) return;
@@ -30,7 +30,7 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
     const img = imagesRef.current[idx] || imagesRef.current[imagesRef.current.length - 1];
     if (!img || img.naturalWidth === 0) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
     const { width: cw, height: ch } = canvas;
@@ -41,19 +41,24 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
 
     let dw: number, dh: number, dx: number, dy: number;
 
+    const isMobile = cw < 768 * (window.devicePixelRatio || 1);
+
     if (canvasAspect > imageAspect) {
       dw = cw;
       dh = cw / imageAspect;
       dx = 0;
       dy = (ch - dh) / 2;
     } else {
+      // Improved Mobile Framing: Center the car which is usually in the middle-right
+      // instead of just cropping the left side.
+      const mobileScale = isMobile ? 1.2 : 1.05; // Slightly more scale for impact
       dh = ch;
-      dw = ch * imageAspect;
-      dx = (cw - dw) / 2;
-      dy = 0;
+      dw = ch * imageAspect * mobileScale;
+      // Offset slightly to the right to keep the car (subject) in view
+      dx = (cw - dw) / 2 + (isMobile ? (dw - cw) * 0.1 : 0);
+      dy = (ch - dh) / 2;
     }
 
-    ctx.clearRect(0, 0, cw, ch);
     ctx.drawImage(img, dx, dy, dw, dh);
     currentFrameRef.current = idx;
   }, []);
@@ -70,11 +75,11 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
       const { width, height } = entry.contentRect;
       if (width === 0 || height === 0) return;
 
-      const dpr = window.devicePixelRatio || 1;
+      // PERFORMANCE: Cap DPR at 1.5 for mobile, 2.0 for desktop
+      const dpr = Math.min(window.devicePixelRatio || 1, width < 768 ? 1.2 : 2);
       canvasRef.current.width = width * dpr;
       canvasRef.current.height = height * dpr;
 
-      // Redraw current frame immediately on resize to prevent stretching
       drawFrame(currentFrameRef.current);
     });
 
@@ -90,9 +95,12 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
     if (imagesRef.current.length > 0) setReady(true);
   }, [pathname]);
 
-  // ─── Preload frames ───
+  // ─── Preload frames with Staggered Priority ───
   useEffect(() => {
     if (typeof window === "undefined" || imagesRef.current.length > 0) return;
+    
+    // STAGGERED LOADING: Wait for intro to start playing before competing for bandwidth
+    if (waitForIntro && !introStarted) return;
 
     const frameCount = 40;
     const imgs: HTMLImageElement[] = [];
@@ -100,6 +108,11 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
     let errored = 0;
 
     const checkDone = () => {
+      if (loaded >= 8 && !ready) { // Snappier ready state
+        imagesRef.current = imgs;
+        setReady(true);
+      }
+      
       if (loaded + errored >= frameCount) {
         const valid = imgs.filter((i) => i.complete && i.naturalWidth > 0);
         if (valid.length > 0) {
@@ -113,37 +126,32 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
 
     for (let i = 1; i <= frameCount; i++) {
       const img = new Image();
+      // @ts-ignore - Low priority as hero is secondary to logo intro
+      img.fetchPriority = 'low';
+      
       img.src = `/animations/hero/ezgif-frame-${i.toString().padStart(3, "0")}.jpg`;
       img.onload = () => { loaded++; checkDone(); };
       img.onerror = () => { errored++; checkDone(); };
       imgs.push(img);
     }
-  }, []);
-
-  const { signalHeroComplete } = useAnimationSequence();
+  }, [ready, introStarted, waitForIntro]);
 
   // ─── Animation Sequence ───
   useEffect(() => {
     let isCancelled = false;
 
-    // 1. Guard: must be ready
     if (!ready) return;
-    
-    // 2. Guard: wait for the correct phase if required
     if (waitForIntro && (phase === "intro" || phase === "transition")) return;
-    
-    // 3. Guard: If already played in this mount session and phase hasn't reset, skip
     if (played && phase === "complete") return;
 
     const images = imagesRef.current;
     if (images.length === 0) return;
 
-    // Start animation
     setPlayed(true);
 
     let frame = 0;
     let lastTime = 0;
-    const fps = 12; // Slow motion cinematic feel
+    const fps = 18; // Smoother and faster for premium feel
     const interval = 1000 / fps;
 
     const animate = (time: number) => {
@@ -153,17 +161,18 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
       const elapsed = time - lastTime;
 
       if (elapsed >= interval) {
-        if (frame < images.length) {
+        if (frame < 40 && images[frame]?.complete) {
           drawFrame(frame);
           frame++;
           lastTime = time - (elapsed % interval);
+        } else if (frame >= 40) {
+            frame = 40;
         }
       }
 
-      if (frame < images.length) {
+      if (frame < 40) {
         rafRef.current = requestAnimationFrame(animate);
       } else {
-        // Animation complete
         signalHeroComplete();
       }
     };

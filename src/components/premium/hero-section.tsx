@@ -43,7 +43,7 @@ export function HeroSection({
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.5, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="text-3xl md:text-5xl lg:text-[3.8rem] font-serif italic text-white/95 leading-[1.06] mb-8 tracking-tight md:max-w-none max-w-[280px]"
+            className="text-[1.75rem] sm:text-3xl md:text-5xl lg:text-[3.8rem] font-serif italic text-white/95 leading-[1.1] md:leading-[1.06] mb-8 tracking-tight max-w-sm md:max-w-none"
           >
             {headline}
           </motion.h1>

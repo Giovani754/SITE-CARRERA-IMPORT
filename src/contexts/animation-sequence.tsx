@@ -25,6 +25,8 @@ type SequencePhase =
 interface AnimationSequenceContextType {
   phase: SequencePhase;
   introNeeded: boolean;  // Whether the intro should play this session
+  introStarted: boolean; // Whether the intro has actually begun its playback
+  signalIntroStarted: () => void;
   signalIntroComplete: () => void;
   signalHeroComplete: () => void;
 }
@@ -32,6 +34,8 @@ interface AnimationSequenceContextType {
 const AnimationSequenceContext = createContext<AnimationSequenceContextType>({
   phase: "complete",
   introNeeded: false,
+  introStarted: false,
+  signalIntroStarted: () => {},
   signalIntroComplete: () => {},
   signalHeroComplete: () => {},
 });
@@ -43,6 +47,7 @@ export function useAnimationSequence() {
 export function AnimationSequenceProvider({ children }: { children: ReactNode }) {
   const [phase, setPhase] = useState<SequencePhase>("complete");
   const [introNeeded, setIntroNeeded] = useState(false);
+  const [introStarted, setIntroStarted] = useState(false);
   const pathname = usePathname();
 
   // On mount or path change, check if intro should play
@@ -52,6 +57,7 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
     // We only trigger animations on the root page
     if (pathname !== "/") {
       setIntroNeeded(false);
+      setIntroStarted(false);
       setPhase("complete");
       return;
     }
@@ -60,19 +66,26 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
       const hasSeen = sessionStorage.getItem("carrera-intro-seen");
       if (!hasSeen) {
         setIntroNeeded(true);
+        setIntroStarted(false);
         setPhase("intro");
       } else {
         // If we returned to home after seeing the intro once, 
         // we might still want to play the Hero drift at least.
         setIntroNeeded(false);
+        setIntroStarted(true); // Treat as started to allow hero preloading
         setPhase("hero");
       }
     } catch {
       setIntroNeeded(false);
+      setIntroStarted(true);
       setPhase("hero");
     }
   }, [pathname]);
 
+  // Called by IntroAnimation when it actually starts playing (buffer ready)
+  const signalIntroStarted = useCallback(() => {
+    setIntroStarted(true);
+  }, []);
 
   // Called by IntroAnimation when it finishes
   const signalIntroComplete = useCallback(() => {
@@ -84,7 +97,7 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
     setPhase("transition");
     setTimeout(() => {
       setPhase("hero");
-    }, 600); // 600ms elegant gap between intro and hero
+    }, 150); // Even faster transition for better flow
   }, []);
 
   // Called by HeroAnimation when it finishes
@@ -94,7 +107,14 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
 
   return (
     <AnimationSequenceContext.Provider
-      value={{ phase, introNeeded, signalIntroComplete, signalHeroComplete }}
+      value={{ 
+        phase, 
+        introNeeded, 
+        introStarted, 
+        signalIntroStarted, 
+        signalIntroComplete, 
+        signalHeroComplete 
+      }}
     >
       {children}
     </AnimationSequenceContext.Provider>
