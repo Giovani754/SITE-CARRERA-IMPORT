@@ -94,16 +94,38 @@ export function DifferentialsSection() {
       <div className="max-w-6xl mx-auto relative z-10">
         <header className="mb-16 md:mb-28 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 1 }}
           >
-            <span className="text-brand-gold text-[10px] md:text-[11px] uppercase font-bold mb-10 block opacity-50 tracking-[0.8em]">
+            <motion.span 
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 0.5, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="text-brand-gold text-[10px] md:text-[11px] uppercase font-bold mb-10 block tracking-[0.8em]"
+            >
               Por que nos escolher
-            </span>
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif italic tracking-tight text-white/95 leading-[1.2]">
-              {title}
+            </motion.span>
+            
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif italic tracking-tight text-white/95 leading-[1.2] flex flex-wrap justify-center gap-x-[0.3em]">
+              {title.split(" ").map((word, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{
+                    duration: 1.2,
+                    delay: 0.4 + i * 0.08,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="inline-block"
+                >
+                  {word}
+                </motion.span>
+              ))}
             </h2>
           </motion.div>
         </header>

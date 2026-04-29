@@ -13,6 +13,8 @@ export function AboutCinematicBanner() {
 
   const y = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.4, 1, 1, 0.4]);
+  const saturate = useTransform(scrollYProgress, [0.1, 0.4], [0, 0.8]);
+  const filter = useTransform(saturate, (s) => `brightness(0.35) contrast(1.15) saturate(${s})`);
 
   return (
     <section 
@@ -21,7 +23,7 @@ export function AboutCinematicBanner() {
     >
       {/* Background Image with Parallax */}
       <motion.div 
-        style={{ y }} 
+        style={{ y, filter }} 
         className="absolute inset-0 z-0 scale-110"
       >
         <Image
@@ -30,7 +32,7 @@ export function AboutCinematicBanner() {
           fill
           sizes="100vw"
           quality={85}
-          className="object-cover brightness-[0.35] contrast-[1.15] saturate-[0.8]"
+          className="object-cover"
         />
       </motion.div>
 

@@ -81,23 +81,27 @@ export function TestimonialsSection() {
       {/* Marquee Container */}
       <div 
         className="relative flex overflow-hidden py-10 touch-none md:touch-pan-x cursor-default"
-        onMouseEnter={() => !isMobile && setIsPaused(true)}
-        onMouseLeave={() => !isMobile && setIsPaused(false)}
-        // Improved Mobile Handling: Explicitly use touch events for better stability
-        onTouchStart={(e) => {
+        onMouseEnter={() => {
+          if (!isMobile) setIsPaused(true);
+        }}
+        onMouseLeave={() => {
+          if (!isMobile) setIsPaused(false);
+        }}
+        // Robust Mobile Interaction
+        onTouchStart={() => {
           setIsPaused(true);
         }}
         onTouchEnd={() => {
-          setIsPaused(false);
-        }}
-        onTouchCancel={() => {
-          setIsPaused(false);
+          // Add a small delay for natural feeling
+          setTimeout(() => setIsPaused(false), 200);
         }}
       >
         <motion.div 
           className="flex whitespace-nowrap gap-5 md:gap-10 px-4 will-change-transform"
           initial={{ x: "0%" }}
           animate={controls}
+          // Extra safety for mobile: ensure it doesn't get stuck if touch cancels
+          onTouchCancel={() => setIsPaused(false)}
         >
           {displayTestimonials.map((testimonial, idx) => (
             <motion.div

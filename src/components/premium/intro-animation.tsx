@@ -50,7 +50,7 @@ export function IntroAnimation() {
 
     const checkDone = () => {
       const totalAttempted = loaded + failed;
-      const startThreshold = isMobile ? 12 : 20;
+      const startThreshold = isMobile ? 8 : 15;
       
       if (totalAttempted >= startThreshold && internalPhase === "loading") {
         imagesRef.current = imgs.filter(Boolean);
@@ -59,18 +59,23 @@ export function IntroAnimation() {
       }
 
       if (totalAttempted >= frameCount) {
-        if (loaded < 5) finish(); 
+        if (loaded < 3) finish(); 
       }
     };
 
     const loadAssets = async () => {
+      // Prepared for future mobile-dedicated assets
+      // desktop_path = /animations/intro/...
+      // mobile_path = /animations/intro-mobile/... (placeholder)
+      const pathPrefix = "/animations/intro"; 
+      
       for (let i = 1; i <= frameCount; i++) {
         const img = new Image();
         const frameNum = i.toString().padStart(3, "0");
-        img.src = `/animations/intro/ezgif-frame-${frameNum}.jpg`;
+        img.src = `${pathPrefix}/ezgif-frame-${frameNum}.jpg`;
         
         // @ts-ignore
-        if (i <= 10) img.fetchPriority = 'high';
+        if (i <= 8) img.fetchPriority = 'high';
 
         img.onload = () => {
           imgs[i-1] = img;

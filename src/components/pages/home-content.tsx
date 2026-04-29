@@ -86,20 +86,43 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
 
             {/* Text Column */}
             <div className="lg:col-span-6 lg:col-start-7 order-1 lg:order-2">
-              <motion.div
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <span className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-10 block opacity-50">
+              <div className="flex flex-col">
+                <motion.span
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 0.5, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                  className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-10 block"
+                >
                   A Carrera Imports
-                </span>
-                <h2 className="text-3xl md:text-[2.5rem] lg:text-[2.8rem] font-serif italic mb-12 leading-[1.1] tracking-tight max-w-xl text-white/95">
-                  Carro de alto padrão não perdoa uma <span className="text-brand-gold/80">escolha mal conduzida.</span>
+                </motion.span>
+
+                <h2 className="text-3xl md:text-[2.5rem] lg:text-[2.8rem] font-serif italic mb-12 leading-[1.1] tracking-tight max-w-xl text-white/95 flex flex-wrap gap-x-[0.3em]">
+                  {"Carro de alto padrão não perdoa uma escolha mal conduzida.".split(" ").map((word, i) => (
+                    <motion.span
+                      key={i}
+                      initial={{ opacity: 0, y: 15 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{
+                        duration: 1.2,
+                        delay: 0.3 + i * 0.08,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                      className={word === "escolha" || word === "mal" || word === "conduzida." ? "text-brand-gold/80" : ""}
+                    >
+                      {word}
+                    </motion.span>
+                  ))}
                 </h2>
                 
-                <div className="space-y-10 max-w-lg">
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 1.2, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                  className="space-y-10 max-w-lg"
+                >
                   <div className="space-y-6">
                     <p className="text-white/60 leading-[1.8] text-[15px] lg:text-base font-sans font-light">
                       Um erro na compra pode custar mais do que dinheiro. Pode custar tempo, confiança, tranquilidade — e a sensação amarga de ter entrado em um mercado onde nem tudo é o que parece.
@@ -151,20 +174,34 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
       <section className="py-28 md:py-48 px-6 lg:px-16 bg-[#050505] relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
           <header className="mb-24 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/5 pb-16">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="max-w-2xl"
-            >
-              <span className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-8 block opacity-50">
+            <div className="max-w-2xl text-center md:text-left">
+              <motion.span 
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 0.5, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-8 block"
+              >
                 Expertise Estratégica
-              </span>
-              <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif italic tracking-tight text-white/95 leading-[1.05]">
-                Onde a negociação deixa de ser aposta
+              </motion.span>
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif italic tracking-tight text-white/95 leading-[1.05] flex flex-wrap justify-center md:justify-start gap-x-[0.3em]">
+                {"Onde a negociação deixa de ser aposta".split(" ").map((word, i) => (
+                  <motion.span
+                    key={i}
+                    initial={{ opacity: 0, y: 15 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      duration: 1.2,
+                      delay: 0.3 + i * 0.08,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                  >
+                    {word}
+                  </motion.span>
+                ))}
               </h2>
-            </motion.div>
+            </div>
             <motion.p 
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 0.3 }}
@@ -194,19 +231,33 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
       <section className="py-12 md:py-24 px-6 lg:px-12 bg-background relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-12 mb-20 md:mb-28">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="max-w-2xl"
-            >
-              <span className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-8 block opacity-50">
+            <div className="max-w-2xl">
+              <motion.span 
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 0.5, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-8 block"
+              >
                 Curadoria Carrera
-              </span>
+              </motion.span>
               
-              <h2 className="text-4xl md:text-5xl lg:text-7xl font-serif italic mb-8 leading-[1] tracking-tight text-white/95">
-                Veículos Selecionados
+              <h2 className="text-4xl md:text-5xl lg:text-7xl font-serif italic mb-8 leading-[1] tracking-tight text-white/95 flex flex-wrap gap-x-[0.3em]">
+                {"Veículos Selecionados".split(" ").map((word, i) => (
+                  <motion.span
+                    key={i}
+                    initial={{ opacity: 0, y: 15 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      duration: 1.2,
+                      delay: 0.3 + i * 0.08,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                  >
+                    {word}
+                  </motion.span>
+                ))}
               </h2>
               
               <p className="text-white text-base lg:text-xl font-light max-w-xl leading-relaxed opacity-60">
@@ -245,11 +296,31 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
       <section className="py-24 md:py-48 px-6 lg:px-12 bg-[#050505] relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <header className="mb-24 text-center">
-            <span className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-8 block opacity-50">
+            <motion.span 
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 0.5, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-8 block"
+            >
               METODOLOGIA
-            </span>
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif italic tracking-tight text-white/90 leading-[1.05]">
-              Da análise ao fechamento, nada fica no achismo
+            </motion.span>
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif italic tracking-tight text-white/90 leading-[1.05] flex flex-wrap justify-center gap-x-[0.3em]">
+              {"Da análise ao fechamento, nada fica no achismo".split(" ").map((word, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{
+                    duration: 1.2,
+                    delay: 0.3 + i * 0.08,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                >
+                  {word}
+                </motion.span>
+              ))}
             </h2>
           </header>
           <ProcessSteps />

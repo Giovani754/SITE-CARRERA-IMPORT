@@ -40,14 +40,14 @@ export function ProcessSteps() {
         {steps.map((step, index) => (
           <motion.div
             key={step.number}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             transition={{
-              duration: 0.8,
-              delay: index * 0.1,
+              duration: 1.2,
+              delay: index * 0.15,
               ease: [0.16, 1, 0.3, 1],
             }}
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: true, margin: "-100px" }}
             className={`group relative bg-[#080808] p-12 lg:p-24 overflow-hidden transition-all duration-1000 hover:bg-[#0A0A0A] ${
               index % 2 === 1 ? "lg:border-l-[0.5px] lg:border-white/5" : ""
             }`}
