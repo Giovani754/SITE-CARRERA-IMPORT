@@ -7,8 +7,10 @@ import { CarCard } from "@/components/premium/car-card";
 import { Search, ChevronDown, X } from "lucide-react";
 import { cn, parsePrice } from "@/lib/utils";
 
+import { Vehicle } from "@/data/vehicles";
+
 interface InventoryContentProps {
-  vehicles: any[];
+  vehicles: Vehicle[];
 }
 
 export default function InventoryContent({ vehicles }: InventoryContentProps) {

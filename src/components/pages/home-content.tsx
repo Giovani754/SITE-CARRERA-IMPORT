@@ -3,16 +3,15 @@
 import { HeroSection } from "@/components/premium/hero-section";
 import { ServiceCard } from "@/components/premium/service-card";
 import { ProcessSteps } from "@/components/premium/process-steps";
-import { CarCard } from "@/components/premium/car-card";
 import { DifferentialsSection } from "@/components/premium/differentials-section";
 import { TestimonialsSection } from "@/components/premium/testimonials-section";
 import { CTASection } from "@/components/premium/cta-section";
 import { FeaturedVehiclesShowcase } from "@/components/premium/featured-vehicles-showcase";
-import { SITE_CONFIG } from "@/data/constants";
-import { ArrowRight, MessageCircle } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { Vehicle } from "@/data/vehicles";
 
 const mainServices = [
   {
@@ -42,7 +41,7 @@ const mainServices = [
 ];
 
 interface HomeContentProps {
-  featuredVehicles: any[];
+  featuredVehicles: Vehicle[];
 }
 
 export default function HomeContent({ featuredVehicles }: HomeContentProps) {
@@ -141,7 +140,7 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
                       Quem construiu patrimônio não compra no escuro. Compra com alguém capaz de enxergar o que o mercado tenta esconder.
                     </p>
                   </div>
-                </div>
+                </motion.div>
 
                 <div className="grid grid-cols-2 gap-12 pt-14 mt-16 border-t border-white/5">
                   <div className="flex flex-col">
@@ -161,7 +160,7 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
                     </span>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </div>
@@ -264,7 +263,7 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
                 Cada veículo em nosso acervo é rigorosamente avaliado quanto a
                 procedência, histórico e estado de conservação.
               </p>
-            </motion.div>
+            </div>
 
             <motion.div
               initial={{ opacity: 0, x: 20 }}

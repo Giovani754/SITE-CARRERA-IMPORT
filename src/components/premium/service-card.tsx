@@ -3,7 +3,6 @@
 import React from "react";
 import { motion, Variants } from "framer-motion";
 import * as Icons from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface ServiceCardProps {
   title: string;
@@ -22,6 +21,7 @@ export function ServiceCard({
   iconName,
   index,
 }: ServiceCardProps) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const Icon = (Icons as any)[iconName] || Icons.HelpCircle;
   const displayNumber = (index + 1).toString().padStart(2, "0");
   const [isMobile, setIsMobile] = React.useState(false);

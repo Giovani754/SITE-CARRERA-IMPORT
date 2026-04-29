@@ -1,11 +1,21 @@
 import { getUsers } from "./actions";
 import Link from "next/link";
-import { Plus, MoreHorizontal, UserX, Mail, Shield } from "lucide-react";
+import { Plus, MoreHorizontal, UserX, Shield } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+interface User {
+  id: string;
+  full_name: string;
+  email: string;
+  role: string;
+  status: string;
+  function?: string;
+  created_at: string;
+}
+
 export default async function UsersPage() {
-  const users = await getUsers();
+  const users = await getUsers() as User[];
 
   return (
     <div className="space-y-8">
@@ -47,7 +57,7 @@ export default async function UsersPage() {
                 </td>
               </tr>
             ) : (
-              users.map((user: any) => (
+              users.map((user: User) => (
                 <tr key={user.id} className="hover:bg-white/[0.01] transition-colors group">
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-4">

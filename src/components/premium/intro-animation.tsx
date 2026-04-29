@@ -30,73 +30,56 @@ export function IntroAnimation() {
     const t = setTimeout(() => {
       setInternalPhase("gone");
       signalIntroComplete();
-    }, isMobile ? 600 : 1000);
+    }, 1000);
     return () => clearTimeout(t);
-  }, [signalIntroComplete, isMobile]);
+  }, [signalIntroComplete]);
 
   // Preload frames
   useEffect(() => {
     if (!introNeeded) return;
 
-    // Safety timeout: Site must work even if assets fail
+    // Safety timeout
     const safetyTimer = setTimeout(() => {
       if (internalPhase === "loading") finish();
-    }, isMobile ? 6000 : 10000);
+    }, 10000);
 
     const frameCount = 40; 
-    const imgs: HTMLImageElement[] = new Array(frameCount);
+    const imgs: HTMLImageElement[] = [];
     let loaded = 0;
     let failed = 0;
 
     const checkDone = () => {
-      const totalAttempted = loaded + failed;
-      const startThreshold = isMobile ? 8 : 15;
-      
-      if (totalAttempted >= startThreshold && internalPhase === "loading") {
-        imagesRef.current = imgs.filter(Boolean);
-        setInternalPhase("playing");
-        signalIntroStarted();
-      }
-
-      if (totalAttempted >= frameCount) {
-        if (loaded < 3) finish(); 
-      }
-    };
-
-    const loadAssets = async () => {
-      // Prepared for future mobile-dedicated assets
-      // desktop_path = /animations/intro/...
-      // mobile_path = /animations/intro-mobile/... (placeholder)
-      const pathPrefix = "/animations/intro"; 
-      
-      for (let i = 1; i <= frameCount; i++) {
-        const img = new Image();
-        const frameNum = i.toString().padStart(3, "0");
-        img.src = `${pathPrefix}/ezgif-frame-${frameNum}.jpg`;
-        
-        // @ts-ignore
-        if (i <= 8) img.fetchPriority = 'high';
-
-        img.onload = () => {
-          imgs[i-1] = img;
-          loaded++;
-          setProgress(Math.round(((loaded + failed) / frameCount) * 100));
-          checkDone();
-        };
-        img.onerror = () => {
-          failed++;
-          setProgress(Math.round(((loaded + failed) / frameCount) * 100));
-          checkDone();
-        };
-        
-        // Batch loading
-        if (i % 6 === 0) await new Promise(r => setTimeout(r, 0));
+      const total = loaded + failed;
+      if (total >= frameCount) {
+        const valid = imgs.filter((i) => i.complete && i.naturalWidth > 0);
+        if (valid.length > 5) {
+          imagesRef.current = valid;
+          setInternalPhase("playing");
+          signalIntroStarted();
+        } else {
+          finish();
+        }
       }
     };
 
-    loadAssets();
+    for (let i = 1; i <= frameCount; i++) {
+      const img = new Image();
+      img.src = `/animations/intro/ezgif-frame-${i.toString().padStart(3, "0")}.jpg`;
+      img.onload = () => {
+        imgs[i-1] = img;
+        loaded++;
+        setProgress(Math.round(((loaded + failed) / frameCount) * 100));
+        checkDone();
+      };
+      img.onerror = () => {
+        failed++;
+        setProgress(Math.round(((loaded + failed) / frameCount) * 100));
+        checkDone();
+      };
+    }
+
     return () => clearTimeout(safetyTimer);
-  }, [introNeeded, isMobile, internalPhase, finish, signalIntroStarted]);
+  }, [introNeeded, finish, signalIntroStarted, internalPhase]);
 
   // Canvas playback
   useEffect(() => {
@@ -105,7 +88,7 @@ export function IntroAnimation() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = window.devicePixelRatio || 1;
     canvas.width = window.innerWidth * dpr;
     canvas.height = window.innerHeight * dpr;
 
@@ -129,20 +112,18 @@ export function IntroAnimation() {
           if (img && img.complete) {
             const cA = canvas.width / canvas.height;
             const iA = img.naturalWidth / img.naturalHeight;
-            let dw: number, dh: number, dx: number, dy: number;
+            let dw: number, dh: number;
 
-            // Proper CONTAIN logic for the Logo Intro
-            // We want the logo fully visible on all screens
-            const padding = isMobile ? 0.75 : 0.85; 
+            // CONTAIN logic for the Logo Intro
             if (cA > iA) {
-              dh = canvas.height * padding;
+              dh = canvas.height * 0.85;
               dw = dh * iA;
             } else {
-              dw = canvas.width * padding;
+              dw = canvas.width * 0.85;
               dh = dw / iA;
             }
-            dx = (canvas.width - dw) / 2;
-            dy = (canvas.height - dh) / 2;
+            const dx = (canvas.width - dw) / 2;
+            const dy = (canvas.height - dh) / 2;
 
             ctx.fillStyle = "#030303";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -158,8 +139,7 @@ export function IntroAnimation() {
       if (frame < images.length) {
         rafId = requestAnimationFrame(animate);
       } else {
-        const t = setTimeout(finish, isMobile ? 150 : 300);
-        return () => clearTimeout(t);
+        setTimeout(finish, 300);
       }
     };
 

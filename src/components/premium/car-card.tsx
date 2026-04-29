@@ -4,24 +4,26 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { MoveRight, Gauge, Calendar, Zap } from "lucide-react";
+import { MoveRight } from "lucide-react";
 import { cn, formatPrice, formatMileage } from "@/lib/utils";
 import { CategoryTag } from "./category-tag";
 
+import { Vehicle } from "@/data/vehicles";
 
 interface CarCardProps {
-  vehicle: any;
+  vehicle: Vehicle;
   index: number;
 }
 
 export function CarCard({ vehicle, index }: CarCardProps) {
-  if (!vehicle) return null;
-  const mainImage = vehicle.images?.[0] || vehicle.image || "";
-  
   const [isMobile, setIsMobile] = React.useState(false);
+  
   React.useEffect(() => {
     setIsMobile(window.innerWidth < 768);
   }, []);
+
+  if (!vehicle) return null;
+  const mainImage = vehicle.images?.[0] || vehicle.image || "";
 
   // Format price using utility
   const priceDisplay = formatPrice(vehicle.price);

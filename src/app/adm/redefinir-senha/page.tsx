@@ -3,7 +3,7 @@
 import { updatePassword } from "../actions";
 import { LogoCarrera } from "@/components/premium/logo-carrera";
 import { useState } from "react";
-import { ShieldCheck, Lock } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 
 export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false);

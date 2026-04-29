@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Upload, X, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 
@@ -30,7 +30,7 @@ export function ImageUpload({ onImagesChange, initialImages = [], slug = "vehicl
         const fileName = `${slug}-${Math.random().toString(36).substring(2, 10)}.${fileExt}`;
         const filePath = `vehicles/${fileName}`;
 
-        const { data, error } = await supabase.storage
+        const { error } = await supabase.storage
           .from('vehicle-images')
           .upload(filePath, file);
 

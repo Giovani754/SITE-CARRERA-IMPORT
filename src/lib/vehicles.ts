@@ -30,8 +30,8 @@ export async function getAllVehicles(): Promise<Vehicle[]> {
     const uniqueMocks = MOCK_VEHICLES.filter(v => !realSlugs.has(v.slug));
     
     return [...realVehicles, ...uniqueMocks];
-  } catch (err) {
-    console.error("Critical error in getAllVehicles:", err);
+  } catch (_err) {
+    console.error("Critical error in getAllVehicles:", _err);
     return MOCK_VEHICLES;
   }
 }
@@ -65,8 +65,8 @@ export async function getFeaturedVehicles(limit = 6): Promise<Vehicle[]> {
     const mockFeatured = MOCK_VEHICLES.filter(v => v.featured && !realSlugs.has(v.slug));
     
     return [...realFeatured, ...mockFeatured].slice(0, limit);
-  } catch (err) {
-    console.error("Critical error in getFeaturedVehicles:", err);
+  } catch (_err) {
+    console.error("Critical error in getFeaturedVehicles:", _err);
     return MOCK_VEHICLES.filter(v => v.featured).slice(0, limit);
   }
 }
@@ -95,8 +95,8 @@ export async function getVehicleBySlug(slug: string): Promise<Vehicle | null> {
 
     // Tenta encontrar nos mocks se não houver no banco
     return MOCK_VEHICLES.find(v => v.slug === slug) || null;
-  } catch (err) {
-    console.error("Critical error in getVehicleBySlug:", err);
+  } catch (_err) {
+    console.error("Critical error in getVehicleBySlug:", _err);
     return MOCK_VEHICLES.find(v => v.slug === slug) || null;
   }
 }
@@ -133,7 +133,7 @@ export async function getRelatedVehicles(currentVehicle: Vehicle, limit = 3): Pr
     }
     
     return MOCK_VEHICLES.filter(v => v.slug !== currentVehicle.slug).slice(0, limit);
-  } catch (err) {
+  } catch {
     return MOCK_VEHICLES.filter(v => v.slug !== currentVehicle.slug).slice(0, limit);
   }
 }

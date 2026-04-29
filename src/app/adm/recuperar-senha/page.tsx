@@ -4,7 +4,7 @@ import { requestPasswordReset } from "../actions";
 import { LogoCarrera } from "@/components/premium/logo-carrera";
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Mail, CheckCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle } from "lucide-react";
 
 export default function RecoverPasswordPage() {
   const [loading, setLoading] = useState(false);

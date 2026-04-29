@@ -2,7 +2,6 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 
 export async function upsertVehicle(formData: FormData) {
   const supabase = await createClient()
@@ -18,7 +17,7 @@ export async function upsertVehicle(formData: FormData) {
   // Get image URLs from formData
   const images = (formData.get('images_json') as string)?.split(',').filter(Boolean) || []
 
-  const vehicleData: any = {
+  const vehicleData = {
     brand: brand,
     model: model,
     version: formData.get('version') as string,
@@ -59,9 +58,10 @@ export async function upsertVehicle(formData: FormData) {
         .insert([vehicleData])
       error = insertError
     }
-  } catch (err: any) {
-    console.error('CRITICAL DATABASE ERROR:', err.message);
-    return { error: `Erro crítico no banco de dados: ${err.message}` }
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
+    console.error('CRITICAL DATABASE ERROR:', errorMessage);
+    return { error: `Erro crítico no banco de dados: ${errorMessage}` }
   }
 
   if (error) {

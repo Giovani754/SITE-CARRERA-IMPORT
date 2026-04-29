@@ -2,16 +2,11 @@
 
 import { Star, CheckCircle, Clock, TrendingUp } from "lucide-react";
 import { updateVehicleStatus, toggleVehicleFeatured } from "./actions";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 export function StatusQuickAction({ id, currentStatus }: { id: string; currentStatus: string }) {
-  const [isLoading, setIsLoading] = useState(false);
-
   const handleStatusChange = async (newStatus: 'available' | 'sold' | 'reserved') => {
-    setIsLoading(true);
     await updateVehicleStatus(id, newStatus);
-    setIsLoading(false);
   };
 
   return (
@@ -51,12 +46,8 @@ export function StatusQuickAction({ id, currentStatus }: { id: string; currentSt
 }
 
 export function FeaturedQuickAction({ id, isFeatured }: { id: string; isFeatured: boolean }) {
-  const [isLoading, setIsLoading] = useState(false);
-
   const handleToggle = async () => {
-    setIsLoading(true);
     await toggleVehicleFeatured(id, isFeatured);
-    setIsLoading(false);
   };
 
   return (

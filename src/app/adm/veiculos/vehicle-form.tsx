@@ -1,19 +1,20 @@
 "use client";
 
 import { upsertVehicle } from "./actions";
-import { ChevronLeft, Info, Image as ImageIcon, CheckCircle, Save, Loader2 } from "lucide-react";
-import Link from "next/link";
+import { Info, Image as ImageIcon, CheckCircle, Save, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { ImageUpload } from "@/components/adm/image-upload";
 import { useRouter } from "next/navigation";
 
+import { Vehicle } from "@/data/vehicles";
+
 interface VehicleFormProps {
-  initialData?: any;
+  initialData?: Vehicle;
   title: string;
   buttonText: string;
 }
 
-export function VehicleForm({ initialData, title, buttonText }: VehicleFormProps) {
+export function VehicleForm({ initialData, buttonText }: VehicleFormProps) {
   const router = useRouter();
   const [brand, setBrand] = useState(initialData?.brand || "");
   const [model, setModel] = useState(initialData?.model || "");
@@ -31,6 +32,7 @@ export function VehicleForm({ initialData, title, buttonText }: VehicleFormProps
         .replace(/[^\w\s-]/g, '')
         .replace(/[\s_-]+/g, '-')
         .replace(/^-+|-+$/g, '');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSlug(suggested);
     }
   }, [brand, model, year, initialData]);

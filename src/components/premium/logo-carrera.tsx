@@ -4,10 +4,9 @@ import { cn } from "@/lib/utils";
 
 interface LogoProps {
   className?: string;
-  variant?: "default" | "light";
 }
 
-export function LogoCarrera({ className, variant = "default" }: LogoProps) {
+export function LogoCarrera({ className }: LogoProps) {
   return (
     <div className={cn("flex items-center justify-center", className)}>
       <Image
