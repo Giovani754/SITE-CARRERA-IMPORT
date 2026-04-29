@@ -60,6 +60,7 @@ export function ProcessSteps() {
                 <motion.span 
                   initial={{ opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
                   className="text-5xl lg:text-7xl font-serif italic text-brand-gold/20 group-hover:text-brand-gold group-hover:scale-110 transition-all duration-1000 select-none"
                 >
                   {step.number}
@@ -67,6 +68,7 @@ export function ProcessSteps() {
                 <motion.div 
                   initial={{ width: 0 }}
                   whileInView={{ width: "100%" }}
+                  viewport={{ once: true }}
                   transition={{ delay: 0.5, duration: 1.5 }}
                   className="h-[0.5px] bg-white/5 group-hover:bg-brand-gold/20 transition-all" 
                 />
@@ -75,6 +77,7 @@ export function ProcessSteps() {
               <motion.h3 
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
                 transition={{ delay: 0.3, duration: 1 }}
                 className="text-2xl lg:text-3xl font-serif italic mb-8 text-white/90 group-hover:text-white transition-colors tracking-tight"
               >
@@ -84,6 +87,7 @@ export function ProcessSteps() {
               <motion.p 
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
                 transition={{ delay: 0.5, duration: 1 }}
                 className="text-white/60 text-[14px] lg:text-[15px] leading-[1.8] font-sans font-light max-w-sm group-hover:text-white transition-colors duration-700"
               >

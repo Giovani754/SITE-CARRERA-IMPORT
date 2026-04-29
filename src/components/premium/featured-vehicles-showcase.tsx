@@ -66,6 +66,8 @@ export function FeaturedVehiclesShowcase({ vehicles }: FeaturedVehiclesShowcaseP
                   src={vehicles[(activeIndex - 1 + vehicles.length) % vehicles.length].images[0]}
                   alt="Previous vehicle"
                   fill
+                  sizes="240px"
+                  quality={30}
                   className="object-cover"
                 />
               </div>
@@ -92,8 +94,10 @@ export function FeaturedVehiclesShowcase({ vehicles }: FeaturedVehiclesShowcaseP
                   src={activeVehicle.images[0]}
                   alt={`${activeVehicle.brand} ${activeVehicle.model}`}
                   fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
                   className="object-cover transition-transform duration-1000 group-hover:scale-105"
                   priority
+                  quality={85}
                 />
                 {/* Overlay gradient for depth */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
@@ -123,6 +127,8 @@ export function FeaturedVehiclesShowcase({ vehicles }: FeaturedVehiclesShowcaseP
                   src={vehicles[(activeIndex + 1) % vehicles.length].images[0]}
                   alt="Next vehicle"
                   fill
+                  sizes="240px"
+                  quality={30}
                   className="object-cover"
                 />
               </div>

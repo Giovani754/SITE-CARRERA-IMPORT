@@ -79,6 +79,8 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
                     src="/images/about_detail.png"
                     alt="Consultoria automotiva premium Carrera Imports — curadoria de veículos de alto padrão em São Paulo"
                     fill
+                    sizes="(max-width: 768px) 100vw, 600px"
+                    priority
                     className="object-cover brightness-[0.8] transition-transform duration-[2s] ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
@@ -99,7 +101,7 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
               >
                 <span className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-10 block opacity-50">

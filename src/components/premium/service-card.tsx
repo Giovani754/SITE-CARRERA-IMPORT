@@ -43,6 +43,7 @@ export function ServiceCard({
         <motion.span 
           initial={{ opacity: 0, scale: 0.7, x: -20 }}
           whileInView={{ opacity: 1, scale: 1, x: 0 }}
+          viewport={{ once: true }}
           transition={{ duration: 1.2, delay: index * 0.15 + 0.4 }}
           className="text-5xl md:text-6xl font-serif italic text-white/[0.05] group-hover:text-brand-gold/20 transition-colors duration-1000 select-none"
         >
@@ -51,6 +52,7 @@ export function ServiceCard({
         <motion.div 
           initial={{ opacity: 0, rotate: -20, scale: 0.8 }}
           whileInView={{ opacity: 1, rotate: 0, scale: 1 }}
+          viewport={{ once: true }}
           transition={{ duration: 1.2, delay: index * 0.15 + 0.6 }}
           className="text-brand-gold/20 group-hover:text-brand-gold group-hover:scale-110 transition-all duration-1000"
         >
@@ -64,6 +66,7 @@ export function ServiceCard({
           <motion.h3 
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 1.2, delay: index * 0.15 + 0.5 }}
             className="text-2xl md:text-4xl font-serif italic mb-5 text-white/95 group-hover:text-brand-gold transition-colors duration-1000 tracking-tight"
           >
@@ -73,6 +76,7 @@ export function ServiceCard({
         <motion.p 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
           transition={{ duration: 1, delay: index * 0.15 + 0.8 }}
           className="text-white/40 text-sm md:text-lg leading-[1.9] font-sans font-light max-w-2xl group-hover:text-white/70 transition-colors duration-1000"
         >

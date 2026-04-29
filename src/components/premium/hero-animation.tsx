@@ -103,18 +103,18 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
     if (waitForIntro && !introStarted) return;
 
     const frameCount = 40;
-    const imgs: HTMLImageElement[] = [];
+    const imgs: HTMLImageElement[] = new Array(frameCount);
     let loaded = 0;
     let errored = 0;
 
     const checkDone = () => {
-      if (loaded >= 8 && !ready) { // Snappier ready state
-        imagesRef.current = imgs;
+      if (loaded >= 12 && !ready) { // Snappier ready state
+        imagesRef.current = imgs.filter(Boolean);
         setReady(true);
       }
       
       if (loaded + errored >= frameCount) {
-        const valid = imgs.filter((i) => i.complete && i.naturalWidth > 0);
+        const valid = imgs.filter((i) => i && i.complete && i.naturalWidth > 0);
         if (valid.length > 0) {
           imagesRef.current = valid;
           setReady(true);
@@ -124,16 +124,37 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
       }
     };
 
-    for (let i = 1; i <= frameCount; i++) {
-      const img = new Image();
-      // @ts-ignore - Low priority as hero is secondary to logo intro
-      img.fetchPriority = 'low';
-      
-      img.src = `/animations/hero/ezgif-frame-${i.toString().padStart(3, "0")}.jpg`;
-      img.onload = () => { loaded++; checkDone(); };
-      img.onerror = () => { errored++; checkDone(); };
-      imgs.push(img);
-    }
+    // Load in small batches to prevent simultaneous network saturation
+    const loadFrames = async () => {
+      const batchSize = 5;
+      for (let i = 1; i <= frameCount; i += batchSize) {
+        const batch = [];
+        for (let j = i; j < i + batchSize && j <= frameCount; j++) {
+          const img = new Image();
+          // @ts-ignore
+          img.fetchPriority = 'low';
+          img.src = `/animations/hero/ezgif-frame-${j.toString().padStart(3, "0")}.jpg`;
+          
+          const promise = img.decode()
+            .then(() => {
+              imgs[j - 1] = img;
+              loaded++;
+              checkDone();
+            })
+            .catch(() => {
+              errored++;
+              checkDone();
+            });
+          batch.push(promise);
+        }
+        // Wait for batch to finish decoding before next batch to keep main thread fluid
+        await Promise.all(batch);
+        // Small breathing room for other tasks
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+    };
+
+    loadFrames();
   }, [ready, introStarted, waitForIntro]);
 
   // ─── Animation Sequence ───
@@ -151,7 +172,9 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
 
     let frame = 0;
     let lastTime = 0;
-    const fps = 18; // Smoother and faster for premium feel
+    // PERFORMANCE: Lower FPS on mobile to save battery/CPU, higher on desktop for premium feel
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const fps = isMobile ? 15 : 22; 
     const interval = 1000 / fps;
 
     const animate = (time: number) => {
@@ -161,16 +184,16 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
       const elapsed = time - lastTime;
 
       if (elapsed >= interval) {
-        if (frame < 40 && images[frame]?.complete) {
+        if (frame < images.length && images[frame]?.complete) {
           drawFrame(frame);
           frame++;
           lastTime = time - (elapsed % interval);
-        } else if (frame >= 40) {
-            frame = 40;
+        } else if (frame >= images.length) {
+            frame = images.length - 1;
         }
       }
 
-      if (frame < 40) {
+      if (frame < images.length - 1) {
         rafRef.current = requestAnimationFrame(animate);
       } else {
         signalHeroComplete();
@@ -187,6 +210,7 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
       }
     };
   }, [ready, phase, waitForIntro, drawFrame, signalHeroComplete, played]);
+
 
   return (
     <div 

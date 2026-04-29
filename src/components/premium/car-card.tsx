@@ -61,8 +61,9 @@ export function CarCard({ vehicle, index }: CarCardProps) {
                 src={mainImage}
                 alt={`${vehicle.brand} ${vehicle.model}`}
                 fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
                 className="object-cover brightness-[0.85] group-hover:brightness-100 transition-all duration-1000"
+                quality={75}
               />
             </motion.div>
           ) : (

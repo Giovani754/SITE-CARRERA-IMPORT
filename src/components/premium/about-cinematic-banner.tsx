@@ -28,8 +28,9 @@ export function AboutCinematicBanner() {
           src="/images/about_banner_v2.png"
           alt="Curadoria automotiva premium e confiança Carrera Imports"
           fill
+          sizes="100vw"
+          quality={85}
           className="object-cover brightness-[0.35] contrast-[1.15] saturate-[0.8]"
-          priority
         />
       </motion.div>
 
