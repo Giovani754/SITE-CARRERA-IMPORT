@@ -32,7 +32,8 @@ export async function logout() {
 export async function requestPasswordReset(formData: FormData) {
   const supabase = await createClient()
   const email = formData.get('email') as string
-  const origin = (await import('next/headers')).headers().get('origin')
+  const headersList = await (await import('next/headers')).headers()
+  const origin = headersList.get('origin')
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${origin}/adm/redefinir-senha`,
