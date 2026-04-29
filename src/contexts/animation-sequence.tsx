@@ -13,7 +13,7 @@ import { usePathname } from "next/navigation";
 
 // ─────────────────────────────────────────────────────────
 // Animation Sequence Context
-// Controls the cinematic sequence: Intro → Hero → Content
+// Controls the cinematic sequence: Intro → Content
 // ─────────────────────────────────────────────────────────
 
 type SequencePhase = "intro" | "content";
@@ -77,22 +77,6 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
         phase, 
         introNeeded, 
         signalIntroComplete 
-      }}
-    >
-      {children}
-    </AnimationSequenceContext.Provider>
-  );
-}
-
-  return (
-    <AnimationSequenceContext.Provider
-      value={{ 
-        phase, 
-        introNeeded, 
-        introStarted, 
-        signalIntroStarted, 
-        signalIntroComplete, 
-        signalHeroComplete 
       }}
     >
       {children}
