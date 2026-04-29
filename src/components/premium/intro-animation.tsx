@@ -1,211 +1,92 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAnimationSequence } from "@/contexts/animation-sequence";
+import Image from "next/image";
 
 export function IntroAnimation() {
-  const { introNeeded, signalIntroStarted, signalIntroComplete } = useAnimationSequence();
+  const { introNeeded, signalIntroComplete } = useAnimationSequence();
+  const [phase, setPhase] = useState<"hidden" | "logo" | "outro">("hidden");
 
-  const [internalPhase, setInternalPhase] = useState<"loading" | "playing" | "fading" | "gone">("loading");
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [progress, setProgress] = useState(0);
-  const imagesRef = useRef<HTMLImageElement[]>([]);
-  const hasFinishedRef = useRef(false);
-
-  // Detect mobile
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
-  }, []);
-
-  const finish = useCallback(() => {
-    if (hasFinishedRef.current) return;
-    hasFinishedRef.current = true;
-
-    setInternalPhase("fading");
-    const t = setTimeout(() => {
-      setInternalPhase("gone");
-      signalIntroComplete();
-    }, isMobile ? 600 : 1000);
-    return () => clearTimeout(t);
-  }, [signalIntroComplete, isMobile]);
-
-  // Preload frames
   useEffect(() => {
     if (!introNeeded) return;
 
-    // Safety timeout: Site must work even if assets fail
-    const safetyTimer = setTimeout(() => {
-      if (internalPhase === "loading") finish();
-    }, isMobile ? 5000 : 8000);
+    // Sequence timing
+    const t1 = setTimeout(() => setPhase("logo"), 500);
+    const t2 = setTimeout(() => setPhase("outro"), 3500);
+    const t3 = setTimeout(() => signalIntroComplete(), 4500);
 
-    const frameCount = isMobile ? 25 : 40; // Even fewer for mobile stability
-    const imgs: HTMLImageElement[] = new Array(frameCount);
-    let loaded = 0;
-    let failed = 0;
-
-    const checkDone = () => {
-      const totalAttempted = loaded + failed;
-      const startThreshold = isMobile ? 5 : 10;
-      
-      if (totalAttempted >= startThreshold && internalPhase === "loading") {
-        imagesRef.current = imgs.filter(Boolean);
-        setInternalPhase("playing");
-        signalIntroStarted();
-      }
-
-      if (totalAttempted >= frameCount) {
-        if (loaded < 3) finish(); // Critical failure fallback
-      }
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
     };
+  }, [introNeeded, signalIntroComplete]);
 
-    // Sequential but fast loading
-    const loadAssets = async () => {
-      for (let i = 1; i <= frameCount; i++) {
-        const img = new Image();
-        const frameIdx = isMobile ? Math.floor((i * 40) / 25) : i;
-        const frameNum = Math.min(frameIdx, 40).toString().padStart(3, "0");
-        
-        img.src = `/animations/intro/ezgif-frame-${frameNum}.jpg`;
-        // @ts-ignore
-        if (i <= 5) img.fetchPriority = 'high';
-
-        img.onload = () => {
-          imgs[i-1] = img;
-          loaded++;
-          setProgress(Math.round(((loaded + failed) / frameCount) * 100));
-          checkDone();
-        };
-        img.onerror = () => {
-          failed++;
-          setProgress(Math.round(((loaded + failed) / frameCount) * 100));
-          checkDone();
-        };
-        
-        // Yield to main thread every few images
-        if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
-      }
-    };
-
-    loadAssets();
-    return () => clearTimeout(safetyTimer);
-  }, [introNeeded, isMobile, internalPhase, finish, signalIntroStarted]);
-
-  // Canvas playback
-  useEffect(() => {
-    if (internalPhase !== "playing") return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.0 : 1.5);
-    canvas.width = window.innerWidth * dpr;
-    canvas.height = window.innerHeight * dpr;
-
-    const ctx = canvas.getContext("2d", { alpha: false });
-    if (!ctx) { finish(); return; }
-
-    let frame = 0;
-    let rafId: number;
-    let lastTime = 0;
-    const fps = isMobile ? 15 : 20; 
-    const interval = 1000 / fps;
-
-    const animate = (time: number) => {
-      if (!lastTime) lastTime = time;
-      const elapsed = time - lastTime;
-      const images = imagesRef.current;
-      
-      if (elapsed >= interval) {
-        if (frame < images.length) {
-          const img = images[frame];
-          if (img && img.complete) {
-            const cA = canvas.width / canvas.height;
-            const iA = img.naturalWidth / img.naturalHeight;
-            let dw: number, dh: number, dx: number, dy: number;
-
-            // Logic: On mobile, always CONTAIN the logo to ensure visibility
-            if (isMobile) {
-              const scale = 0.8;
-              if (cA > iA) {
-                dh = canvas.height * scale;
-                dw = dh * iA;
-              } else {
-                dw = canvas.width * scale;
-                dh = dw / iA;
-              }
-              dx = (canvas.width - dw) / 2;
-              dy = (canvas.height - dh) / 2;
-            } else {
-              // Desktop: Cinematic COVER
-              if (cA > iA) {
-                dw = canvas.width;
-                dh = canvas.width / iA;
-                dx = 0;
-                dy = (canvas.height - dh) / 2;
-              } else {
-                dh = canvas.height;
-                dw = canvas.height * iA;
-                dx = (canvas.width - dw) / 2;
-                dy = 0;
-              }
-            }
-
-            ctx.fillStyle = "#030303";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, dx, dy, dw, dh);
-            frame++;
-            lastTime = time - (elapsed % interval);
-          } else {
-            frame++; // Skip missing frame
-          }
-        }
-      }
-
-      if (frame < images.length) {
-        rafId = requestAnimationFrame(animate);
-      } else {
-        const t = setTimeout(finish, isMobile ? 200 : 400);
-        return () => clearTimeout(t);
-      }
-    };
-
-    rafId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(rafId);
-  }, [internalPhase, isMobile, finish]);
-
-  if (!introNeeded || internalPhase === "gone") return null;
+  if (!introNeeded) return null;
 
   return (
     <AnimatePresence>
-      {(internalPhase === "loading" || internalPhase === "playing") && (
+      {phase !== "outro" && (
         <motion.div
-          key="intro-overlay"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="fixed inset-0 z-[9999] bg-[#030303] flex items-center justify-center overflow-hidden"
         >
-          {internalPhase === "loading" && (
-            <div className="flex flex-col items-center gap-6">
-              <div className="w-48 h-[1px] bg-white/5 relative overflow-hidden rounded-full">
-                <motion.div
-                  className="absolute top-0 left-0 h-full bg-brand-gold"
-                  initial={{ width: "0%" }}
-                  animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.3 }}
-                />
-              </div>
-              <span className="text-[10px] uppercase tracking-[0.4em] text-white/20 font-bold">
-                Carrera Imports
-              </span>
-            </div>
-          )}
+          <div className="relative">
+            {/* Logo Entrance */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, filter: "blur(20px)" }}
+              animate={phase === "logo" ? { 
+                opacity: 1, 
+                scale: 1, 
+                filter: "blur(0px)" 
+              } : {}}
+              transition={{ 
+                duration: 2, 
+                ease: [0.16, 1, 0.3, 1] 
+              }}
+              className="relative z-10"
+            >
+              <Image
+                src="/logo-carrera-imports.png"
+                alt="Carrera Imports"
+                width={320}
+                height={80}
+                className="w-[240px] md:w-[320px] h-auto object-contain brightness-110"
+                priority
+              />
+            </motion.div>
 
-          {internalPhase === "playing" && (
-            <canvas ref={canvasRef} className="w-full h-full object-cover" />
-          )}
+            {/* Cinematic Glow Effect */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={phase === "logo" ? { 
+                opacity: [0, 0.4, 0.2],
+                scale: [0.8, 1.2, 1.1],
+              } : {}}
+              transition={{ 
+                duration: 4, 
+                ease: "easeOut",
+                times: [0, 0.5, 1]
+              }}
+              className="absolute inset-0 bg-brand-gold/20 blur-[80px] rounded-full -z-10"
+            />
+          </div>
+
+          {/* Bottom Label */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={phase === "logo" ? { opacity: 0.2, y: 0 } : {}}
+            transition={{ duration: 1.5, delay: 1, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute bottom-12 left-1/2 -translate-x-1/2"
+          >
+            <span className="text-[10px] uppercase tracking-[0.8em] text-white font-bold">
+              Boutique Automotiva
+            </span>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

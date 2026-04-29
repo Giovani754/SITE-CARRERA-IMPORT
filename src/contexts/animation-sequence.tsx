@@ -16,28 +16,18 @@ import { usePathname } from "next/navigation";
 // Controls the cinematic sequence: Intro → Hero → Content
 // ─────────────────────────────────────────────────────────
 
-type SequencePhase =
-  | "intro"       // Logo intro is playing
-  | "transition"  // Brief pause between intro and hero
-  | "hero"        // Hero drift animation is playing
-  | "complete";   // All animations done, site is static
+type SequencePhase = "intro" | "content";
 
 interface AnimationSequenceContextType {
   phase: SequencePhase;
-  introNeeded: boolean;  // Whether the intro should play this session
-  introStarted: boolean; // Whether the intro has actually begun its playback
-  signalIntroStarted: () => void;
+  introNeeded: boolean;
   signalIntroComplete: () => void;
-  signalHeroComplete: () => void;
 }
 
 const AnimationSequenceContext = createContext<AnimationSequenceContextType>({
-  phase: "complete",
+  phase: "content",
   introNeeded: false,
-  introStarted: false,
-  signalIntroStarted: () => {},
   signalIntroComplete: () => {},
-  signalHeroComplete: () => {},
 });
 
 export function useAnimationSequence() {
@@ -45,19 +35,17 @@ export function useAnimationSequence() {
 }
 
 export function AnimationSequenceProvider({ children }: { children: ReactNode }) {
-  const [phase, setPhase] = useState<SequencePhase>("complete");
+  const [phase, setPhase] = useState<SequencePhase>("content");
   const [introNeeded, setIntroNeeded] = useState(false);
-  const [introStarted, setIntroStarted] = useState(false);
   const pathname = usePathname();
 
-  // On mount or path change, check if intro should play
+  // Handle initialization and navigation
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     if (pathname !== "/") {
       setIntroNeeded(false);
-      setIntroStarted(false);
-      setPhase("complete");
+      setPhase("content");
       return;
     }
 
@@ -66,42 +54,35 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
       if (!hasSeen) {
         setIntroNeeded(true);
         setPhase("intro");
-        setIntroStarted(false);
       } else {
         setIntroNeeded(false);
-        setPhase("hero");
-        setIntroStarted(true);
+        setPhase("content");
       }
     } catch {
       setIntroNeeded(false);
-      setPhase("hero");
-      setIntroStarted(true);
+      setPhase("content");
     }
   }, [pathname]);
 
-  // Called by IntroAnimation when it actually starts its playback
-  const signalIntroStarted = useCallback(() => {
-    setIntroStarted(true);
-  }, []);
-
-  // Called by IntroAnimation when it finishes completely
   const signalIntroComplete = useCallback(() => {
     try {
       sessionStorage.setItem("carrera-intro-seen", "true");
     } catch {}
-
-    setPhase("transition");
-    // Brief pause for visual elegance
-    const t = setTimeout(() => {
-      setPhase("hero");
-    }, 150);
-    return () => clearTimeout(t);
+    setPhase("content");
   }, []);
 
-  // Called by HeroAnimation when it finishes
-  const signalHeroComplete = useCallback(() => {
-    setPhase("complete");
-  }, []);
+  return (
+    <AnimationSequenceContext.Provider
+      value={{ 
+        phase, 
+        introNeeded, 
+        signalIntroComplete 
+      }}
+    >
+      {children}
+    </AnimationSequenceContext.Provider>
+  );
+}
 
   return (
     <AnimationSequenceContext.Provider
