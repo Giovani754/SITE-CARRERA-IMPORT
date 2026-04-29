@@ -62,19 +62,13 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
             {/* Image Column */}
             <div className="lg:col-span-5 order-2 lg:order-1">
               <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                 className="relative editorial-shadow"
               >
-                <motion.div
-                  className="aspect-[4/5] relative overflow-hidden rounded-sm"
-                  initial={{ filter: "grayscale(100%)" }}
-                  whileInView={{ filter: "grayscale(0%)" }}
-                  viewport={{ once: false, amount: 0.4 }}
-                  transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
-                >
+                <div className="aspect-[4/5] relative overflow-hidden rounded-sm">
                   <Image
                     src="/images/about_detail.png"
                     alt="Consultoria automotiva premium Carrera Imports — curadoria de veículos de alto padrão em São Paulo"
@@ -84,15 +78,9 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
                     className="object-cover brightness-[0.8] transition-transform duration-[2s] ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
-                </motion.div>
+                </div>
                 {/* Decorative Frame */}
-                <motion.div
-                  initial={{ opacity: 0, x: 8, y: 8 }}
-                  whileInView={{ opacity: 1, x: 3, y: 3 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.5, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute -inset-4 border border-brand-gold/10 -z-10"
-                />
+                <div className="absolute -inset-4 border border-brand-gold/10 -z-10 opacity-40" />
               </motion.div>
             </div>
 
@@ -163,26 +151,20 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
       <section className="py-28 md:py-48 px-6 lg:px-16 bg-[#050505] relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
           <header className="mb-24 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/5 pb-16">
-            <div className="max-w-2xl">
-              <motion.span 
-                initial={{ opacity: 0, x: -10 }}
-                whileInView={{ opacity: 0.5, x: 0 }}
-                viewport={{ once: true }}
-                className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-8 block"
-              >
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="max-w-2xl"
+            >
+              <span className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-8 block opacity-50">
                 Expertise Estratégica
-              </motion.span>
+              </span>
               <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif italic tracking-tight text-white/95 leading-[1.05]">
-                <motion.span
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  Onde a negociação deixa de ser aposta
-                </motion.span>
+                Onde a negociação deixa de ser aposta
               </h2>
-            </div>
+            </motion.div>
             <motion.p 
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 0.3 }}
@@ -212,38 +194,26 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
       <section className="py-12 md:py-24 px-6 lg:px-12 bg-background relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-12 mb-20 md:mb-28">
-            <div className="max-w-2xl">
-              <motion.span 
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 0.5, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-8 block"
-              >
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="max-w-2xl"
+            >
+              <span className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-8 block opacity-50">
                 Curadoria Carrera
-              </motion.span>
+              </span>
               
-              <motion.h2 
-                initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-                whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="text-4xl md:text-5xl lg:text-7xl font-serif italic mb-8 leading-[1] tracking-tight text-white/95"
-              >
+              <h2 className="text-4xl md:text-5xl lg:text-7xl font-serif italic mb-8 leading-[1] tracking-tight text-white/95">
                 Veículos Selecionados
-              </motion.h2>
+              </h2>
               
-              <motion.p 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 0.4, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="text-white text-base lg:text-xl font-light max-w-xl leading-relaxed"
-              >
+              <p className="text-white text-base lg:text-xl font-light max-w-xl leading-relaxed opacity-60">
                 Cada veículo em nosso acervo é rigorosamente avaliado quanto a
                 procedência, histórico e estado de conservação.
-              </motion.p>
-            </div>
+              </p>
+            </motion.div>
 
             <motion.div
               initial={{ opacity: 0, x: 20 }}

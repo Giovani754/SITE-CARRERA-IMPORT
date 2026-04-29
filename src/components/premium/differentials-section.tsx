@@ -103,7 +103,7 @@ export function DifferentialsSection() {
       y: 0,
       filter: "none",
       transition: {
-        duration: 1.5,
+        duration: isMobile ? 0.6 : 1,
         ease: [0.16, 1, 0.3, 1],
       },
     },
@@ -170,10 +170,10 @@ export function DifferentialsSection() {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-120px" }}
+          viewport={{ once: true, margin: isMobile ? "-20px" : "-100px" }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-24"
         >
-          {differentials.map((item, idx) => (
+          {differentials.map((item) => (
             <motion.div
               key={item.title}
               variants={itemVariants}
@@ -182,41 +182,22 @@ export function DifferentialsSection() {
               <div className="relative">
                 {!isMobile && <div className="absolute inset-0 bg-brand-gold/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />}
                 
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-                  whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: isMobile ? 0.2 : 0.8 + idx * 0.1, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                  className="shrink-0 w-20 h-20 border border-white/[0.06] rounded-sm flex items-center justify-center text-brand-gold/40 group-hover:text-brand-gold group-hover:border-brand-gold/30 group-hover:bg-brand-gold/[0.05] transition-all duration-1000 ease-out z-10 relative"
-                >
+                <div className="shrink-0 w-20 h-20 border border-white/[0.06] rounded-sm flex items-center justify-center text-brand-gold/40 group-hover:text-brand-gold group-hover:border-brand-gold/30 group-hover:bg-brand-gold/[0.05] transition-all duration-1000 ease-out z-10 relative">
                   <item.icon size={30} strokeWidth={0.75} />
-                </motion.div>
+                </div>
                 
                 <div className="absolute -top-1 -left-1 w-3 h-3 border-t border-l border-brand-gold/0 group-hover:border-brand-gold/40 transition-all duration-700" />
                 <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-brand-gold/0 group-hover:border-brand-gold/40 transition-all duration-700" />
               </div>
 
               <div className="relative">
-                <div className="overflow-hidden mb-5">
-                  <motion.h3 
-                    whileInView={{ y: [20, 0], opacity: [0, 1] }}
-                    viewport={{ once: true }}
-                    transition={{ delay: isMobile ? 0.3 : 1 + idx * 0.1, duration: 1 }}
-                    className="text-xl md:text-2xl font-serif italic text-white/90 tracking-tight group-hover:text-brand-gold transition-all duration-700"
-                  >
-                    {item.title}
-                  </motion.h3>
-                </div>
+                <h3 className="text-xl md:text-2xl font-serif italic text-white/90 tracking-tight group-hover:text-brand-gold transition-all duration-700 mb-5">
+                  {item.title}
+                </h3>
                 
-                <motion.p 
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: isMobile ? 0.4 : 1.2 + idx * 0.1, duration: 1 }}
-                  className="text-white/40 text-[15px] md:text-base leading-[1.9] font-sans font-light group-hover:text-white/70 transition-colors duration-700 max-w-[290px]"
-                >
+                <p className="text-white/40 text-[15px] md:text-base leading-[1.9] font-sans font-light group-hover:text-white/70 transition-colors duration-700 max-w-[290px]">
                   {item.description}
-                </motion.p>
+                </p>
                 
                 <div className="mt-10 flex items-center gap-4">
                   <div className="h-[1px] w-0 bg-brand-gold/30 group-hover:w-16 transition-all duration-1000 ease-out" />

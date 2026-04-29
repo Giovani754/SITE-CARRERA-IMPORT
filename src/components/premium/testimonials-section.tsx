@@ -64,7 +64,7 @@ export function TestimonialsSection() {
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10 mb-16 md:mb-24 text-center">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}

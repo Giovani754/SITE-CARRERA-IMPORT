@@ -149,13 +149,13 @@ export function FeaturedVehiclesShowcase({ vehicles }: FeaturedVehiclesShowcaseP
 
           <div className="relative flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10">
             <div className="flex-1 w-full">
-              <AnimatePresence mode="wait">
+              <AnimatePresence initial={false}>
                 <motion.div
                   key={activeVehicle.id}
-                  initial={{ y: 30, opacity: 0 }}
+                  initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -30, opacity: 0 }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  exit={{ y: -20, opacity: 0 }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <span className="text-brand-gold/60 text-[10px] md:text-xs font-medium uppercase tracking-[0.3em] mb-3 block">
                     {activeVehicle.brand}
@@ -195,12 +195,13 @@ export function FeaturedVehiclesShowcase({ vehicles }: FeaturedVehiclesShowcaseP
             </div>
 
             <div className="flex flex-row lg:flex-col items-center lg:items-end justify-between lg:justify-end w-full lg:w-auto gap-6 lg:gap-8 pt-6 lg:pt-0 border-t lg:border-t-0 border-white/5">
-              <AnimatePresence mode="wait">
+              <AnimatePresence initial={false}>
                 <motion.div
                   key={`price-${activeVehicle.id}`}
-                  initial={{ scale: 0.9, opacity: 0 }}
+                  initial={{ scale: 0.95, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 1.1, opacity: 0 }}
+                  exit={{ scale: 1.05, opacity: 0 }}
+                  transition={{ duration: 0.4 }}
                 >
                   <div className="text-left lg:text-right">
                     <span className="text-[8px] md:text-[9px] uppercase tracking-[0.3em] md:tracking-[0.4em] text-white/30 font-bold mb-1 block">Investimento</span>

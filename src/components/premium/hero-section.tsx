@@ -40,7 +40,7 @@ export function HeroSection({
 
           {/* Headline */}
           <motion.h1
-            initial={{ opacity: 0, y: 25 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.5, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="text-[1.75rem] sm:text-3xl md:text-5xl lg:text-[3.8rem] font-serif italic text-white/95 leading-[1.1] md:leading-[1.06] mb-8 tracking-tight max-w-sm md:max-w-none"
@@ -50,7 +50,7 @@ export function HeroSection({
 
           {/* Subheadline */}
           <motion.p
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.5, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
             className="text-white/35 text-[15px] md:text-base max-w-lg leading-[1.9] font-sans font-light"

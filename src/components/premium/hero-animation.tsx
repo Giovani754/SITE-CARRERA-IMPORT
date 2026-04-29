@@ -117,10 +117,17 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
 
   // ─── Preload frames with Staggered Priority ───
   useEffect(() => {
-    if (typeof window === "undefined" || imagesRef.current.length > 0) return;
+    if (typeof window === "undefined") return;
     
+    // If images are already in ref (e.g. from a previous mount that stayed in memory),
+    // and we are returning to the page, we should be ready almost instantly.
+    if (imagesRef.current.length > 0) {
+      setReady(true);
+      setTimeout(() => drawFrame(0), 10);
+      return;
+    }
+
     // We only wait for introStarted if waitForIntro is true
-    // If introStarted is false, it might mean we just navigated home and context is resetting
     if (waitForIntro && !introStarted) return;
 
     const frameCount = isMobile ? 20 : 40;
@@ -133,7 +140,7 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
       if (loaded >= threshold && !ready) {
         imagesRef.current = imgs.filter(Boolean);
         setReady(true);
-        // DRAW FIRST FRAME IMMEDIATELY when ready to avoid black screen
+        // DRAW FIRST FRAME IMMEDIATELY
         setTimeout(() => drawFrame(0), 10);
       }
       
@@ -149,7 +156,7 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
     };
 
     const loadFrames = async () => {
-      const batchSize = isMobile ? 3 : 5;
+      const batchSize = isMobile ? 4 : 8; // Slightly larger batches if not initial load
       for (let i = 1; i <= frameCount; i += batchSize) {
         const batch = [];
         for (let j = i; j < i + batchSize && j <= frameCount; j++) {
@@ -174,7 +181,8 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
           batch.push(promise);
         }
         await Promise.all(batch);
-        await new Promise(resolve => setTimeout(resolve, isMobile ? 100 : 50));
+        // Minimal delay to keep UI snappy
+        await new Promise(resolve => setTimeout(resolve, isMobile ? 50 : 20));
       }
     };
 

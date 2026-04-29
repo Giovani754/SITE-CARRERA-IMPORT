@@ -45,48 +45,22 @@ export function ServiceCard({
     >
       {/* 01. Number & Icon Section */}
       <div className="flex items-center gap-10 md:w-1/3 mb-8 md:mb-0">
-        <motion.span 
-          initial={{ opacity: 0, scale: 0.7, x: -20 }}
-          whileInView={{ opacity: 1, scale: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.2, delay: isMobile ? 0.1 : index * 0.15 + 0.4 }}
-          className="text-5xl md:text-6xl font-serif italic text-white/[0.05] group-hover:text-brand-gold/20 transition-colors duration-1000 select-none"
-        >
+        <span className="text-5xl md:text-6xl font-serif italic text-white/[0.05] group-hover:text-brand-gold/20 transition-colors duration-1000 select-none">
           {displayNumber}
-        </motion.span>
-        <motion.div 
-          initial={{ opacity: 0, rotate: -20, scale: 0.8 }}
-          whileInView={{ opacity: 1, rotate: 0, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.2, delay: isMobile ? 0.2 : index * 0.15 + 0.6 }}
-          className="text-brand-gold/20 group-hover:text-brand-gold group-hover:scale-110 transition-all duration-1000"
-        >
+        </span>
+        <div className="text-brand-gold/20 group-hover:text-brand-gold group-hover:scale-110 transition-all duration-1000">
           <Icon size={28} strokeWidth={1} />
-        </motion.div>
+        </div>
       </div>
 
       {/* 02. Title & Description Section */}
       <div className="flex flex-col md:w-2/3">
-        <div className="overflow-hidden">
-          <motion.h3 
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.2, delay: isMobile ? 0.15 : index * 0.15 + 0.5 }}
-            className="text-2xl md:text-4xl font-serif italic mb-5 text-white/95 group-hover:text-brand-gold transition-colors duration-1000 tracking-tight"
-          >
-            {title}
-          </motion.h3>
-        </div>
-        <motion.p 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, delay: isMobile ? 0.25 : index * 0.15 + 0.8 }}
-          className="text-white/40 text-sm md:text-lg leading-[1.9] font-sans font-light max-w-2xl group-hover:text-white/70 transition-colors duration-1000"
-        >
+        <h3 className="text-2xl md:text-4xl font-serif italic mb-5 text-white/95 group-hover:text-brand-gold transition-colors duration-1000 tracking-tight">
+          {title}
+        </h3>
+        <p className="text-white/40 text-sm md:text-lg leading-[1.9] font-sans font-light max-w-2xl group-hover:text-white/70 transition-colors duration-1000">
           {description}
-        </motion.p>
+        </p>
       </div>
 
       {/* 03. Hover Accent */}
