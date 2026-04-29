@@ -21,6 +21,7 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false);
+  const [canvasSized, setCanvasSized] = useState(false);
   const [played, setPlayed] = useState(false);
   
   const currentFrameRef = useRef<number>(0);
@@ -37,13 +38,11 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
 
   // ─── Reset on mount ───
   useEffect(() => {
-    // HARD RESET local states on mount
     setPlayed(false);
     setReady(globalHeroFrames.length > 0);
     setFailed(false);
     currentFrameRef.current = 0;
     
-    // Cleanup function
     return () => {
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
@@ -55,11 +54,13 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
   // ─── Draw logic ───
   const drawFrame = useCallback((idx: number) => {
     const canvas = canvasRef.current;
-    const images = globalHeroFrames;
-    if (!canvas || images.length === 0) return;
+    if (!canvas || globalHeroFrames.length === 0) return;
     
-    const img = images[idx] || images[images.length - 1];
+    const img = globalHeroFrames[idx] || globalHeroFrames[globalHeroFrames.length - 1];
     if (!img || !img.complete || img.naturalWidth === 0) return;
+
+    // Ensure canvas has dimensions
+    if (canvas.width === 0 || canvas.height === 0) return;
 
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
@@ -105,6 +106,7 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
       canvasRef.current.width = width * dpr;
       canvasRef.current.height = height * dpr;
 
+      setCanvasSized(true);
       drawFrame(currentFrameRef.current);
     });
 
@@ -116,15 +118,15 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
   useEffect(() => {
     if (typeof window === "undefined") return;
     
-    // Check if we already have the frames in global cache
     if (globalHeroFrames.length > 0) {
       if (!ready) setReady(true);
-      // Force initial frame draw after a micro-delay for canvas readiness
-      const t = setTimeout(() => drawFrame(0), 50);
-      return () => clearTimeout(t);
+      // Wait for canvas to be sized before drawing
+      if (canvasSized) {
+        drawFrame(0);
+      }
+      return;
     }
 
-    // Wait for intro if needed
     if (waitForIntro && !introStarted) return;
 
     const frameCount = isMobile ? 20 : 40;
@@ -137,7 +139,6 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
       if (loaded >= threshold && !ready) {
         globalHeroFrames = imgs.filter(Boolean);
         setReady(true);
-        setTimeout(() => drawFrame(0), 10);
       }
       
       if (loaded + errored >= frameCount) {
@@ -181,11 +182,12 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
     };
 
     loadFrames();
-  }, [introStarted, waitForIntro, isMobile, ready, drawFrame]);
+  }, [introStarted, waitForIntro, isMobile, ready, drawFrame, canvasSized]);
 
   // ─── Animation Loop ───
   useEffect(() => {
-    if (!ready || played) return;
+    // We need ready frames AND a sized canvas
+    if (!ready || !canvasSized || played) return;
     if (waitForIntro && (phase === "intro" || phase === "transition")) return;
 
     const images = globalHeroFrames;
@@ -223,11 +225,12 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
         rafRef.current = null;
       }
     };
-  }, [ready, phase, waitForIntro, drawFrame, signalHeroComplete, played, isMobile]);
+  }, [ready, canvasSized, phase, waitForIntro, drawFrame, signalHeroComplete, played, isMobile]);
 
   return (
     <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden bg-[#030303]">
-      {!ready && !failed && (
+      {/* Background Poster while loading */}
+      {(!ready || !canvasSized) && !failed && (
         <div className="absolute inset-0">
           <img 
             src="/animations/hero/ezgif-frame-001.jpg" 
@@ -244,7 +247,7 @@ export function HeroAnimation({ waitForIntro = true }: HeroAnimationProps) {
           ref={canvasRef}
           className={cn(
             "w-full h-full object-cover brightness-75 contrast-125 transition-opacity duration-1000",
-            ready ? "opacity-100" : "opacity-0"
+            (ready && canvasSized) ? "opacity-100" : "opacity-0"
           )}
         />
       )}

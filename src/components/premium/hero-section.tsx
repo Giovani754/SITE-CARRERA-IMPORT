@@ -18,8 +18,7 @@ export function HeroSection({
 
   return (
     <section className="relative min-h-screen w-full flex items-end overflow-hidden bg-[#030303]">
-      {/* Cinematic Background Layer - Keyed to force restart on home return */}
-      <HeroAnimation key={`hero-anim-${pathname}`} />
+      <HeroAnimation />
 
       {/* Content Layer — key forces re-animation on route change */}
       <motion.div
