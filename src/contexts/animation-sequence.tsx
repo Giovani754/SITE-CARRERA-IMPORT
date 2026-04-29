@@ -62,46 +62,40 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
     }
 
     try {
-      // Force a brief state reset to ensure child components detect a "fresh" start
-      setIntroStarted(false);
-      
       const hasSeen = sessionStorage.getItem("carrera-intro-seen");
       if (!hasSeen) {
         setIntroNeeded(true);
         setPhase("intro");
+        setIntroStarted(false);
       } else {
         setIntroNeeded(false);
-        // Use a micro-delay to ensure the state change is propagated
-        setTimeout(() => {
-          setIntroStarted(true);
-          setPhase("hero");
-        }, 10);
+        setPhase("hero");
+        setIntroStarted(true);
       }
     } catch {
       setIntroNeeded(false);
-      setTimeout(() => {
-        setIntroStarted(true);
-        setPhase("hero");
-      }, 10);
+      setPhase("hero");
+      setIntroStarted(true);
     }
   }, [pathname]);
 
-  // Called by IntroAnimation when it actually starts playing (buffer ready)
+  // Called by IntroAnimation when it actually starts its playback
   const signalIntroStarted = useCallback(() => {
     setIntroStarted(true);
   }, []);
 
-  // Called by IntroAnimation when it finishes
+  // Called by IntroAnimation when it finishes completely
   const signalIntroComplete = useCallback(() => {
     try {
       sessionStorage.setItem("carrera-intro-seen", "true");
     } catch {}
 
-    // Transition phase: brief elegant pause
     setPhase("transition");
-    setTimeout(() => {
+    // Brief pause for visual elegance
+    const t = setTimeout(() => {
       setPhase("hero");
-    }, 150); // Even faster transition for better flow
+    }, 150);
+    return () => clearTimeout(t);
   }, []);
 
   // Called by HeroAnimation when it finishes
