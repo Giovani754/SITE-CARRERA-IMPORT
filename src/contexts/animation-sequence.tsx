@@ -16,18 +16,28 @@ import { usePathname } from "next/navigation";
 // Controls the cinematic sequence: Intro → Content
 // ─────────────────────────────────────────────────────────
 
-type SequencePhase = "intro" | "content";
+type SequencePhase =
+  | "intro"       // Logo intro is playing
+  | "transition"  // Brief pause between intro and hero
+  | "hero"        // Hero drift animation is playing
+  | "complete";   // All animations done, site is static
 
 interface AnimationSequenceContextType {
   phase: SequencePhase;
   introNeeded: boolean;
+  introStarted: boolean; 
+  signalIntroStarted: () => void;
   signalIntroComplete: () => void;
+  signalHeroComplete: () => void;
 }
 
 const AnimationSequenceContext = createContext<AnimationSequenceContextType>({
-  phase: "content",
+  phase: "complete",
   introNeeded: false,
+  introStarted: false,
+  signalIntroStarted: () => {},
   signalIntroComplete: () => {},
+  signalHeroComplete: () => {},
 });
 
 export function useAnimationSequence() {
@@ -35,17 +45,18 @@ export function useAnimationSequence() {
 }
 
 export function AnimationSequenceProvider({ children }: { children: ReactNode }) {
-  const [phase, setPhase] = useState<SequencePhase>("content");
+  const [phase, setPhase] = useState<SequencePhase>("complete");
   const [introNeeded, setIntroNeeded] = useState(false);
+  const [introStarted, setIntroStarted] = useState(false);
   const pathname = usePathname();
 
-  // Handle initialization and navigation
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     if (pathname !== "/") {
       setIntroNeeded(false);
-      setPhase("content");
+      setIntroStarted(false);
+      setPhase("complete");
       return;
     }
 
@@ -54,21 +65,37 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
       if (!hasSeen) {
         setIntroNeeded(true);
         setPhase("intro");
+        setIntroStarted(false);
       } else {
         setIntroNeeded(false);
-        setPhase("content");
+        setPhase("hero");
+        setIntroStarted(true);
       }
     } catch {
       setIntroNeeded(false);
-      setPhase("content");
+      setPhase("hero");
+      setIntroStarted(true);
     }
   }, [pathname]);
+
+  const signalIntroStarted = useCallback(() => {
+    setIntroStarted(true);
+  }, []);
 
   const signalIntroComplete = useCallback(() => {
     try {
       sessionStorage.setItem("carrera-intro-seen", "true");
     } catch {}
-    setPhase("content");
+
+    setPhase("transition");
+    const t = setTimeout(() => {
+      setPhase("hero");
+    }, 150);
+    return () => clearTimeout(t);
+  }, []);
+
+  const signalHeroComplete = useCallback(() => {
+    setPhase("complete");
   }, []);
 
   return (
@@ -76,7 +103,10 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
       value={{ 
         phase, 
         introNeeded, 
-        signalIntroComplete 
+        introStarted,
+        signalIntroStarted,
+        signalIntroComplete, 
+        signalHeroComplete 
       }}
     >
       {children}

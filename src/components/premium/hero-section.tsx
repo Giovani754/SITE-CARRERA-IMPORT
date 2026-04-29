@@ -18,7 +18,7 @@ export function HeroSection({
 
   return (
     <section className="relative min-h-screen w-full flex items-end overflow-hidden bg-[#030303]">
-      <HeroAnimation />
+      <HeroAnimation key={`hero-anim-${pathname}`} />
 
       {/* Content Layer — key forces re-animation on route change */}
       <motion.div
