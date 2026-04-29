@@ -4,6 +4,9 @@ import { Plus, Edit2, ExternalLink, Filter } from 'lucide-react'
 import Image from 'next/image'
 import { StatusQuickAction, FeaturedQuickAction } from './quick-actions'
 import { DeleteVehicleButton } from './delete-button'
+import { formatPrice, formatMileage } from '@/lib/utils'
+
+
 
 export default async function VeiculosListPage() {
   const supabase = await createClient()
@@ -82,12 +85,14 @@ export default async function VeiculosListPage() {
                   <td className="px-8 py-6">
                     <div className="flex flex-col gap-1">
                       <span className="text-[11px] text-white/60">{v.year}</span>
-                      <span className="text-[9px] uppercase tracking-widest text-white/20">{v.mileage}</span>
+                      <span className="text-[9px] uppercase tracking-widest text-white/20">{formatMileage(v.mileage)}</span>
                     </div>
+
                   </td>
                   <td className="px-8 py-6">
-                    <span className="text-[11px] font-sans text-white/60">{v.price}</span>
+                    <span className="text-[11px] font-sans text-white/60">{formatPrice(v.price)}</span>
                   </td>
+
                   <td className="px-8 py-6">
                     <span className={`text-[9px] uppercase tracking-[0.2em] font-bold px-2 py-1 rounded-[2px] ${
                       v.status === 'available' ? 'bg-green-500/10 text-green-500/60' :

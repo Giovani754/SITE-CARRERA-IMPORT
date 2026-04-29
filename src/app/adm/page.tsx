@@ -27,7 +27,7 @@ export default async function LoginPage() {
         <form className="space-y-8">
           <div className="space-y-6">
             <div className="space-y-2">
-              <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/30 ml-1">
+              <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/25 ml-1">
                 E-mail
               </label>
               <input
@@ -39,9 +39,17 @@ export default async function LoginPage() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/30 ml-1">
-                Senha
-              </label>
+              <div className="flex items-center justify-between ml-1">
+                <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/25">
+                  Senha
+                </label>
+                <Link 
+                  href="/adm/recuperar-senha"
+                  className="text-[9px] uppercase tracking-[0.2em] text-white/20 hover:text-brand-gold transition-colors"
+                >
+                  Esqueci minha senha
+                </Link>
+              </div>
               <input
                 name="password"
                 type="password"

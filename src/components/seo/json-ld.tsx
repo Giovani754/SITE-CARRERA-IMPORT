@@ -156,8 +156,8 @@ export function VehicleJsonLd({
     brand: string;
     model: string;
     year: number;
-    mileage: string;
-    price: string;
+    mileage: string | number;
+    price: string | number;
     fuel: string;
     transmission: string;
     color: string;
@@ -181,7 +181,7 @@ export function VehicleJsonLd({
         vehicleModelDate: String(vehicle.year),
         mileageFromOdometer: {
           "@type": "QuantitativeValue",
-          value: vehicle.mileage.replace(/[^\d]/g, ""),
+          value: String(vehicle.mileage).replace(/[^\d]/g, ""),
           unitCode: "KMT",
         },
         fuelType: vehicle.fuel,
@@ -194,10 +194,11 @@ export function VehicleJsonLd({
         offers: {
           "@type": "Offer",
           priceCurrency: "BRL",
-          price: vehicle.price.includes("Consulta")
+          price: String(vehicle.price).includes("Consulta")
             ? undefined
-            : vehicle.price.replace(/[^\d]/g, ""),
+            : String(vehicle.price).replace(/[^\d]/g, ""),
           availability: "https://schema.org/InStock",
+
           areaServed: {
             "@type": "City",
             name: "São Paulo",

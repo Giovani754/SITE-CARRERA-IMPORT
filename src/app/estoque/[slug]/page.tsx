@@ -20,6 +20,9 @@ import { CarCard } from "@/components/premium/car-card";
 import { VehicleJsonLd } from "@/components/seo/json-ld";
 import { LeadForm } from "@/components/premium/lead-form";
 import { SITE_CONFIG } from "@/data/constants";
+import { formatPrice, formatMileage } from "@/lib/utils";
+
+
 
 // Next.js 16: params is a Promise
 type PageProps = {
@@ -40,7 +43,7 @@ export async function generateMetadata({
 
   return {
     title: `${vehicle.brand} ${vehicle.model} ${vehicle.year}`,
-    description: `${vehicle.brand} ${vehicle.model} ${vehicle.year} — ${vehicle.mileage}, ${vehicle.transmission}. Consultoria automotiva premium em São Paulo.`,
+    description: `${vehicle.brand} ${vehicle.model} ${vehicle.year} — ${formatMileage(vehicle.mileage)}, ${vehicle.transmission}. Consultoria automotiva premium em São Paulo.`,
     openGraph: {
       title: `${vehicle.brand} ${vehicle.model} ${vehicle.year} | Carrera Imports`,
       description: vehicle.description?.substring(0, 160),
@@ -137,9 +140,9 @@ export default async function VehiclePage({ params }: PageProps) {
                     Destaques
                   </h3>
                   <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {vehicle.highlights.map((h: string) => (
+                    {[...new Set(vehicle.highlights as string[])].map((h, idx) => (
                       <li
-                        key={h}
+                        key={`${h}-${idx}`}
                         className="flex items-center gap-3 text-sm text-white/60"
                       >
                         <div className="w-1 h-1 bg-brand-gold/50 rounded-full shrink-0" />
@@ -149,6 +152,7 @@ export default async function VehiclePage({ params }: PageProps) {
                   </ul>
                 </div>
               )}
+
             </div>
 
             {/* Sticky Sidebar */}
@@ -169,8 +173,9 @@ export default async function VehiclePage({ params }: PageProps) {
                     {vehicle.model}
                   </h1>
                   <p className="text-2xl font-sans tracking-tight text-white/80">
-                    {vehicle.price}
+                    {formatPrice(vehicle.price)}
                   </p>
+
                 </div>
 
                 {/* Specs List */}
@@ -181,7 +186,7 @@ export default async function VehiclePage({ params }: PageProps) {
                       label: "Ano",
                       value: String(vehicle.year),
                     },
-                    { icon: Gauge, label: "Km", value: vehicle.mileage },
+                    { icon: Gauge, label: "Km", value: formatMileage(vehicle.mileage) },
                     {
                       icon: Zap,
                       label: "Câmbio",
@@ -193,6 +198,11 @@ export default async function VehiclePage({ params }: PageProps) {
                       icon: Activity,
                       label: "Versão",
                       value: vehicle.version || 'Premium',
+                    },
+                    {
+                      icon: ShieldCheck,
+                      label: "Blindagem",
+                      value: vehicle.blindagem || 'Sem Blindagem',
                     },
                   ].map((spec) => (
                     <div

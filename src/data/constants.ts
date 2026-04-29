@@ -26,14 +26,14 @@ export const SITE_CONFIG = {
   },
 
   contact: {
-    email: "contato@carreraimports.com.br",
+    email: "contato@carreiraimports.com.br",
     phone: "(11) 99999-9999",
   },
 
   location: {
     city: "São Paulo",
     state: "SP",
-    full: "São Paulo, SP",
+    full: "Av. Engenheiro Luís Carlos Berrini, 1748 - Itaim Bibi, São Paulo - SP, 04571-010",
     label: "São Paulo / SP",
   },
 

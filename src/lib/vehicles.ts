@@ -4,7 +4,7 @@ import { Vehicle } from "@/data/vehicles";
 
 /**
  * Retorna todos os veículos disponíveis.
- * Tenta buscar do Supabase primeiro; se vazio ou erro, retorna os mocks.
+ * Une os dados do Supabase com os Mocks para garantir um catálogo completo na apresentação.
  */
 export async function getAllVehicles(): Promise<Vehicle[]> {
   const supabase = await createClient();
@@ -20,8 +20,16 @@ export async function getAllVehicles(): Promise<Vehicle[]> {
       return MOCK_VEHICLES;
     }
 
-    // Se houver dados no banco, use eles. Caso contrário, use os mocks como fallback inicial.
-    return (dbVehicles && dbVehicles.length > 0) ? (dbVehicles as Vehicle[]) : MOCK_VEHICLES;
+    const realVehicles = (dbVehicles || []) as Vehicle[];
+    
+    // Se o banco estiver vazio, usa só mocks
+    if (realVehicles.length === 0) return MOCK_VEHICLES;
+
+    // Se houver dados no banco, unimos com os mocks que não tenham o mesmo slug
+    const realSlugs = new Set(realVehicles.map(v => v.slug));
+    const uniqueMocks = MOCK_VEHICLES.filter(v => !realSlugs.has(v.slug));
+    
+    return [...realVehicles, ...uniqueMocks];
   } catch (err) {
     console.error("Critical error in getAllVehicles:", err);
     return MOCK_VEHICLES;
@@ -47,17 +55,22 @@ export async function getFeaturedVehicles(limit = 6): Promise<Vehicle[]> {
       return MOCK_VEHICLES.filter(v => v.featured).slice(0, limit);
     }
 
-    if (dbFeatured && dbFeatured.length > 0) {
-      return dbFeatured as Vehicle[];
-    }
+    const realFeatured = (dbFeatured || []) as Vehicle[];
+    
+    // Se tiver destaques no banco suficientes, usa eles. 
+    // Caso contrário, completa com os mocks featured.
+    if (realFeatured.length >= limit) return realFeatured;
 
-    // Se não houver nada no banco, retorna os mocks marcados como featured
-    return MOCK_VEHICLES.filter(v => v.featured).slice(0, limit);
+    const realSlugs = new Set(realFeatured.map(v => v.slug));
+    const mockFeatured = MOCK_VEHICLES.filter(v => v.featured && !realSlugs.has(v.slug));
+    
+    return [...realFeatured, ...mockFeatured].slice(0, limit);
   } catch (err) {
     console.error("Critical error in getFeaturedVehicles:", err);
     return MOCK_VEHICLES.filter(v => v.featured).slice(0, limit);
   }
 }
+
 
 /**
  * Busca um veículo individual pelo slug.

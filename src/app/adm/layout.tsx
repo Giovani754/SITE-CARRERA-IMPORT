@@ -3,6 +3,7 @@ import { LogoCarrera } from '@/components/premium/logo-carrera'
 import { LogOut, Globe } from 'lucide-react'
 import { logout } from './actions'
 import { SidebarNav } from '@/components/admin/sidebar-nav'
+import { AdminHeader } from '@/components/admin/admin-header'
 import Link from 'next/link'
 
 export default async function AdminLayout({
@@ -45,10 +46,16 @@ export default async function AdminLayout({
         </aside>
       )}
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-auto min-h-screen">
-        {children}
-      </main>
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
+        {user && <AdminHeader userEmail={user.email} />}
+        
+        <main className="flex-1 overflow-auto bg-[#050505]">
+          <div className="p-8 max-w-[1600px] mx-auto">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   )
 }

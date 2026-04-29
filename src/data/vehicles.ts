@@ -4,8 +4,9 @@ export interface Vehicle {
   model: string;
   version: string;
   year: number;
-  mileage: string;
-  price: string;
+  mileage: string | number;
+  price: string | number;
+
   transmission: string;
   fuel: string;
   color: string;
@@ -15,7 +16,7 @@ export interface Vehicle {
   status: "available" | "sold" | "reserved";
   featured: boolean;
   slug: string;
-  category: string;
+  category?: string;
   power?: string;
   engine?: string;
   city: string;

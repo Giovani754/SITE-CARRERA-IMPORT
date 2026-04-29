@@ -18,7 +18,7 @@ export async function upsertVehicle(formData: FormData) {
   // Get image URLs from formData
   const images = (formData.get('images_json') as string)?.split(',').filter(Boolean) || []
 
-  const vehicleData = {
+  const vehicleData: any = {
     brand: brand,
     model: model,
     version: formData.get('version') as string,
@@ -36,8 +36,14 @@ export async function upsertVehicle(formData: FormData) {
     blindagem: formData.get('blindagem') as string,
     city: formData.get('city') as string,
     images: images,
-    highlights: (formData.get('highlights_json') as string)?.split(',').map(i => i.trim()).filter(Boolean) || [],
+    highlights: Array.from(new Set((formData.get('highlights_json') as string)?.split(',').map(i => i.trim()).filter(Boolean) || [])),
   }
+
+
+  // Log payload for debugging in terminal
+  console.log('--- UPSERT VEHICLE PAYLOAD ---');
+  console.log('ID:', id || 'NEW');
+  console.log('Data:', JSON.stringify(vehicleData, null, 2));
 
   let error
   try {
@@ -54,13 +60,19 @@ export async function upsertVehicle(formData: FormData) {
       error = insertError
     }
   } catch (err: any) {
-    console.error('Critical Database Error:', err);
-    return { error: `Erro crítico: ${err.message}` }
+    console.error('CRITICAL DATABASE ERROR:', err.message);
+    return { error: `Erro crítico no banco de dados: ${err.message}` }
   }
 
   if (error) {
-    console.error('Supabase Error:', error)
-    return { error: `Erro no Supabase: ${error.message} - ${error.details}` }
+    console.error('SUPABASE OPERATION ERROR:', error.message);
+    console.error('DETAILS:', error.details);
+    console.error('HINT:', error.hint);
+    return { 
+      error: `Erro no Supabase: ${error.message}`,
+      details: error.details,
+      hint: error.hint
+    }
   }
 
   // Revalidate everything

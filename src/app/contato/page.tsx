@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Breadcrumb } from "@/components/premium/breadcrumb";
 import { PageHero } from "@/components/premium/page-hero";
-import { LeadForm } from "@/components/premium/lead-form";
+
 import { LocalBusinessJsonLd } from "@/components/seo/json-ld";
 import { SITE_CONFIG } from "@/data/constants";
 import {
@@ -14,11 +14,11 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Contato",
   description:
-    "Entre em contato com a Carrera Imports. Consultoria automotiva premium em São Paulo. WhatsApp, e-mail e atendimento personalizado para compra e venda de veículos de alto padrão.",
+    "Entre em contato com a Carreira Imports. Consultoria automotiva premium em São Paulo. WhatsApp, e-mail e atendimento personalizado para compra e venda de veículos de alto padrão.",
   openGraph: {
-    title: "Contato | Carrera Imports",
+    title: "Contato | Carreira Imports",
     description:
-      "Fale com a Carrera Imports. Atendimento personalizado para compra e venda de veículos premium em São Paulo.",
+      "Fale com a Carreira Imports. Atendimento personalizado para compra e venda de veículos premium em São Paulo.",
   },
 };
 
@@ -28,9 +28,9 @@ export default function ContactPage() {
       <LocalBusinessJsonLd />
 
       <PageHero
-        eyebrow="Consultoria em São Paulo"
-        title="Estamos prontos para conduzir o seu próximo passo na capital."
-        description="Fale com nossa equipe estratégica em São Paulo. Atendimento personalizado para o mercado de alto desempenho."
+        eyebrow="CONSULTORIA EM SÃO PAULO"
+        title="Antes de negociar, fale com quem entende o mercado."
+        description="Entre em contato com a Carreira Imports e receba uma condução discreta, criteriosa e alinhada ao seu objetivo: comprar, vender ou encontrar o veículo certo."
         backgroundImage="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1920&auto=format&fit=crop"
         backgroundAlt="Arquitetura urbana premium - São Paulo"
         accentPosition="right"
@@ -45,9 +45,9 @@ export default function ContactPage() {
             <div className="space-y-12">
               <div className="space-y-6">
                 <p className="text-white/45 text-[15px] leading-[1.8] font-sans font-light max-w-lg">
-                  Seja para vender um veículo com discrição ou encontrar um
-                  exemplar premium com procedência, nossa equipe oferece
-                  atendimento personalizado com rapidez e eficácia.
+                  Antes de comprar, vender ou avaliar um veículo premium, fale com quem sabe conduzir esse tipo de negociação.
+                  <br /><br />
+                  A Carreira Imports atende clientes que buscam discrição, procedência e clareza para tomar decisões automotivas com mais segurança.
                 </p>
 
                 <div className="space-y-6 pt-6">
@@ -62,10 +62,10 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/25 block mb-0.5">
-                        WhatsApp
+                        WHATSAPP
                       </span>
                       <span className="text-sm font-medium text-white/70 group-hover:text-white transition-colors">
-                        Atendimento Imediato
+                        Atendimento direto
                       </span>
                     </div>
                   </Link>
@@ -75,7 +75,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/25 block mb-0.5">
-                        E-mail
+                        E-MAIL
                       </span>
                       <span className="text-sm font-medium text-white/70">
                         {SITE_CONFIG.contact.email}
@@ -88,7 +88,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/25 block mb-0.5">
-                        Localização
+                        LOCALIZAÇÃO
                       </span>
                       <span className="text-sm font-medium text-white/70">
                         {SITE_CONFIG.location.full}
@@ -98,47 +98,52 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {/* Business Hours & Map Placeholder */}
+              {/* Business Hours & Map */}
               <div className="space-y-8">
                 <div className="p-8 border border-white/5 bg-[#080808] rounded-sm">
                   <h3 className="text-[10px] uppercase tracking-[0.4em] font-bold mb-5 text-brand-gold/60">
-                    Horário de Atendimento
+                    HORÁRIO DE ATENDIMENTO
                   </h3>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div className="flex justify-between text-[11px] tracking-[0.2em] uppercase">
-                      <span className="text-white/30">Segunda a Sexta</span>
+                      <span className="text-white/30">SEGUNDA A SEXTA</span>
                       <span className="text-white/70 font-medium">
-                        {SITE_CONFIG.hours.weekdays}
+                        09H ÀS 19H
                       </span>
                     </div>
                     <div className="flex justify-between text-[11px] tracking-[0.2em] uppercase">
-                      <span className="text-white/30">Sábados</span>
+                      <span className="text-white/30">SÁBADOS</span>
                       <span className="text-white/70 font-medium">
-                        {SITE_CONFIG.hours.saturday}
+                        10H ÀS 14H
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Map Placeholder */}
-                <div className="aspect-video bg-surface-base border border-white/5 overflow-hidden filter grayscale opacity-40 hover:opacity-60 transition-opacity rounded-sm relative group">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <MapPin size={24} className="text-brand-gold/30" />
-                  </div>
-                  <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-[2px] text-[8px] uppercase tracking-widest text-white/50">
-                    SÃO PAULO, SP — JARDINS
-                  </div>
+                {/* Map */}
+                <div className="w-full aspect-video border border-white/10 rounded-sm overflow-hidden relative group">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3656.3685!2d-46.6976!3d-23.6090!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce57223e743603%3A0xc3461421c6139c8c!2sAv.%20Eng.%20Lu%C3%ADs%20Carlos%20Berrini%2C%201748%20-%20Itaim%20Bibi%2C%20S%C3%A3o%20Paulo%20-%20SP%2C%2004571-010!5e0!3m2!1spt-BR!2sbr!4v1714347700000!5m2!1spt-BR!2sbr"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0, filter: "grayscale(1) contrast(1.2) opacity(0.6)" }}
+                    allowFullScreen={true}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Localização Carreira Imports"
+                    className="grayscale hover:grayscale-0 transition-all duration-700"
+                  ></iframe>
                 </div>
               </div>
             </div>
 
             {/* Contact Form */}
-            <div className="bg-[#080808] border border-white/5 p-10 lg:p-14 rounded-sm">
+            <div className="bg-[#080808] border border-white/5 p-10 lg:p-14 rounded-sm h-fit">
               <h3 className="text-[10px] uppercase tracking-[0.4em] font-bold text-brand-gold/60 mb-2">
-                Envie uma Mensagem
+                INICIE SUA CONSULTORIA
               </h3>
               <p className="text-white/30 text-xs mb-8 font-light">
-                Preencha o formulário e retornaremos em breve.
+                Preencha seus dados e nossa equipe retorna com a condução adequada para o seu objetivo.
               </p>
               <form className="space-y-8">
                 <div className="space-y-2">
@@ -146,7 +151,7 @@ export default function ContactPage() {
                     htmlFor="contact-name"
                     className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/25"
                   >
-                    Nome Completo
+                    NOME COMPLETO
                   </label>
                   <input
                     id="contact-name"
@@ -161,7 +166,7 @@ export default function ContactPage() {
                     htmlFor="contact-email"
                     className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/25"
                   >
-                    E-mail
+                    E-MAIL
                   </label>
                   <input
                     id="contact-email"
@@ -176,7 +181,7 @@ export default function ContactPage() {
                     htmlFor="contact-phone"
                     className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/25"
                   >
-                    Telefone / WhatsApp
+                    TELEFONE / WHATSAPP
                   </label>
                   <input
                     id="contact-phone"
@@ -191,13 +196,13 @@ export default function ContactPage() {
                     htmlFor="contact-message"
                     className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/25"
                   >
-                    Mensagem
+                    MENSAGEM
                   </label>
                   <textarea
                     id="contact-message"
                     rows={3}
                     className="w-full bg-transparent border-b border-white/[0.08] py-3 focus:outline-none focus:border-brand-gold transition-colors font-sans text-sm resize-none text-white placeholder:text-white/15"
-                    placeholder="Como podemos ajudar?"
+                    placeholder="Conte se deseja comprar, vender ou encontrar um veículo específico."
                   />
                 </div>
 
@@ -205,7 +210,7 @@ export default function ContactPage() {
                   type="submit"
                   className="w-full bg-brand-gold text-black py-5 text-[10px] uppercase tracking-[0.4em] font-bold flex items-center justify-center gap-3 hover:bg-[#C5A030] transition-all hover:scale-[1.01] active:scale-[0.99] rounded-sm"
                 >
-                  Enviar Mensagem
+                  ENVIAR SOLICITAÇÃO
                 </button>
               </form>
             </div>

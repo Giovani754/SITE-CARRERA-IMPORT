@@ -5,6 +5,7 @@ import { Breadcrumb } from "@/components/premium/breadcrumb";
 import { PageHero } from "@/components/premium/page-hero";
 import { CarCard } from "@/components/premium/car-card";
 import { Search, ChevronDown, X } from "lucide-react";
+import { cn, parsePrice } from "@/lib/utils";
 
 interface InventoryContentProps {
   vehicles: any[];
@@ -12,77 +13,95 @@ interface InventoryContentProps {
 
 export default function InventoryContent({ vehicles }: InventoryContentProps) {
   const [activeBrand, setActiveBrand] = useState("Todos");
-  const [activeBlindagem, setActiveBlindagem] = useState("Todos");
   const [searchQuery, setSearchQuery] = useState("");
-  const [priceRange, setPriceRange] = useState("Todos");
-  const [activeYear, setActiveYear] = useState("Todos");
+  
+  // New range-based filters
+  const [minYear, setMinYear] = useState("");
+  const [maxYear, setMaxYear] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [armorStatus, setArmorStatus] = useState("Todos"); // "Todos", "Com Blindagem", "Sem Blindagem"
 
   const brands = useMemo(() => {
     if (!vehicles) return ["Todos"];
-    const unique = [...new Set(vehicles.map((v) => v.brand))].filter(Boolean);
-    return ["Todos", ...unique.sort()];
+    const unique = [...new Set(vehicles.map((v) => v.brand?.trim().toUpperCase()))].filter(Boolean);
+    return ["Todos", ...unique.sort((a, b) => a.localeCompare(b))];
   }, [vehicles]);
 
-  const armors = useMemo(() => {
-    if (!vehicles) return ["Todos"];
-    const unique = [...new Set(vehicles.map((v) => v.blindagem))].filter(Boolean);
-    return ["Todos", "Blindados", "Não Blindados", ...unique];
-  }, [vehicles]);
-
-  const years = useMemo(() => {
-    if (!vehicles) return ["Todos"];
-    const unique = [...new Set(vehicles.map((v) => v.year))].filter(Boolean);
-    return ["Todos", ...unique.sort((a, b) => b - a)];
-  }, [vehicles]);
 
   const filteredVehicles = useMemo(() => {
     if (!vehicles) return [];
     return vehicles.filter((v) => {
-      const matchesBrand = activeBrand === "Todos" || v.brand === activeBrand;
-      const matchesYear = activeYear === "Todos" || v.year.toString() === activeYear;
+      // 1. Brand Filter
+      const matchesBrand = activeBrand === "Todos" || v.brand?.trim().toUpperCase() === activeBrand;
       
-      const isBlindado = !!v.blindagem;
-      const matchesArmor = 
-        activeBlindagem === "Todos" || 
-        (activeBlindagem === "Blindados" && isBlindado) || 
-        (activeBlindagem === "Não Blindados" && !isBlindado) ||
-        v.blindagem === activeBlindagem;
+      // 2. Year Range Filter
+      const year = Number(v.year);
+      const minYearNum = minYear ? Number(minYear) : 0;
+      const maxYearNum = maxYear ? Number(maxYear) : 9999;
+      const matchesYear = year >= minYearNum && year <= maxYearNum;
 
+      // 3. Armor Filter (Simplified)
+      const isBlindado = !!v.blindagem && v.blindagem !== "Nao" && v.blindagem !== "Não" && v.blindagem.toLowerCase() !== "sem blindagem";
+      const matchesArmor = 
+        armorStatus === "Todos" || 
+        (armorStatus === "Com Blindagem" && isBlindado) || 
+        (armorStatus === "Sem Blindagem" && !isBlindado);
+
+      // 4. Search Filter
       const matchesSearch =
         searchQuery === "" ||
-        `${v.brand} ${v.model}`
+        [
+          v.brand,
+          v.model,
+          v.version,
+          v.category,
+          v.city,
+          v.blindagem,
+          v.status,
+          String(v.price),
+          String(v.year)
+        ]
+          .filter(Boolean)
+          .join(" ")
           .toLowerCase()
           .includes(searchQuery.toLowerCase());
           
-      // Price range logic (simplified for demonstration)
-      let matchesPrice = true;
-      if (priceRange !== "Todos") {
-        const priceNum = parseInt(v.price.replace(/\D/g, ""));
-        if (priceRange === "Abaixo de 500k") matchesPrice = priceNum < 500000;
-        else if (priceRange === "500k - 1M") matchesPrice = priceNum >= 500000 && priceNum <= 1000000;
-        else if (priceRange === "Acima de 1M") matchesPrice = priceNum > 1000000;
-      }
+      // 5. Price Range Filter
+      const priceNum = parsePrice(v.price);
+      const minPriceNum = minPrice ? Number(minPrice.replace(/\D/g, "")) : 0;
+      const maxPriceNum = maxPrice ? Number(maxPrice.replace(/\D/g, "")) : Infinity;
+      const matchesPrice = priceNum >= minPriceNum && priceNum <= (maxPriceNum || Infinity);
 
       return matchesBrand && matchesYear && matchesArmor && matchesSearch && matchesPrice;
     });
-  }, [activeBrand, activeArmor, activeYear, searchQuery, priceRange, vehicles]);
+  }, [activeBrand, armorStatus, minYear, maxYear, searchQuery, minPrice, maxPrice, vehicles]);
 
   const clearFilters = () => {
     setActiveBrand("Todos");
-    setActiveBlindagem("Todos");
-    setActiveYear("Todos");
-    setPriceRange("Todos");
+    setArmorStatus("Todos");
+    setMinYear("");
+    setMaxYear("");
+    setMinPrice("");
+    setMaxPrice("");
     setSearchQuery("");
   };
 
-  const hasActiveFilters = activeBrand !== "Todos" || activeBlindagem !== "Todos" || activeYear !== "Todos" || priceRange !== "Todos" || searchQuery !== "";
+  const hasActiveFilters = 
+    activeBrand !== "Todos" || 
+    armorStatus !== "Todos" || 
+    minYear !== "" || 
+    maxYear !== "" || 
+    minPrice !== "" || 
+    maxPrice !== "" || 
+    searchQuery !== "";
 
   return (
     <>
       <PageHero
         eyebrow="ACERVO CARRERA IMPORTS"
-        title="Veículos premium selecionados antes de chegarem até você."
-        description="Cada modelo do acervo passa por análise de histórico, conservação, documentação e coerência de mercado. Aqui, o carro bonito precisa provar que também é uma boa escolha."
+        title="Curadoria de veículos premium selecionados para quem exige o extraordinário."
+        description="Cada ativo do nosso acervo passa por uma rigorosa análise de procedência, histórico e conservação. Aqui, a exclusividade não é um detalhe, é a nossa premissa fundamental."
         backgroundImage="https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1920&auto=format&fit=crop"
         backgroundAlt="Veículo premium em exposição - Carrera Imports"
         accentPosition="left"
@@ -92,99 +111,130 @@ export default function InventoryContent({ vehicles }: InventoryContentProps) {
         <div className="max-w-7xl mx-auto">
           <Breadcrumb items={[{ name: "Estoque", href: "/estoque" }]} />
 
-          {/* New Compact Filter Bar */}
-          <div className="mt-12 mb-16 relative z-30">
-            <div className="flex flex-col lg:flex-row items-center border border-white/5 bg-[#080808] rounded-sm divide-y lg:divide-y-0 lg:divide-x divide-white/5">
+          {/* Premium Boutique Filter Interface */}
+          <div className="mt-16 mb-20 relative z-30">
+            <div className="flex flex-col gap-6">
               
-              {/* Search */}
-              <div className="w-full lg:w-1/4 relative group">
-                <Search size={14} className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-brand-gold transition-colors" />
-                <input
-                  type="text"
-                  placeholder="BUSCAR MODELO..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-transparent py-6 pl-14 pr-6 text-[10px] uppercase tracking-[0.3em] font-bold focus:outline-none focus:bg-white/[0.01] transition-all"
-                />
-              </div>
+              {/* Main Control Bar */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 border border-white/5 bg-[#0a0a0a] rounded-sm overflow-hidden shadow-2xl">
+                
+                {/* Search - 5 cols */}
+                <div className="lg:col-span-5 relative group border-b lg:border-b-0 lg:border-r border-white/5">
+                  <Search size={16} className="absolute left-8 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-brand-gold transition-all duration-500" />
+                  <input
+                    type="text"
+                    placeholder="BUSCAR NO ACERVO... (MARCA, MODELO, ANO)"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-transparent py-8 pl-16 pr-8 text-[11px] uppercase tracking-[0.4em] font-bold text-white placeholder:text-white/10 focus:outline-none focus:bg-white/[0.01] transition-all"
+                  />
+                </div>
 
-              {/* Brand Select */}
-              <div className="w-full lg:w-1/6 relative">
-                <select
-                  value={activeBrand}
-                  onChange={(e) => setActiveBrand(e.target.value)}
-                  className="w-full bg-transparent py-6 px-8 text-[10px] uppercase tracking-[0.3em] font-bold focus:outline-none appearance-none cursor-pointer hover:bg-white/[0.01]"
-                >
-                  <option value="Todos">MARCA</option>
-                  {brands.filter(b => b !== "Todos").map(b => (
-                    <option key={b} value={b} className="bg-[#0a0a0a]">{b}</option>
-                  ))}
-                </select>
-                <ChevronDown size={12} className="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 pointer-events-none" />
-              </div>
-
-              {/* Year Select */}
-              <div className="w-full lg:w-1/6 relative">
-                <select
-                  value={activeYear}
-                  onChange={(e) => setActiveYear(e.target.value)}
-                  className="w-full bg-transparent py-6 px-8 text-[10px] uppercase tracking-[0.3em] font-bold focus:outline-none appearance-none cursor-pointer hover:bg-white/[0.01]"
-                >
-                  <option value="Todos">ANO</option>
-                  {years.filter(y => y !== "Todos").map(y => (
-                    <option key={y} value={y.toString()} className="bg-[#0a0a0a]">{y}</option>
-                  ))}
-                </select>
-                <ChevronDown size={12} className="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 pointer-events-none" />
-              </div>
-
-              {/* Price Select */}
-              <div className="w-full lg:w-1/6 relative">
-                <select
-                  value={priceRange}
-                  onChange={(e) => setPriceRange(e.target.value)}
-                  className="w-full bg-transparent py-6 px-8 text-[10px] uppercase tracking-[0.3em] font-bold focus:outline-none appearance-none cursor-pointer hover:bg-white/[0.01]"
-                >
-                  <option value="Todos">VALOR</option>
-                  <option value="Abaixo de 500k" className="bg-[#0a0a0a]">Até 500k</option>
-                  <option value="500k - 1M" className="bg-[#0a0a0a]">500k - 1M</option>
-                  <option value="Acima de 1M" className="bg-[#0a0a0a]">Acima de 1M</option>
-                </select>
-                <ChevronDown size={12} className="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 pointer-events-none" />
-              </div>
-
-              {/* Armor Select */}
-              <div className="w-full lg:w-1/6 relative">
-                <select
-                  value={activeBlindagem}
-                  onChange={(e) => setActiveBlindagem(e.target.value)}
-                  className="w-full bg-transparent py-6 px-8 text-[10px] uppercase tracking-[0.3em] font-bold focus:outline-none appearance-none cursor-pointer hover:bg-white/[0.01]"
-                >
-                  <option value="Todos">BLINDAGEM</option>
-                  <option value="Blindados" className="bg-[#0a0a0a]">Blindados</option>
-                  <option value="Não Blindados" className="bg-[#0a0a0a]">Sem Blindagem</option>
-                </select>
-                <ChevronDown size={12} className="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 pointer-events-none" />
-              </div>
-
-              {/* Clear Action */}
-              <div className="w-full lg:flex-1 flex items-center justify-center p-4">
-                {hasActiveFilters ? (
-                  <button
-                    onClick={clearFilters}
-                    className="flex items-center gap-3 text-[9px] uppercase tracking-[0.3em] font-bold text-brand-gold hover:text-white transition-colors py-2 px-4"
+                {/* Brand - 4 cols */}
+                <div className="lg:col-span-4 relative border-b lg:border-b-0 lg:border-r border-white/5">
+                  <select
+                    value={activeBrand}
+                    onChange={(e) => setActiveBrand(e.target.value)}
+                    className="w-full bg-transparent py-8 px-10 text-[11px] uppercase tracking-[0.4em] font-bold text-white/70 appearance-none cursor-pointer hover:text-white transition-all focus:outline-none"
                   >
-                    <X size={12} />
-                    Limpar
-                  </button>
-                ) : (
-                  <span className="text-[9px] uppercase tracking-[0.3em] font-bold text-white/10">
-                    {filteredVehicles.length} un.
-                  </span>
-                )}
+                    <option value="Todos">MARCAS (TODAS)</option>
+                    {brands.filter(b => b !== "Todos").map(b => (
+                      <option key={b} value={b} className="bg-[#0a0a0a]">{b.toUpperCase()}</option>
+                    ))}
+                  </select>
+                  <ChevronDown size={14} className="absolute right-8 top-1/2 -translate-y-1/2 text-white/20 pointer-events-none" />
+                </div>
+
+                {/* Armor Toggle - 3 cols */}
+                <div className="lg:col-span-3 flex items-center justify-center p-2 bg-white/[0.02]">
+                  <div className="flex bg-black p-1 rounded-sm border border-white/5 w-full max-w-[240px]">
+                    {[
+                      { id: "Todos", label: "TUDO" },
+                      { id: "Com Blindagem", label: "BLINDADOS" },
+                      { id: "Sem Blindagem", label: "SEM" },
+                    ].map((opt) => (
+                      <button
+                        key={opt.id}
+                        onClick={() => setArmorStatus(opt.id)}
+                        className={cn(
+                          "flex-1 py-3 text-[9px] font-bold uppercase tracking-[0.2em] transition-all duration-500",
+                          armorStatus === opt.id 
+                            ? "bg-brand-gold text-black shadow-lg" 
+                            : "text-white/30 hover:text-white/60"
+                        )}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Advanced Range Bar */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                
+                {/* Year Range */}
+                <div className="lg:col-span-3 flex items-center gap-4 bg-[#0a0a0a] border border-white/5 rounded-sm px-6 py-2">
+                  <span className="text-[9px] uppercase tracking-[0.3em] font-bold text-white/20 whitespace-nowrap">ANO:</span>
+                  <input
+                    type="number"
+                    placeholder="DE"
+                    value={minYear}
+                    onChange={(e) => setMinYear(e.target.value)}
+                    className="w-full bg-transparent py-3 text-[10px] font-bold text-white focus:outline-none text-center border-b border-transparent focus:border-brand-gold/30 transition-all"
+                  />
+                  <div className="w-4 h-[1px] bg-white/10 shrink-0" />
+                  <input
+                    type="number"
+                    placeholder="ATÉ"
+                    value={maxYear}
+                    onChange={(e) => setMaxYear(e.target.value)}
+                    className="w-full bg-transparent py-3 text-[10px] font-bold text-white focus:outline-none text-center border-b border-transparent focus:border-brand-gold/30 transition-all"
+                  />
+                </div>
+
+                {/* Price Range */}
+                <div className="lg:col-span-5 flex items-center gap-4 bg-[#0a0a0a] border border-white/5 rounded-sm px-8 py-2">
+                  <span className="text-[9px] uppercase tracking-[0.3em] font-bold text-white/20 whitespace-nowrap">INVESTIMENTO (R$):</span>
+                  <input
+                    type="text"
+                    placeholder="MÍNIMO"
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(e.target.value)}
+                    className="w-full bg-transparent py-3 text-[10px] font-bold text-white focus:outline-none text-center border-b border-transparent focus:border-brand-gold/30 transition-all"
+                  />
+                  <div className="w-4 h-[1px] bg-white/10 shrink-0" />
+                  <input
+                    type="text"
+                    placeholder="MÁXIMO"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(e.target.value)}
+                    className="w-full bg-transparent py-3 text-[10px] font-bold text-white focus:outline-none text-center border-b border-transparent focus:border-brand-gold/30 transition-all"
+                  />
+                </div>
+
+                {/* Info & Clear - 4 cols */}
+                <div className="lg:col-span-4 flex items-center justify-between lg:justify-end gap-10">
+                  <div className="flex flex-col items-end">
+                    <span className="text-[9px] uppercase tracking-[0.3em] font-bold text-white/10">Catálogo Atualizado</span>
+                    <span className="text-[12px] font-serif italic text-white/50">{filteredVehicles.length} veículos encontrados</span>
+                  </div>
+                  
+                  {hasActiveFilters && (
+                    <button
+                      onClick={clearFilters}
+                      className="group flex items-center gap-3 text-[9px] uppercase tracking-[0.4em] font-bold text-brand-gold hover:text-white transition-all duration-500 py-4 px-8 border border-brand-gold/20 rounded-sm hover:bg-brand-gold/5"
+                    >
+                      <X size={12} className="group-hover:rotate-90 transition-transform duration-500" />
+                      LIMPAR
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
+
+
 
           {/* Inventory Grid */}
           {filteredVehicles.length > 0 ? (

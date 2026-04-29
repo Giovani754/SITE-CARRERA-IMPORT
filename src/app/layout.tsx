@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import { PremiumHeader } from "@/components/premium/premium-header";
-import { PremiumFooter } from "@/components/premium/premium-footer";
-import { WhatsAppButton } from "@/components/premium/whatsapp-button";
+import { PublicLayoutElements } from "@/components/layout/public-layout-elements";
 import {
   OrganizationJsonLd,
   WebSiteJsonLd,
 } from "@/components/seo/json-ld";
 import { AnimationSequenceProvider } from "@/contexts/animation-sequence";
-import { IntroAnimation } from "@/components/premium/intro-animation";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -84,13 +81,11 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans bg-[#030303] text-[#FAFAFA]">
         <AnimationSequenceProvider>
-          <IntroAnimation />
           <OrganizationJsonLd />
           <WebSiteJsonLd />
-          <PremiumHeader />
-          <main className="flex-1">{children}</main>
-          <PremiumFooter />
-          <WhatsAppButton />
+          <PublicLayoutElements>
+            {children}
+          </PublicLayoutElements>
         </AnimationSequenceProvider>
       </body>
     </html>

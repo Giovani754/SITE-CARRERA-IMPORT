@@ -6,6 +6,9 @@ import { Vehicle } from "@/data/vehicles";
 import { ArrowRight, ArrowLeft, Calendar, Gauge, Shield, Zap } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { formatPrice, formatMileage } from "@/lib/utils";
+import { CategoryTag } from "./category-tag";
+
 
 interface FeaturedVehiclesShowcaseProps {
   vehicles: Vehicle[];
@@ -97,14 +100,10 @@ export function FeaturedVehiclesShowcase({ vehicles }: FeaturedVehiclesShowcaseP
                 
                 {/* Category Tag */}
                 <div className="absolute top-6 left-6 md:top-10 md:left-10">
-                  <motion.span 
-                    initial={{ y: -20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                    className="px-4 py-1.5 bg-brand-gold/10 backdrop-blur-md border border-brand-gold/20 text-brand-gold text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] rounded-full"
-                  >
-                    {activeVehicle.category || "Premium Choice"}
-                  </motion.span>
+                  <CategoryTag 
+                    category={activeVehicle.category} 
+                    blindagem={activeVehicle.blindagem} 
+                  />
                 </div>
               </div>
             </motion.div>
@@ -169,8 +168,9 @@ export function FeaturedVehiclesShowcase({ vehicles }: FeaturedVehiclesShowcaseP
                     </div>
                     <div className="flex items-center gap-3 text-white/30">
                       <Gauge size={18} className="text-brand-gold/40" />
-                      <span className="text-sm md:text-base font-light tracking-wide">{activeVehicle.mileage}</span>
+                      <span className="text-sm md:text-base font-light tracking-wide">{formatMileage(activeVehicle.mileage)}</span>
                     </div>
+
                     {activeVehicle.power && (
                       <div className="flex items-center gap-3 text-white/30">
                         <Zap size={18} className="text-brand-gold/40" />
@@ -199,8 +199,9 @@ export function FeaturedVehiclesShowcase({ vehicles }: FeaturedVehiclesShowcaseP
                   <div className="text-left lg:text-right">
                     <span className="text-[8px] md:text-[9px] uppercase tracking-[0.3em] md:tracking-[0.4em] text-white/30 font-bold mb-1 block">Investimento</span>
                     <div className="text-xl md:text-3xl font-serif italic text-brand-gold leading-none">
-                      {activeVehicle.price}
+                      {formatPrice(activeVehicle.price)}
                     </div>
+
                   </div>
                 </motion.div>
               </AnimatePresence>

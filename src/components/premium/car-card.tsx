@@ -5,7 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { MoveRight, Gauge, Calendar, Zap } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice, formatMileage } from "@/lib/utils";
+import { CategoryTag } from "./category-tag";
+
 
 interface CarCardProps {
   vehicle: any;
@@ -16,15 +18,10 @@ export function CarCard({ vehicle, index }: CarCardProps) {
   if (!vehicle) return null;
   const mainImage = vehicle.images?.[0] || vehicle.image || "";
   
-  // Strict consultation check
-  const priceValue = vehicle.price || "";
-  const isConsultation = !priceValue || 
-                         priceValue.toLowerCase().includes("consulta") || 
-                         priceValue === "0" || 
-                         priceValue.toLowerCase() === "sob consulta";
+  // Format price using utility
+  const priceDisplay = formatPrice(vehicle.price);
+  const isConsultation = priceDisplay === "Sob Consulta";
   
-  // Tag Superior - Category or status if special
-  const categoryTag = vehicle.blindagem ? "BLINDADO" : (vehicle.category || "EXCLUSIVO").toUpperCase();
   
   // Trust Seals - We'll take the most relevant from highlights or use defaults
   const trustSeals = vehicle.highlights?.filter((h: string) => 
@@ -79,9 +76,10 @@ export function CarCard({ vehicle, index }: CarCardProps) {
 
           {/* Top Tag */}
           <div className="absolute top-5 left-5">
-            <span className="bg-black/60 backdrop-blur-md px-3 py-1.5 text-[8px] uppercase tracking-[0.3em] text-white/70 border border-white/10 rounded-[2px] font-bold">
-              {categoryTag}
-            </span>
+            <CategoryTag 
+              category={vehicle.category} 
+              blindagem={vehicle.blindagem} 
+            />
           </div>
           
           {/* Status Overlay (Sold/Reserved) */}
@@ -102,7 +100,7 @@ export function CarCard({ vehicle, index }: CarCardProps) {
               "text-xl lg:text-2xl font-serif italic tracking-tight block transition-colors duration-500",
               isConsultation ? "text-white/30" : "text-brand-gold"
             )}>
-              {isConsultation ? "Sob consulta" : priceValue}
+              {priceDisplay}
             </span>
           </div>
 
@@ -120,18 +118,20 @@ export function CarCard({ vehicle, index }: CarCardProps) {
           <div className="flex items-center gap-4 mb-8 text-white/40 font-sans text-xs font-light">
             <span>{vehicle.year}</span>
             <span className="text-white/10">·</span>
-            <span>{vehicle.mileage}</span>
+            <span>{formatMileage(vehicle.mileage)}</span>
           </div>
+
 
           {/* Trust Seals */}
           <div className="flex flex-col gap-3 mb-10 pt-8 border-t border-white/5">
-            {finalSeals.map((seal: string) => (
-              <div key={seal} className="flex items-center gap-3 text-[10px] text-white/40 group-hover:text-white/60 transition-colors">
+            {[...new Set(finalSeals as string[])].map((seal, idx) => (
+              <div key={`${seal}-${idx}`} className="flex items-center gap-3 text-[10px] text-white/40 group-hover:text-white/60 transition-colors">
                 <div className="w-1.5 h-1.5 bg-brand-gold/30 rounded-full" />
                 <span className="truncate">{seal}</span>
               </div>
             ))}
           </div>
+
 
           {/* CTA */}
           <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.4em] font-bold text-white/20 group-hover:text-brand-gold transition-all duration-700 mt-auto">

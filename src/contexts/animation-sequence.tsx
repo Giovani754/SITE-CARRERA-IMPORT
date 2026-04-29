@@ -9,6 +9,8 @@ import {
   type ReactNode,
 } from "react";
 
+import { usePathname } from "next/navigation";
+
 // ─────────────────────────────────────────────────────────
 // Animation Sequence Context
 // Controls the cinematic sequence: Intro → Hero → Content
@@ -41,10 +43,18 @@ export function useAnimationSequence() {
 export function AnimationSequenceProvider({ children }: { children: ReactNode }) {
   const [phase, setPhase] = useState<SequencePhase>("complete");
   const [introNeeded, setIntroNeeded] = useState(false);
+  const pathname = usePathname();
 
-  // On mount, check if intro should play
+  // On mount or path change, check if intro should play
   useEffect(() => {
     if (typeof window === "undefined") return;
+
+    // We only trigger animations on the root page
+    if (pathname !== "/") {
+      setIntroNeeded(false);
+      setPhase("complete");
+      return;
+    }
 
     try {
       const hasSeen = sessionStorage.getItem("carrera-intro-seen");
@@ -52,16 +62,17 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
         setIntroNeeded(true);
         setPhase("intro");
       } else {
-        // Intro already seen — skip directly to hero
+        // If we returned to home after seeing the intro once, 
+        // we might still want to play the Hero drift at least.
         setIntroNeeded(false);
         setPhase("hero");
       }
     } catch {
-      // sessionStorage unavailable — skip intro
       setIntroNeeded(false);
       setPhase("hero");
     }
-  }, []);
+  }, [pathname]);
+
 
   // Called by IntroAnimation when it finishes
   const signalIntroComplete = useCallback(() => {
