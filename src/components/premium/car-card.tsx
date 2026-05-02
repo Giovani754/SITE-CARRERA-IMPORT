@@ -23,7 +23,7 @@ export function CarCard({ vehicle, index }: CarCardProps) {
   }, []);
 
   if (!vehicle) return null;
-  const mainImage = vehicle.images?.[0] || vehicle.image || "";
+  const mainImage = vehicle.images?.[0] || "";
 
   // Format price using utility
   const priceDisplay = formatPrice(vehicle.price);

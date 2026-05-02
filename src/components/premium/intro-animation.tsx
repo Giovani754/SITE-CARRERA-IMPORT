@@ -3,9 +3,12 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAnimationSequence } from "@/contexts/animation-sequence";
+import { getAnimationConfig, getFrameUrl } from "@/config/animations";
 
 export function IntroAnimation() {
-  const { introNeeded, signalIntroStarted, signalIntroComplete } = useAnimationSequence();
+  const { introNeeded, signalIntroStarted, signalIntroComplete, debugHome } = useAnimationSequence();
+
+  if (debugHome) return null;
 
   const [internalPhase, setInternalPhase] = useState<"loading" | "playing" | "fading" | "gone">("loading");
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -43,7 +46,8 @@ export function IntroAnimation() {
       if (internalPhase === "loading") finish();
     }, 10000);
 
-    const frameCount = 40; 
+    const config = getAnimationConfig("logo", isMobile);
+    const { frameCount, basePath, framePattern } = config;
     const imgs: HTMLImageElement[] = [];
     let loaded = 0;
     let failed = 0;
@@ -63,8 +67,8 @@ export function IntroAnimation() {
     };
 
     for (let i = 1; i <= frameCount; i++) {
-      const img = new Image();
-      img.src = `/animations/intro/ezgif-frame-${i.toString().padStart(3, "0")}.jpg`;
+      const img = new window.Image();
+      img.src = getFrameUrl(basePath, framePattern, i);
       img.onload = () => {
         imgs[i-1] = img;
         loaded++;

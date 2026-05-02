@@ -6,10 +6,11 @@ import {
   useState,
   useCallback,
   useEffect,
+  useRef,
   type ReactNode,
 } from "react";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 // ─────────────────────────────────────────────────────────
 // Animation Sequence Context
@@ -29,6 +30,7 @@ interface AnimationSequenceContextType {
   signalIntroStarted: () => void;
   signalIntroComplete: () => void;
   signalHeroComplete: () => void;
+  debugHome: boolean;
 }
 
 const AnimationSequenceContext = createContext<AnimationSequenceContextType>({
@@ -38,6 +40,7 @@ const AnimationSequenceContext = createContext<AnimationSequenceContextType>({
   signalIntroStarted: () => {},
   signalIntroComplete: () => {},
   signalHeroComplete: () => {},
+  debugHome: false,
 });
 
 export function useAnimationSequence() {
@@ -49,17 +52,32 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
   const [introNeeded, setIntroNeeded] = useState(false);
   const [introStarted, setIntroStarted] = useState(false);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const debugHome = searchParams.get("debugHome") === "1";
+  const transitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // On mount or path change, check if intro should play
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    // Clear any pending transition timer from a previous cycle
+    if (transitionTimerRef.current) {
+      clearTimeout(transitionTimerRef.current);
+      transitionTimerRef.current = null;
+    }
+
     // We only trigger animations on the root page
     if (pathname !== "/") {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIntroNeeded(false);
       setPhase("complete");
       setIntroStarted(false);
+      return;
+    }
+
+    if (debugHome) {
+      setIntroNeeded(false);
+      setPhase("hero");
+      setIntroStarted(true);
       return;
     }
 
@@ -81,6 +99,14 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
       setPhase("hero");
       setIntroStarted(true);
     }
+
+    return () => {
+      // Cleanup transition timer when pathname changes or unmount
+      if (transitionTimerRef.current) {
+        clearTimeout(transitionTimerRef.current);
+        transitionTimerRef.current = null;
+      }
+    };
   }, [pathname]);
 
   const signalIntroStarted = useCallback(() => {
@@ -95,7 +121,13 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
 
     // Transition phase: brief elegant pause
     setPhase("transition");
-    setTimeout(() => {
+
+    // Clear any previous transition timer before setting a new one
+    if (transitionTimerRef.current) {
+      clearTimeout(transitionTimerRef.current);
+    }
+    transitionTimerRef.current = setTimeout(() => {
+      transitionTimerRef.current = null;
       setPhase("hero");
     }, 600); // Elegant gap between intro and hero
   }, []);
@@ -113,7 +145,8 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
         introStarted,
         signalIntroStarted,
         signalIntroComplete, 
-        signalHeroComplete 
+        signalHeroComplete,
+        debugHome
       }}
     >
       {children}
