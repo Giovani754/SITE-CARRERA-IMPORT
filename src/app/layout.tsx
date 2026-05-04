@@ -6,7 +6,6 @@ import {
   OrganizationJsonLd,
   WebSiteJsonLd,
 } from "@/components/seo/json-ld";
-import { AnimationSequenceProvider } from "@/contexts/animation-sequence";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -80,13 +79,11 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans bg-[#030303] text-[#FAFAFA]">
-        <AnimationSequenceProvider>
-          <OrganizationJsonLd />
-          <WebSiteJsonLd />
-          <PublicLayoutElements>
-            {children}
-          </PublicLayoutElements>
-        </AnimationSequenceProvider>
+        <OrganizationJsonLd />
+        <WebSiteJsonLd />
+        <PublicLayoutElements>
+          {children}
+        </PublicLayoutElements>
       </body>
     </html>
   );

@@ -40,15 +40,26 @@ const mainServices = [
   },
 ];
 
+import { useState } from "react";
+import { HomeIntroSequence } from "@/components/premium/home-intro-sequence";
+
 interface HomeContentProps {
   featuredVehicles: Vehicle[];
 }
 
 export default function HomeContent({ featuredVehicles }: HomeContentProps) {
+  const [heroCanPlay, setHeroCanPlay] = useState(false);
+
   return (
     <>
+      <HomeIntroSequence 
+        onComplete={() => setHeroCanPlay(true)} 
+        onSkip={() => setHeroCanPlay(true)} 
+      />
+
       {/* ======================== 1. HERO PREMIUM ======================== */}
       <HeroSection
+        canPlay={heroCanPlay}
         headline="Carro premium não se compra no escuro."
         subheadline="A Carrera Imports filtra oportunidades, analisa procedência e conduz negociações para quem não aceita arriscar patrimônio em conversa de vendedor."
       />

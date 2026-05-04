@@ -3,22 +3,27 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { HeroAnimation } from "./hero-animation";
+import { HomeHeroSequence } from "./home-hero-sequence";
 
 interface HeroProps {
   headline: string;
   subheadline: string;
+  canPlay?: boolean;
 }
 
 export function HeroSection({
   headline = "Consultoria Premium para Veículos Extraordinários",
   subheadline = "Intermediação inteligente, procedência garantida e atendimento personalizado para quem valoriza tempo e confiança.",
+  canPlay = true,
 }: HeroProps) {
   const pathname = usePathname();
 
   return (
     <section className="relative min-h-screen w-full flex items-end overflow-hidden bg-[#030303]">
-      <HeroAnimation key={`hero-anim-${pathname}`} />
+      <HomeHeroSequence 
+        key={`hero-anim-${pathname}`} 
+        canPlay={canPlay} 
+      />
 
       {/* Content Layer — key forces re-animation on route change */}
       <motion.div
