@@ -1,7 +1,29 @@
+import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { Car, TrendingUp, CheckCircle, Clock } from 'lucide-react'
 
+// Main Page Component (Server Component)
 export default async function DashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="p-10 lg:p-16 flex items-center justify-center min-h-[50vh]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-[1px] bg-brand-gold/20 relative overflow-hidden">
+            <div className="absolute inset-0 bg-brand-gold animate-progress" />
+          </div>
+          <span className="text-[9px] uppercase tracking-[0.4em] text-white/20 font-bold">
+            Carregando Painel Executivo
+          </span>
+        </div>
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
+  )
+}
+
+// Actual Dashboard Content (Server Component)
+async function DashboardContent() {
   const supabase = await createClient()
 
   // Get some stats

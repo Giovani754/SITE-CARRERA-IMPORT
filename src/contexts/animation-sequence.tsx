@@ -7,6 +7,7 @@ import {
   useCallback,
   useEffect,
   useRef,
+  Suspense,
   type ReactNode,
 } from "react";
 
@@ -47,13 +48,28 @@ export function useAnimationSequence() {
   return useContext(AnimationSequenceContext);
 }
 
+/**
+ * Internal component to safely use useSearchParams within a Suspense boundary.
+ * This prevents the entire page from bailing out of static generation.
+ */
+function SearchParamsHandler({ onDebugChange }: { onDebugChange: (val: boolean) => void }) {
+  const searchParams = useSearchParams();
+  const debugHome = searchParams.get("debugHome") === "1";
+  
+  useEffect(() => {
+    onDebugChange(debugHome);
+  }, [debugHome, onDebugChange]);
+
+  return null;
+}
+
 export function AnimationSequenceProvider({ children }: { children: ReactNode }) {
   const [phase, setPhase] = useState<SequencePhase>("complete");
   const [introNeeded, setIntroNeeded] = useState(false);
   const [introStarted, setIntroStarted] = useState(false);
+  const [debugHome, setDebugHome] = useState(false);
+  
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const debugHome = searchParams.get("debugHome") === "1";
   const transitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // On mount or path change, check if intro should play
@@ -107,7 +123,7 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
         transitionTimerRef.current = null;
       }
     };
-  }, [pathname]);
+  }, [pathname, debugHome]);
 
   const signalIntroStarted = useCallback(() => {
     setIntroStarted(true);
@@ -149,6 +165,9 @@ export function AnimationSequenceProvider({ children }: { children: ReactNode })
         debugHome
       }}
     >
+      <Suspense fallback={null}>
+        <SearchParamsHandler onDebugChange={setDebugHome} />
+      </Suspense>
       {children}
     </AnimationSequenceContext.Provider>
   );
