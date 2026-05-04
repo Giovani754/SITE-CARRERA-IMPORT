@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import NextImage from "next/image";
 import { cn } from "@/lib/utils";
-import { getAnimationConfig, getFrameUrl } from "@/config/animations";
+import { getAnimationConfig, getFrameUrl, ANIMATION_CONFIG } from "@/config/animations";
 
 export function HomeHeroSequence({ canPlay = true }: { canPlay?: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -12,38 +12,46 @@ export function HomeHeroSequence({ canPlay = true }: { canPlay?: boolean }) {
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const currentFrameRef = useRef<number>(0);
   const playbackStartedRef = useRef(false);
+  
+  // Frozen config for the duration of this component's lifecycle
+  const modeRef = useRef<"mobile" | "desktop" | null>(null);
+  const configRef = useRef<any>(null);
 
   const [status, setStatus] = useState<"loading" | "playing" | "finished" | "failed">("loading");
-  const [isMobile, setIsMobile] = useState(false);
   const [canvasSized, setCanvasSized] = useState(false);
   const [loadedCount, setLoadedCount] = useState(0);
 
-  // 1. Detect Mobile
+  // 1. Initialize and Freeze Config
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
+    if (modeRef.current) return;
+
+    const isMobileNow = window.innerWidth < 768;
+    const mode = isMobileNow ? "mobile" : "desktop";
+    const config = getAnimationConfig("hero", isMobileNow);
+    
+    modeRef.current = mode;
+    configRef.current = config;
+    
+    console.log("[hero] mode locked:", mode, config.basePath);
   }, []);
 
-  // 2. Preload ALL Frames
+  // 2. Preload ALL Frames (using frozen config)
   useEffect(() => {
-    const config = getAnimationConfig("hero", isMobile);
-    const { frameCount, basePath, framePattern } = config;
+    if (!configRef.current) return;
+    
+    const { frameCount, basePath, framePattern } = configRef.current;
     const imgs: HTMLImageElement[] = [];
     let loaded = 0;
     let failedCount = 0;
-
-    console.log("hero starting load", { frameCount, basePath });
 
     const checkStatus = () => {
       setLoadedCount(loaded);
       
       if (loaded + failedCount >= frameCount) {
         const valid = imgs.filter((i) => i && i.complete && i.naturalWidth > 0);
-        console.log("hero loaded frames", { loaded: valid.length, total: frameCount });
+        console.log("[hero] loaded frames", { loaded: valid.length, total: frameCount });
         
-        if (valid.length >= frameCount * 0.9) { // High threshold for hero
+        if (valid.length >= frameCount * 0.9) {
           imagesRef.current = imgs;
           setStatus("playing");
         } else {
@@ -69,15 +77,14 @@ export function HomeHeroSequence({ canPlay = true }: { canPlay?: boolean }) {
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [isMobile]);
+  }, []); // Only run once to use frozen config
 
-  // 3. Draw Frame helper
+  // 3. Draw Frame helper (Stable Scale)
   const drawFrame = useCallback((idx: number) => {
     const canvas = canvasRef.current;
     const images = imagesRef.current;
     if (!canvas || images.length === 0) return;
 
-    // Use specific frame. If missing, don't jump to end.
     const img = images[idx];
     if (!img || !img.complete || img.naturalWidth === 0) return;
 
@@ -91,22 +98,25 @@ export function HomeHeroSequence({ canPlay = true }: { canPlay?: boolean }) {
 
     let dw: number, dh: number, dx: number, dy: number;
 
+    // Stable Cover Logic
+    // We use a fixed scale multiplier to ensure no "flicker" between frames
+    const isMobileMode = modeRef.current === "mobile";
+    const scaleFactor = isMobileMode ? 1.0 : 1.0; // Use pure cover for stability
+
     if (canvasAspect > imageAspect) {
-      dw = cw;
-      dh = cw / imageAspect;
-      dx = 0;
-      dy = (ch - dh) / 2;
+      dw = cw * scaleFactor;
+      dh = dw / imageAspect;
     } else {
-      const scale = isMobile ? 1.4 : 1.05;
-      dh = ch;
-      dw = ch * imageAspect * scale;
-      dx = (cw - dw) / 2 - (isMobile ? (dw - cw) * 0.15 : 0);
-      dy = (ch - dh) / 2;
+      dh = ch * scaleFactor;
+      dw = dh * imageAspect;
     }
+    
+    dx = (cw - dw) / 2;
+    dy = (ch - dh) / 2;
 
     ctx.drawImage(img, dx, dy, dw, dh);
     currentFrameRef.current = idx;
-  }, [isMobile]);
+  }, []);
 
   // 4. Handle Sizing
   useEffect(() => {
@@ -139,7 +149,7 @@ export function HomeHeroSequence({ canPlay = true }: { canPlay?: boolean }) {
     if (status !== "playing" || !canvasSized || !canPlay || playbackStartedRef.current) return;
     
     playbackStartedRef.current = true;
-    console.log("hero playing started");
+    console.log("[hero] playing started", modeRef.current);
     
     let frame = 0;
     let lastTime = 0;
@@ -147,7 +157,7 @@ export function HomeHeroSequence({ canPlay = true }: { canPlay?: boolean }) {
     const totalFrames = images.length;
     if (totalFrames === 0) return;
 
-    const fps = isMobile ? 18 : 22;
+    const fps = modeRef.current === "mobile" ? 20 : 24;
     const interval = 1000 / fps;
 
     const animate = (time: number) => {
@@ -157,7 +167,10 @@ export function HomeHeroSequence({ canPlay = true }: { canPlay?: boolean }) {
       if (elapsed >= interval) {
         if (frame < totalFrames) {
           drawFrame(frame);
-          console.log("hero frame", frame + 1);
+          if (process.env.NODE_ENV === "development") {
+            // Only log every 10 frames to avoid console flood in prod build
+            if (frame % 10 === 0) console.log("[hero] frame", frame + 1, images[frame].src);
+          }
           frame++;
           lastTime = time - (elapsed % interval);
         }
@@ -166,7 +179,7 @@ export function HomeHeroSequence({ canPlay = true }: { canPlay?: boolean }) {
       if (frame < totalFrames) {
         rafRef.current = requestAnimationFrame(animate);
       } else {
-        console.log("hero complete");
+        console.log("[hero] complete");
         setStatus("finished");
       }
     };
@@ -178,13 +191,12 @@ export function HomeHeroSequence({ canPlay = true }: { canPlay?: boolean }) {
         rafRef.current = null;
       }
     };
-  }, [status, canvasSized, isMobile, drawFrame, canPlay]);
+  }, [status, canvasSized, drawFrame, canPlay]);
 
-  const posterPath = getFrameUrl(
-    getAnimationConfig("hero", false).basePath,
-    getAnimationConfig("hero", false).framePattern,
-    1
-  );
+  // Use frozen config for poster path too
+  const posterPath = configRef.current 
+    ? getFrameUrl(configRef.current.basePath, configRef.current.framePattern, 1)
+    : getFrameUrl(ANIMATION_CONFIG.hero.desktop.basePath, ANIMATION_CONFIG.hero.desktop.framePattern, 1);
 
   return (
     <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden bg-[#030303]">

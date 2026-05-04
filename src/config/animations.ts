@@ -20,10 +20,9 @@ export const ANIMATION_CONFIG = {
       frameCount: 40,
     },
     mobile: {
-      // TODO: Add mobile-specific logo animation assets
       basePath: "/animations/logo/mobile",
       framePattern: "ezgif-frame-{index}.jpg",
-      frameCount: 0, // No mobile frames yet
+      frameCount: 40, 
     },
   },
   hero: {
@@ -33,10 +32,9 @@ export const ANIMATION_CONFIG = {
       frameCount: 40,
     },
     mobile: {
-      // TODO: Add mobile-specific hero animation assets
       basePath: "/animations/hero/mobile",
       framePattern: "ezgif-frame-{index}.jpg",
-      frameCount: 0, // No mobile frames yet
+      frameCount: 40,
     },
   },
 } as const;
