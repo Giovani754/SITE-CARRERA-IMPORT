@@ -1,13 +1,12 @@
 "use client";
 
 import React from "react";
-import { motion, useAnimation } from "framer-motion";
+import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import { testimonials } from "@/data/testimonials";
 import { cn } from "@/lib/utils";
 
 export function TestimonialsSection() {
-  const controls = useAnimation();
   const [isPaused, setIsPaused] = React.useState(false);
   const [isMobile, setIsMobile] = React.useState(false);
 
@@ -19,46 +18,40 @@ export function TestimonialsSection() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
   
-  // Clone testimonials - EVEN MORE AGGRESSIVE for mobile
+  // Clone testimonials - Optimized for smooth loop
   const displayTestimonials = React.useMemo(() => {
-    // Mobile only needs enough to cover the screen twice. 
-    // If we have 10 testimonials, 6-8 is plenty for mobile.
+    // We need enough to cover the screen and loop seamlessly
     const base = isMobile ? testimonials.slice(0, 6) : testimonials;
     return [...base, ...base];
   }, [isMobile]);
 
-  const DURATION = isMobile ? 30 : 120;
-  const marqueeDistance = "-50%";
-
-  React.useEffect(() => {
-    let isMounted = true;
-
-    const startAnimation = () => {
-      if (!isMounted) return;
-      controls.start({
-        x: marqueeDistance,
-        transition: {
-          duration: DURATION,
-          ease: "linear",
-          repeat: Infinity,
-        },
-      });
-    };
-
-    if (isPaused) {
-      controls.stop();
-    } else {
-      startAnimation();
-    }
-
-    return () => {
-      isMounted = false;
-    };
-  }, [isPaused, controls, DURATION, isMobile]);
+  const DURATION = isMobile ? "30s" : "120s";
 
   return (
-    <section className="py-24 md:py-52 bg-background relative overflow-hidden border-y border-white/[0.02]">
-      {/* Cinematic Ambient Glows - Optimized */}
+    <section className="py-24 md:py-52 bg-background relative overflow-hidden border-y border-white/[0.02] testimonials-no-select">
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes marquee-carrera {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee-carrera {
+          animation: marquee-carrera var(--marquee-duration) linear infinite;
+        }
+        .pause-marquee {
+          animation-play-state: paused !important;
+        }
+        .testimonials-no-select,
+        .testimonials-no-select * {
+          -webkit-user-select: none !important;
+          -webkit-touch-callout: none !important;
+          -moz-user-select: none !important;
+          -ms-user-select: none !important;
+          user-select: none !important;
+          -webkit-tap-highlight-color: transparent !important;
+        }
+      `}} />
+
+      {/* Cinematic Ambient Glows */}
       <div className="absolute top-0 left-1/4 w-[250px] md:w-[500px] h-[250px] md:h-[500px] bg-brand-gold/[0.01] rounded-full blur-[80px] md:blur-[150px] pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-[250px] md:w-[500px] h-[250px] md:h-[500px] bg-brand-gold/[0.01] rounded-full blur-[80px] md:blur-[150px] pointer-events-none" />
 
@@ -78,36 +71,33 @@ export function TestimonialsSection() {
         </motion.div>
       </div>
 
-      {/* Marquee Container */}
+      {/* Marquee Container - Optimized for Mobile Touch and Selection */}
       <div 
-        className="relative flex overflow-hidden py-10 touch-none md:touch-pan-x cursor-default"
-        onMouseEnter={() => {
-          if (!isMobile) setIsPaused(true);
-        }}
-        onMouseLeave={() => {
-          if (!isMobile) setIsPaused(false);
-        }}
-        // Robust Mobile Interaction
-        onTouchStart={() => {
-          setIsPaused(true);
-        }}
-        onTouchEnd={() => {
-          // Add a small delay for natural feeling
-          setTimeout(() => setIsPaused(false), 200);
-        }}
+        className="relative flex overflow-hidden py-10 touch-pan-y select-none cursor-default"
+        style={{ 
+          WebkitUserSelect: 'none',
+          WebkitTouchCallout: 'none',
+          msUserSelect: 'none',
+          userSelect: 'none'
+        } as React.CSSProperties}
+        onMouseEnter={() => !isMobile && setIsPaused(true)}
+        onMouseLeave={() => !isMobile && setIsPaused(false)}
+        onTouchStart={() => setIsPaused(true)}
+        onTouchEnd={() => setIsPaused(false)}
+        onTouchCancel={() => setIsPaused(false)}
       >
-        <motion.div 
-          className="flex whitespace-nowrap gap-5 md:gap-10 px-4 will-change-transform"
-          initial={{ x: "0%" }}
-          animate={controls}
-          // Extra safety for mobile: ensure it doesn't get stuck if touch cancels
-          onTouchCancel={() => setIsPaused(false)}
+        <div 
+          className={cn(
+            "flex whitespace-nowrap gap-5 md:gap-10 px-4 will-change-transform animate-marquee-carrera",
+            isPaused && "pause-marquee"
+          )}
+          style={{ "--marquee-duration": DURATION } as React.CSSProperties}
         >
           {displayTestimonials.map((testimonial, idx) => (
-            <motion.div
+            <div
               key={`${testimonial.id}-${idx}`}
-              whileTap={isMobile ? { scale: 0.98 } : {}}
-              className="w-[260px] sm:w-[320px] md:w-[450px] bg-white/[0.02] border border-white/[0.05] p-6 md:p-12 rounded-2xl flex flex-col justify-between group/card hover:bg-white/[0.04] hover:border-brand-gold/20 transition-all duration-700"
+              draggable={false}
+              className="w-[280px] sm:w-[320px] md:w-[450px] bg-white/[0.02] border border-white/[0.05] p-6 md:p-12 rounded-2xl flex flex-col justify-between group/card hover:bg-white/[0.04] hover:border-brand-gold/20 transition-all duration-700 shrink-0"
             >
               <div className="mb-6 md:mb-10">
                 <div className="flex gap-1.5 mb-5 md:mb-8">
@@ -124,7 +114,7 @@ export function TestimonialsSection() {
                     />
                   ))}
                 </div>
-                <blockquote className="text-white/60 text-[12px] md:text-base leading-[1.7] md:leading-[1.9] font-sans font-light group-hover/card:text-white/80 transition-colors duration-500 italic whitespace-normal line-clamp-4">
+                <blockquote className="text-white/60 text-[12px] md:text-base leading-[1.7] md:leading-[1.9] font-sans font-light group-hover/card:text-white/80 transition-colors duration-500 italic whitespace-normal line-clamp-4 select-none">
                   &ldquo;{testimonial.quote}&rdquo;
                 </blockquote>
               </div>
@@ -142,11 +132,11 @@ export function TestimonialsSection() {
                   </span>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
 
-        {/* Gradient Fades */}
+        {/* Gradient Fades - Cinematic Edges */}
         <div className="absolute inset-y-0 left-0 w-16 md:w-48 bg-gradient-to-r from-background via-background/80 to-transparent z-10 pointer-events-none" />
         <div className="absolute inset-y-0 right-0 w-16 md:w-48 bg-gradient-to-l from-background via-background/80 to-transparent z-10 pointer-events-none" />
       </div>
@@ -159,4 +149,3 @@ export function TestimonialsSection() {
     </section>
   );
 }
-
