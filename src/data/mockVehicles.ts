@@ -58,7 +58,7 @@ export const MOCK_VEHICLES: Vehicle[] = [
     status: "available",
     slug: "audi-rs6-avant-performance-2024",
     highlights: ["Configuração rara", "Baixa quilometragem", "Alto desempenho"],
-    images: ["https://images.unsplash.com/photo-1614200187074-4e488257008b?q=80&w=1200&auto=format&fit=crop"],
+    images: ["/images/hero_car.png"],
     description: "Perua de altíssimo desempenho selecionada para clientes que desejam versatilidade, potência e configuração diferenciada em um único ativo.",
     transmission: "Tiptronic 8 Speed",
     fuel: "Gasolina",
