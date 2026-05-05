@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion, Variants } from "framer-motion";
+import { motion, Variants, useReducedMotion } from "framer-motion";
 import {
   UserCheck,
   Zap,
@@ -50,38 +50,23 @@ const differentials = [
   },
 ];
 
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.3,
-    },
-  },
-};
-
 export function DifferentialsSection() {
   const title = "Por que clientes exigentes não negociam sozinhos";
+  const shouldReduceMotion = useReducedMotion();
   const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
     setIsMobile(window.innerWidth < 768);
   }, []);
 
-  const itemVariants: Variants = {
-    hidden: { 
-      opacity: 0, 
-      y: isMobile ? 15 : 25,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.16, 1, 0.3, 1],
-      },
-    },
+  const cardHoverVariants: Variants = {
+    hover: { 
+      y: -6,
+      transition: { 
+        duration: 0.4, 
+        ease: [0.33, 1, 0.68, 1] 
+      } 
+    }
   };
 
   return (
@@ -130,29 +115,70 @@ export function DifferentialsSection() {
           </motion.div>
         </header>
 
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: isMobile ? "0px" : "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-24"
-        >
-          {differentials.map((item) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-24">
+          {differentials.map((item, i) => (
             <motion.div
               key={item.title}
-              variants={itemVariants}
-              className="group flex flex-col items-center text-center md:items-start md:text-left gap-10"
+              initial={{
+                opacity: 0,
+                x: isMobile ? -64 : -120,
+                scale: 0.98,
+                filter: shouldReduceMotion || isMobile ? "none" : "blur(1.5px)"
+              }}
+              whileInView={{
+                opacity: 1,
+                x: 0,
+                scale: 1,
+                filter: "blur(0px)"
+              }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{
+                duration: isMobile ? 0.7 : 0.85,
+                delay: isMobile ? i * 0.11 : i * 0.16,
+                ease: [0.22, 1, 0.36, 1]
+              }}
+              whileHover="hover"
+              className="group flex flex-col items-center text-center md:items-start md:text-left gap-10 cursor-default"
             >
-              <div className="relative">
-                {!isMobile && <div className="absolute inset-0 bg-brand-gold/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />}
+              <motion.div 
+                variants={shouldReduceMotion ? {} : cardHoverVariants}
+                className="relative"
+              >
+                {/* Ambient glow on entry */}
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ 
+                    opacity: [0, 0.5, 0.2], 
+                    scale: [0.8, 1.1, 1],
+                  }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.5, delay: (isMobile ? i * 0.11 : i * 0.16) + 0.2 }}
+                  className="absolute inset-0 bg-brand-gold/10 blur-3xl pointer-events-none"
+                />
                 
-                <div className="shrink-0 w-20 h-20 border border-white/[0.06] rounded-sm flex items-center justify-center text-brand-gold/40 group-hover:text-brand-gold group-hover:border-brand-gold/30 group-hover:bg-brand-gold/[0.05] transition-all duration-1000 ease-out z-10 relative">
-                  <item.icon size={30} strokeWidth={0.75} />
+                <div className="shrink-0 w-20 h-20 border border-white/[0.08] rounded-sm flex items-center justify-center text-brand-gold/30 group-hover:text-brand-gold group-hover:border-brand-gold/50 group-hover:bg-brand-gold/[0.12] transition-all duration-700 ease-out z-10 relative overflow-hidden">
+                  <motion.div
+                    variants={{
+                      hover: { scale: 1.1, rotate: 5 }
+                    }}
+                    transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                  >
+                    <item.icon size={30} strokeWidth={0.75} />
+                  </motion.div>
+                  
+                  {/* Inner flash on entry */}
+                  <motion.div 
+                    initial={{ x: "-100%" }}
+                    whileInView={{ x: "200%" }}
+                    viewport={{ once: true }}
+                    transition={{ delay: (isMobile ? i * 0.11 : i * 0.16) + 0.5, duration: 1.2, ease: "easeInOut" }}
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-brand-gold/10 to-transparent skew-x-12"
+                  />
                 </div>
                 
                 <div className="absolute -top-1 -left-1 w-3 h-3 border-t border-l border-brand-gold/0 group-hover:border-brand-gold/40 transition-all duration-700" />
                 <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-brand-gold/0 group-hover:border-brand-gold/40 transition-all duration-700" />
-              </div>
+              </motion.div>
 
               <div className="relative">
                 <h3 className="text-xl md:text-2xl font-serif italic text-white/90 tracking-tight group-hover:text-brand-gold transition-all duration-700 mb-5">
@@ -170,7 +196,7 @@ export function DifferentialsSection() {
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
