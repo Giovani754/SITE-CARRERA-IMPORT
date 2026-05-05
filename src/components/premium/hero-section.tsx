@@ -25,20 +25,24 @@ export function HeroSection({
         canPlay={canPlay} 
       />
 
+      {/* Legibility Overlay — Elegant gradient to ground the text */}
+      <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-[#030303] via-[#030303]/40 to-transparent md:from-[#030303]/80 md:via-transparent" />
+      <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#030303]/60 via-transparent to-transparent hidden md:block" />
+
       {/* Content Layer — key forces re-animation on route change */}
       <motion.div
         key={`hero-content-${pathname}`}
-        className="relative z-20 w-full max-w-7xl mx-auto px-6 lg:px-12 pb-32 md:pb-40"
+        className="relative z-30 w-full max-w-7xl mx-auto px-6 lg:px-12 pb-32 md:pb-40"
       >
         <div className="max-w-2xl">
           {/* Eyebrow */}
           <motion.span
             initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 0.5, x: 0 }}
+            animate={{ opacity: 0.6, x: 0 }}
             transition={{ duration: 1.4, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="flex items-center gap-6 text-brand-gold text-[9px] uppercase tracking-[0.7em] font-medium mb-8 font-sans"
+            className="flex items-center gap-6 text-brand-gold text-[10px] uppercase tracking-[0.7em] font-bold mb-8 font-sans"
           >
-            <span className="h-[0.5px] w-12 bg-brand-gold/40" />
+            <span className="h-[0.5px] w-12 bg-brand-gold/60" />
             Boutique Automotiva de Alto Padrão
           </motion.span>
 
@@ -47,7 +51,7 @@ export function HeroSection({
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.5, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[1.75rem] sm:text-3xl md:text-5xl lg:text-[3.8rem] font-serif italic text-white/95 leading-[1.1] md:leading-[1.06] mb-8 tracking-tight max-w-sm md:max-w-none"
+            className="text-[1.85rem] sm:text-3xl md:text-5xl lg:text-[4rem] font-serif italic text-white leading-[1.15] md:leading-[1.06] mb-8 tracking-tight max-w-sm md:max-w-none text-balance"
           >
             {headline}
           </motion.h1>
@@ -55,9 +59,9 @@ export function HeroSection({
           {/* Subheadline */}
           <motion.p
             initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 0.7, y: 0 }}
             transition={{ duration: 1.5, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="text-white/35 text-[15px] md:text-base max-w-lg leading-[1.9] font-sans font-light"
+            className="text-white text-base md:text-lg max-w-lg leading-relaxed font-sans font-light"
           >
             {subheadline}
           </motion.p>
@@ -70,7 +74,7 @@ export function HeroSection({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 3, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-        className="absolute bottom-10 right-8 md:right-auto md:left-1/2 md:-translate-x-1/2 z-20 flex flex-col items-end md:items-center gap-3 md:gap-4"
+        className="absolute bottom-10 right-8 md:right-auto md:left-1/2 md:-translate-x-1/2 z-30 flex flex-col items-end md:items-center gap-3 md:gap-4"
       >
         {/* Mouse icon - hidden on small mobile to stay clean */}
         <motion.div
