@@ -70,13 +70,31 @@ export function DifferentialsSection() {
   };
 
   return (
-    <section className="py-32 md:py-52 px-6 lg:px-12 relative overflow-hidden bg-background">
+    <section className="py-32 md:py-52 px-6 lg:px-12 relative overflow-hidden bg-[#030303]">
+      {/* Background Desktop */}
+      <div 
+        className="absolute inset-0 z-0 hidden md:block opacity-[0.22] pointer-events-none" 
+        style={{ backgroundImage: "url('/images/backgrounds/bg-diferenciais-desktop.png')", backgroundSize: 'cover', backgroundPosition: 'center' }} 
+        aria-hidden="true"
+      />
+      {/* Background Mobile */}
+      <div 
+        className="absolute inset-0 z-0 block md:hidden opacity-[0.18] pointer-events-none" 
+        style={{ backgroundImage: "url('/images/backgrounds/bg-diferenciais-mobile.png')", backgroundSize: 'cover', backgroundPosition: 'center' }} 
+        aria-hidden="true"
+      />
+      {/* Overlay escuro e gradiente para leitura */}
+      <div 
+        className="absolute inset-0 z-[1] bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.03),transparent_60%),linear-gradient(to_bottom,rgba(3,3,3,0.7),rgba(3,3,3,0.95))]" 
+        aria-hidden="true"
+      />
+
       {/* Ambient refined glow */}
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-brand-gold/[0.01] to-transparent pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-brand-gold/[0.005] blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-brand-gold/[0.02] rounded-full blur-[120px] md:blur-[180px] pointer-events-none translate-x-1/4 translate-y-1/4" />
 
-      <div className="max-w-6xl mx-auto relative z-10">
+      <div className="max-w-6xl mx-auto relative z-[2]">
         <header className="mb-16 md:mb-28 text-center">
           <motion.div
             initial={{ opacity: 0 }}

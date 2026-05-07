@@ -47,68 +47,169 @@ interface HomeContentProps {
   featuredVehicles: Vehicle[];
 }
 
+const premiumBackground = [
+  "radial-gradient(ellipse 65% 28% at 92% 6%, rgba(212,175,55,0.022) 0%, transparent 55%)",
+  "radial-gradient(ellipse 50% 38% at 8% 36%, rgba(255,255,255,0.010) 0%, transparent 52%)",
+  "radial-gradient(ellipse 38% 20% at 52% 94%, rgba(212,175,55,0.012) 0%, transparent 48%)",
+  "radial-gradient(ellipse 30% 15% at 78% 58%, rgba(212,175,55,0.008) 0%, transparent 45%)",
+  "linear-gradient(180deg, #050505 0%, #030303 35%, #040404 68%, #050505 100%)",
+].join(", ");
+
 export default function HomeContent({ featuredVehicles }: HomeContentProps) {
   const [heroCanPlay, setHeroCanPlay] = useState(false);
 
   return (
     <>
-      <HomeIntroSequence 
-        onComplete={() => setHeroCanPlay(true)} 
-        onSkip={() => setHeroCanPlay(true)} 
+      <HomeIntroSequence
+        onComplete={() => setHeroCanPlay(true)}
+        onSkip={() => setHeroCanPlay(true)}
       />
 
       {/* ======================== 1. HERO PREMIUM ======================== */}
       <HeroSection
         canPlay={heroCanPlay}
         headline="Carro premium não se compra no escuro."
-        subheadline="A Carrera Imports filtra oportunidades, analisa procedência e conduz negociações para quem não aceita arriscar patrimônio em conversa de vendedor."
+        subheadline="A Carrera Imports filtra oportunidades, analisa procedência e conduz \nnegociações para quem não aceita arriscar patrimônio em conversa de vendedor."
       />
 
-      {/* ============ 2. SEÇÃO INSTITUCIONAL / ESSÊNCIA DA MARCA ============ */}
-      <section className="py-28 md:py-48 px-6 lg:px-16 relative overflow-hidden bg-background">
-        <div className="absolute top-0 right-0 w-1/4 h-full bg-brand-gold/[0.015] -z-10 translate-x-1/4 skew-x-3" />
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
-            {/* Image Column */}
-            <div className="lg:col-span-5 order-2 lg:order-1">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                className="relative editorial-shadow"
-              >
-                <div className="aspect-[4/5] relative overflow-hidden rounded-sm">
-                  <Image
-                    src="/images/about_detail.png"
-                    alt="Consultoria automotiva premium Carrera Imports — curadoria de veículos de alto padrão em São Paulo"
-                    fill
-                    sizes="(max-width: 768px) 100vw, 600px"
-                    priority
-                    className="object-cover brightness-[0.8]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
-                </div>
-                {/* Decorative Frame */}
-                <div className="absolute -inset-4 border border-brand-gold/10 -z-10 opacity-40" />
-              </motion.div>
-            </div>
+      {/* ======================== WRAPPER PREMIUM BACKGROUND ======================== */}
+      <div className="relative" style={{ background: premiumBackground }}>
 
-            {/* Text Column */}
-            <div className="lg:col-span-6 lg:col-start-7 order-1 lg:order-2">
-              <div className="flex flex-col">
+        {/* ============ 2. SEÇÃO INSTITUCIONAL ============ */}
+        <section className="py-28 md:py-48 px-6 lg:px-16 relative overflow-hidden bg-transparent">
+          <div className="absolute inset-0 z-0 hidden md:block" style={{ backgroundImage: "url('/images/backgrounds/bg-institucional-desktop.png')", backgroundSize: 'cover', backgroundPosition: 'center' }} />
+          <div className="absolute inset-0 z-0 block md:hidden" style={{ backgroundImage: "url('/images/backgrounds/bg-institucional-mobile.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }} />
+          <div className="absolute inset-0 z-[1] bg-black/60" />
+          <div className="absolute top-0 right-0 w-1/4 h-full bg-brand-gold/[0.015] -z-10 translate-x-1/4 skew-x-3" />
+          <div className="max-w-7xl mx-auto relative z-[2]">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
+              <div className="lg:col-span-5 order-2 lg:order-1">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                  className="relative editorial-shadow"
+                >
+                  <div className="aspect-[4/5] relative overflow-hidden rounded-sm">
+                    <Image
+                      src="/images/about_detail.png"
+                      alt="Consultoria automotiva premium Carrera Imports – curadoria de veículos de alto padrão em São Paulo"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 600px"
+                      priority
+                      className="object-cover brightness-[0.8]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
+                  </div>
+                  <div className="absolute -inset-4 border border-brand-gold/10 -z-10 opacity-40" />
+                </motion.div>
+              </div>
+
+              <div className="lg:col-span-6 lg:col-start-7 order-1 lg:order-2">
+                <div className="flex flex-col">
+                  <motion.span
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 0.5, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                    className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-10 block"
+                  >
+                    A Carrera Imports
+                  </motion.span>
+
+                  <h2 className="text-3xl md:text-[2.5rem] lg:text-[2.8rem] font-serif italic mb-12 leading-[1.1] tracking-tight max-w-xl text-white/95 flex flex-wrap gap-x-[0.3em]">
+                    {"Carro de alto padrão não perdoa uma escolha mal conduzida.".split(" ").map((word, i) => (
+                      <motion.span
+                        key={i}
+                        initial={{ opacity: 0, y: 15 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{
+                          duration: 1.2,
+                          delay: 0.3 + i * 0.08,
+                          ease: [0.16, 1, 0.3, 1],
+                        }}
+                        className={word === "escolha" || word === "mal" || word === "conduzida." ? "text-brand-gold/80" : ""}
+                      >
+                        {word}
+                      </motion.span>
+                    ))}
+                  </h2>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 1.2, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                    className="space-y-10 max-w-lg"
+                  >
+                    <div className="space-y-6">
+                      <p className="text-white/60 leading-[1.8] text-[15px] lg:text-base font-sans font-light">
+                        Um erro na compra pode custar mais do que dinheiro. Pode custar tempo, confiança, tranquilidade – e a sensação amarga de ter entrado em um mercado onde nem tudo é o que parece.
+                      </p>
+                      <p className="text-white/85 leading-[1.8] text-base lg:text-lg font-sans font-medium">
+                        A Carrera Imports existe para eliminar esse risco.
+                      </p>
+                      <p className="text-white/50 leading-[1.8] text-[14px] lg:text-[15px] font-sans font-light">
+                        Selecionamos oportunidades reais, analisamos procedência, negociamos com critério e protegemos o seu patrimônio antes que ele se transforme em problema.
+                      </p>
+                    </div>
+
+                    <div className="pt-10 border-t border-white/10">
+                      <p className="text-white/35 leading-[1.8] text-base lg:text-xl font-serif italic relative">
+                        <span className="absolute -left-6 -top-2 text-4xl text-brand-gold/20 font-serif">"</span>
+                        Quem construiu patrimônio não compra no escuro. Compra com alguém capaz de enxergar o que o mercado tenta esconder.
+                      </p>
+                    </div>
+                  </motion.div>
+
+                  <div className="grid grid-cols-2 gap-12 pt-14 mt-16 border-t border-white/5">
+                    <div className="flex flex-col">
+                      <span className="text-[10px] uppercase tracking-[0.5em] text-white/25 mb-4 font-bold">
+                        Ativos Intermediados
+                      </span>
+                      <span className="text-4xl lg:text-5xl font-serif italic text-brand-gold/70">
+                        +400
+                      </span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] uppercase tracking-[0.5em] text-white/25 mb-4 font-bold">
+                        Índice de Confiança
+                      </span>
+                      <span className="text-4xl lg:text-5xl font-serif italic text-brand-gold/70">
+                        100%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ================ 3. SEÇÃO DE DIFERENCIAIS ================ */}
+        <DifferentialsSection />
+
+        {/* ================= 4. SEÇÃO DE SERVIÇOS / EXPERTISE ================= */}
+        <section className="py-28 md:py-48 px-6 lg:px-16 bg-[#050505] relative overflow-hidden">
+          <div className="absolute inset-0 z-0 hidden md:block" style={{ backgroundImage: "url('/images/backgrounds/bg-expertise-desktop.png')", backgroundSize: 'cover', backgroundPosition: 'center' }} />
+          <div className="absolute inset-0 z-0 block md:hidden" style={{ backgroundImage: "url('/images/backgrounds/bg-expertise-mobile.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }} />
+          <div className="absolute inset-0 z-[1] bg-black/65" />
+          <div className="max-w-7xl mx-auto relative z-[2]">
+            <header className="mb-24 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/5 pb-16">
+              <div className="max-w-2xl text-center md:text-left">
                 <motion.span
                   initial={{ opacity: 0, x: -10 }}
                   whileInView={{ opacity: 0.5, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                  className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-10 block"
+                  className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-8 block"
                 >
-                  A Carrera Imports
+                  Expertise Estratégica
                 </motion.span>
-
-                <h2 className="text-3xl md:text-[2.5rem] lg:text-[2.8rem] font-serif italic mb-12 leading-[1.1] tracking-tight max-w-xl text-white/95 flex flex-wrap gap-x-[0.3em]">
-                  {"Carro de alto padrão não perdoa uma escolha mal conduzida.".split(" ").map((word, i) => (
+                <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif italic tracking-tight text-white/95 leading-[1.05] flex flex-wrap justify-center md:justify-start gap-x-[0.3em]">
+                  {"Onde a negociação deixa de ser aposta".split(" ").map((word, i) => (
                     <motion.span
                       key={i}
                       initial={{ opacity: 0, y: 15 }}
@@ -119,246 +220,163 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
                         delay: 0.3 + i * 0.08,
                         ease: [0.16, 1, 0.3, 1],
                       }}
-                      className={word === "escolha" || word === "mal" || word === "conduzida." ? "text-brand-gold/80" : ""}
                     >
                       {word}
                     </motion.span>
                   ))}
                 </h2>
-                
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 1.2, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                  className="space-y-10 max-w-lg"
-                >
-                  <div className="space-y-6">
-                    <p className="text-white/60 leading-[1.8] text-[15px] lg:text-base font-sans font-light">
-                      Um erro na compra pode custar mais do que dinheiro. Pode custar tempo, confiança, tranquilidade — e a sensação amarga de ter entrado em um mercado onde nem tudo é o que parece.
-                    </p>
-                    <p className="text-white/85 leading-[1.8] text-base lg:text-lg font-sans font-medium">
-                      A Carrera Imports existe para eliminar esse risco.
-                    </p>
-                    <p className="text-white/50 leading-[1.8] text-[14px] lg:text-[15px] font-sans font-light">
-                      Selecionamos oportunidades reais, analisamos procedência, negociamos com critério e protegemos o seu patrimônio antes que ele se transforme em problema.
-                    </p>
-                  </div>
-                  
-                  <div className="pt-10 border-t border-white/10">
-                    <p className="text-white/35 leading-[1.8] text-base lg:text-xl font-serif italic relative">
-                      <span className="absolute -left-6 -top-2 text-4xl text-brand-gold/20 font-serif">“</span>
-                      Quem construiu patrimônio não compra no escuro. Compra com alguém capaz de enxergar o que o mercado tenta esconder.
-                    </p>
-                  </div>
-                </motion.div>
-
-                <div className="grid grid-cols-2 gap-12 pt-14 mt-16 border-t border-white/5">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] uppercase tracking-[0.5em] text-white/25 mb-4 font-bold">
-                      Ativos Intermediados
-                    </span>
-                    <span className="text-4xl lg:text-5xl font-serif italic text-brand-gold/70">
-                      +400
-                    </span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] uppercase tracking-[0.5em] text-white/25 mb-4 font-bold">
-                      Índice de Confiança
-                    </span>
-                    <span className="text-4xl lg:text-5xl font-serif italic text-brand-gold/70">
-                      100%
-                    </span>
-                  </div>
-                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ================ 3. SEÇÃO DE DIFERENCIAIS ================ */}
-      <DifferentialsSection />
-
-      {/* ================= 4. SEÇÃO DE SERVIÇOS / EXPERTISE ================= */}
-      <section className="py-28 md:py-48 px-6 lg:px-16 bg-[#050505] relative overflow-hidden">
-        <div className="max-w-7xl mx-auto relative z-10">
-          <header className="mb-24 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/5 pb-16">
-            <div className="max-w-2xl text-center md:text-left">
-              <motion.span 
-                initial={{ opacity: 0, x: -10 }}
-                whileInView={{ opacity: 0.5, x: 0 }}
+              <motion.p
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 0.3 }}
                 viewport={{ once: true }}
-                transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-8 block"
+                transition={{ delay: 0.5 }}
+                className="text-white text-xs md:text-sm font-sans font-light max-w-xs md:text-right italic"
               >
-                Expertise Estratégica
-              </motion.span>
-              <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif italic tracking-tight text-white/95 leading-[1.05] flex flex-wrap justify-center md:justify-start gap-x-[0.3em]">
-                {"Onde a negociação deixa de ser aposta".split(" ").map((word, i) => (
-                  <motion.span
-                    key={i}
-                    initial={{ opacity: 0, y: 15 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{
-                      duration: 1.2,
-                      delay: 0.3 + i * 0.08,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                  >
-                    {word}
-                  </motion.span>
-                ))}
-              </h2>
-            </div>
-            <motion.p 
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 0.3 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.5 }}
-              className="text-white text-xs md:text-sm font-sans font-light max-w-xs md:text-right italic"
-            >
-              Inteligência de mercado e curadoria de elite para negociações de alto desempenho.
-            </motion.p>
-          </header>
+                Inteligência de mercado e curadoria de elite para negociações de alto desempenho.
+              </motion.p>
+            </header>
 
-          <div className="flex flex-col">
-            {mainServices.map((service, idx) => (
-              <ServiceCard
-                key={service.title}
-                index={idx}
-                title={service.title}
-                description={service.description}
-                iconName={service.iconName}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============= 5. ESTOQUE / VEÍCULOS EM DESTAQUE ============= */}
-      <section className="py-12 md:py-24 px-6 lg:px-12 bg-background relative overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-12 mb-20 md:mb-28">
-            <div className="max-w-2xl">
-              <motion.span 
-                initial={{ opacity: 0, x: -10 }}
-                whileInView={{ opacity: 0.5, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-8 block"
-              >
-                Curadoria Carrera
-              </motion.span>
-              
-              <h2 className="text-4xl md:text-5xl lg:text-7xl font-serif italic mb-8 leading-[1] tracking-tight text-white/95 flex flex-wrap gap-x-[0.3em]">
-                {"Veículos Selecionados".split(" ").map((word, i) => (
-                  <motion.span
-                    key={i}
-                    initial={{ opacity: 0, y: 15 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{
-                      duration: 1.2,
-                      delay: 0.3 + i * 0.08,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                  >
-                    {word}
-                  </motion.span>
-                ))}
-              </h2>
-              
-              <p className="text-white text-base lg:text-xl font-light max-w-xl leading-relaxed opacity-60">
-                Cada veículo em nosso acervo é rigorosamente avaliado quanto a
-                procedência, histórico e estado de conservação.
-              </p>
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.6 }}
-            >
-              <Link
-                href="/estoque"
-                className="group flex items-center gap-8 text-[11px] uppercase tracking-[0.5em] font-bold text-white/40 hover:text-brand-gold transition-all"
-              >
-                Catálogo Completo
-                <div className="flex items-center">
-                  <div className="h-[0.5px] w-12 bg-white/10 group-hover:bg-brand-gold group-hover:w-24 transition-all duration-700" />
-                  <ArrowRight
-                    size={14}
-                    className="opacity-0 group-hover:opacity-100 -translate-x-6 group-hover:translate-x-0 transition-all ml-4"
-                  />
-                </div>
-              </Link>
-            </motion.div>
-          </div>
-
-          <FeaturedVehiclesShowcase vehicles={featuredVehicles.slice(0, 5)} />
-        </div>
-      </section>
-
-      {/* ============= 6. METODOLOGIA / COMO FUNCIONA ============= */}
-      <section className="py-24 md:py-48 px-6 lg:px-12 bg-[#050505] relative overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <header className="mb-24 text-center">
-            <motion.span 
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 0.5, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-8 block"
-            >
-              METODOLOGIA
-            </motion.span>
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif italic tracking-tight text-white/90 leading-[1.05] flex flex-wrap justify-center gap-x-[0.3em]">
-              {"Da análise ao fechamento, nada fica no achismo".split(" ").map((word, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, y: 15 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    duration: 1.2,
-                    delay: 0.3 + i * 0.08,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                >
-                  {word}
-                </motion.span>
+            <div className="flex flex-col">
+              {mainServices.map((service, idx) => (
+                <ServiceCard
+                  key={service.title}
+                  index={idx}
+                  title={service.title}
+                  description={service.description}
+                  iconName={service.iconName}
+                />
               ))}
-            </h2>
-          </header>
-          <ProcessSteps />
-        </div>
-      </section>
+            </div>
+          </div>
+        </section>
 
-      {/* ================ 7. PROVA SOCIAL ================ */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 1.5 }}
-      >
-        <TestimonialsSection />
-      </motion.div>
+        {/* ============= 5. ESTOQUE / VEÍCULOS EM DESTAQUE ============= */}
+        <section className="py-12 md:py-24 px-6 lg:px-12 bg-transparent relative overflow-hidden">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-12 mb-20 md:mb-28">
+              <div className="max-w-2xl">
+                <motion.span
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 0.5, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                  className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-8 block"
+                >
+                  Curadoria Carrera
+                </motion.span>
 
-      {/* ================ 8. CTA FINAL ================ */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <CTASection
-          headline="Não coloque seu patrimônio na mão de qualquer vendedor."
-          subheadline="Fale com a Carrera Imports e entre em uma negociação filtrada, segura e conduzida por quem sabe separar oportunidade real de promessa bonita."
-        />
-      </motion.div>
+                <h2 className="text-4xl md:text-5xl lg:text-7xl font-serif italic mb-8 leading-[1] tracking-tight text-white/95 flex flex-wrap gap-x-[0.3em]">
+                  {"Veículos Selecionados".split(" ").map((word, i) => (
+                    <motion.span
+                      key={i}
+                      initial={{ opacity: 0, y: 15 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{
+                        duration: 1.2,
+                        delay: 0.3 + i * 0.08,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                    >
+                      {word}
+                    </motion.span>
+                  ))}
+                </h2>
+
+                <p className="text-white text-base lg:text-xl font-light max-w-xl leading-relaxed opacity-60">
+                  Cada veículo em nosso acervo é rigorosamente avaliado quanto a procedência, histórico e estado de conservação.
+                </p>
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1, delay: 0.6 }}
+              >
+                <Link
+                  href="/estoque"
+                  className="group flex items-center gap-8 text-[11px] uppercase tracking-[0.5em] font-bold text-white/40 hover:text-brand-gold transition-all"
+                >
+                  Catálogo Completo
+                  <div className="flex items-center">
+                    <div className="h-[0.5px] w-12 bg-white/10 group-hover:bg-brand-gold group-hover:w-24 transition-all duration-700" />
+                    <ArrowRight
+                      size={14}
+                      className="opacity-0 group-hover:opacity-100 -translate-x-6 group-hover:translate-x-0 transition-all ml-4"
+                    />
+                  </div>
+                </Link>
+              </motion.div>
+            </div>
+
+            <FeaturedVehiclesShowcase vehicles={featuredVehicles.slice(0, 5)} />
+          </div>
+        </section>
+
+        {/* ============= 6. METODOLOGIA / COMO FUNCIONA ============= */}
+        <section className="py-24 md:py-48 px-6 lg:px-12 bg-[#050505] relative overflow-hidden">
+          <div className="absolute inset-0 z-0 hidden md:block" style={{ backgroundImage: "url('/images/backgrounds/bg-metodologia-desktop.png')", backgroundSize: 'cover', backgroundPosition: 'center' }} />
+          <div className="absolute inset-0 z-0 block md:hidden" style={{ backgroundImage: "url('/images/backgrounds/bg-metodologia-mobile.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }} />
+          <div className="absolute inset-0 z-[1] bg-black/65" />
+          <div className="max-w-7xl mx-auto relative z-[2]">
+            <header className="mb-24 text-center">
+              <motion.span
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 0.5, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                className="text-brand-gold text-[10px] uppercase tracking-[0.8em] font-bold mb-8 block"
+              >
+                METODOLOGIA
+              </motion.span>
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif italic tracking-tight text-white/90 leading-[1.05] flex flex-wrap justify-center gap-x-[0.3em]">
+                {"Da análise ao fechamento, nada fica no achismo".split(" ").map((word, i) => (
+                  <motion.span
+                    key={i}
+                    initial={{ opacity: 0, y: 15 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      duration: 1.2,
+                      delay: 0.3 + i * 0.08,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </h2>
+            </header>
+            <ProcessSteps />
+          </div>
+        </section>
+
+        {/* ================ 7. PROVA SOCIAL ================ */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1.5 }}
+        >
+          <TestimonialsSection />
+        </motion.div>
+
+        {/* ================ 8. CTA FINAL ================ */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <CTASection
+            headline="Não coloque seu patrimônio na mão de qualquer vendedor."
+            subheadline="Fale com a Carrera Imports e entre em uma negociação filtrada, segura e conduzida por quem sabe separar oportunidade real de promessa bonita."
+          />
+        </motion.div>
+
+      </div>
     </>
   );
 }
