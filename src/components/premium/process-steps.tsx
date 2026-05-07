@@ -36,7 +36,7 @@ export function ProcessSteps() {
       {/* Central Line (Desktop) */}
       <div className="absolute left-1/2 top-0 bottom-0 w-[0.5px] bg-white/5 hidden lg:block" />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:gap-x-0 gap-y-px bg-white/5 border border-white/5 overflow-hidden rounded-sm">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:gap-x-0 gap-y-px bg-white/[0.03] border border-white/[0.08] overflow-hidden rounded-sm shadow-2xl">
         {steps.map((step, index) => (
           <motion.div
             key={step.number}
@@ -48,7 +48,7 @@ export function ProcessSteps() {
               ease: [0.16, 1, 0.3, 1],
             }}
             viewport={{ once: true, margin: "-100px" }}
-            className={`group relative bg-[#080808] p-12 lg:p-24 overflow-hidden transition-all duration-1000 hover:bg-[#0A0A0A] ${
+            className={`group relative bg-black/25 backdrop-blur-md p-12 lg:p-24 overflow-hidden transition-all duration-1000 hover:bg-black/35 ${
               index % 2 === 1 ? "lg:border-l-[0.5px] lg:border-white/5" : ""
             }`}
           >
