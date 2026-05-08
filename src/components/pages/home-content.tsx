@@ -69,7 +69,7 @@ export default function HomeContent({ featuredVehicles }: HomeContentProps) {
       <HeroSection
         canPlay={heroCanPlay}
         headline="Carro premium não se compra no escuro."
-        subheadline="A Carrera Imports filtra oportunidades, analisa procedência e conduz \nnegociações para quem não aceita arriscar patrimônio em conversa de vendedor."
+        subheadline="A Carrera Imports filtra oportunidades, analisa procedência e conduz negociações para quem não aceita arriscar patrimônio em conversa de vendedor."
       />
 
       {/* ======================== WRAPPER PREMIUM BACKGROUND ======================== */}
