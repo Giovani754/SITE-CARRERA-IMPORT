@@ -6,6 +6,7 @@ import { PageHero } from "@/components/premium/page-hero";
 import { CarCard } from "@/components/premium/car-card";
 import { Search, ChevronDown, X } from "lucide-react";
 import { cn, parsePrice } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 import { Vehicle } from "@/data/vehicles";
 
@@ -114,7 +115,12 @@ export default function InventoryContent({ vehicles }: InventoryContentProps) {
           <Breadcrumb items={[{ name: "Estoque", href: "/estoque" }]} />
 
           {/* Premium Boutique Filter Interface */}
-          <div className="mt-16 mb-20 relative z-30">
+          <motion.div
+            initial={{ opacity: 0, y: -15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-16 mb-20 relative z-30"
+          >
             <div className="flex flex-col gap-6">
               
               {/* Main Control Bar */}
@@ -234,7 +240,7 @@ export default function InventoryContent({ vehicles }: InventoryContentProps) {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
 
 
@@ -246,7 +252,12 @@ export default function InventoryContent({ vehicles }: InventoryContentProps) {
               ))}
             </div>
           ) : (
-            <div className="text-center py-40 bg-[#080808] border border-white/5 rounded-sm">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="text-center py-40 bg-[#080808] border border-white/5 rounded-sm"
+            >
               <span className="text-[10px] uppercase tracking-[0.5em] text-white/20 font-bold mb-8 block">
                 Nenhum ativo encontrado
               </span>
@@ -256,7 +267,7 @@ export default function InventoryContent({ vehicles }: InventoryContentProps) {
               >
                 Resetar Filtros
               </button>
-            </div>
+            </motion.div>
           )}
         </div>
       </section>
@@ -282,9 +293,17 @@ export default function InventoryContent({ vehicles }: InventoryContentProps) {
                 { label: "MERCADO", value: "Preço com leitura real" },
                 { label: "NEGOCIAÇÃO", value: "Tratativa conduzida com critério" },
                 { label: "POSICIONAMENTO", value: "Seleção por perfil e oportunidade" },
-              ].map((item) => (
-                <div
+              ].map((item, index) => (
+                <motion.div
                   key={item.label}
+                  initial={{ opacity: 0, y: 20, scale: 0.97 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{
+                    duration: 0.6,
+                    delay: index * 0.1,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
                   className="p-10 border border-white/5 bg-[#080808] rounded-sm group hover:border-brand-gold/20 transition-all duration-700 hover:shadow-2xl hover:shadow-brand-gold/[0.01]"
                 >
                   <span className="text-brand-gold text-[9px] uppercase tracking-[0.5em] font-bold block mb-4 opacity-40 group-hover:opacity-100 transition-opacity">
@@ -293,7 +312,7 @@ export default function InventoryContent({ vehicles }: InventoryContentProps) {
                   <span className="text-white/80 text-sm md:text-base font-serif italic group-hover:text-white transition-colors leading-tight block">
                     {item.value}
                   </span>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
