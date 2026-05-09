@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 
 export async function getUsers() {
@@ -22,7 +23,8 @@ export async function getUsers() {
 }
 
 export async function createTeamMember(formData: FormData) {
-  const supabase = await createClient();
+  // Use admin client to perform Auth Admin operations
+  const supabaseAdmin = createAdminClient();
   
   const email = formData.get("email") as string;
   const full_name = formData.get("full_name") as string;
@@ -30,7 +32,7 @@ export async function createTeamMember(formData: FormData) {
   const function_label = formData.get("function") as string;
 
   // 1. Invite user via Supabase Auth
-  const { data, error: inviteError } = await supabase.auth.admin.inviteUserByEmail(email, {
+  const { data, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
     data: {
       full_name,
       role,
@@ -41,8 +43,13 @@ export async function createTeamMember(formData: FormData) {
     return { error: `Erro ao convidar: ${inviteError.message}` };
   }
 
+  // Safety check to prevent TypeError
+  if (!data?.user?.id) {
+    return { error: "Erro crítico: Usuário não foi retornado pelo Supabase após convite." };
+  }
+
   // 2. Create profile entry (optional if handled by triggers)
-  const { error: profileError } = await supabase
+  const { error: profileError } = await supabaseAdmin
     .from("profiles")
     .insert([{
       id: data.user.id,
@@ -55,6 +62,7 @@ export async function createTeamMember(formData: FormData) {
 
   if (profileError) {
     console.error("Error creating profile:", profileError);
+    // Even if profile fails, we shouldn't crash, but it's good to log
   }
 
   revalidatePath("/adm/usuarios");
@@ -77,13 +85,14 @@ export async function toggleUserStatus(userId: string, currentStatus: string) {
 }
 
 export async function deleteUser(userId: string) {
-  const supabase = await createClient();
+  // Use admin client to perform Auth Admin operations
+  const supabaseAdmin = createAdminClient();
 
   // 1. Delete from profiles
-  await supabase.from("profiles").delete().eq("id", userId);
+  await supabaseAdmin.from("profiles").delete().eq("id", userId);
 
   // 2. Delete from Auth (requires admin privileges)
-  const { error } = await supabase.auth.admin.deleteUser(userId);
+  const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
 
   if (error) return { error: "Falha ao remover do Auth." };
 
