@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Estoque",
+  title: "Estoque Premium | Veículos Selecionados pela Carrera Imports",
   description:
-    "Confira nosso acervo de veículos premium rigorosamente selecionados. Porsche, BMW, Audi, Mercedes-Benz e mais. Consultoria automotiva em São Paulo com procedência garantida.",
+    "Confira veículos premium selecionados com análise de procedência, histórico, conservação e margem de negociação pela Carrera Imports.",
   openGraph: {
-    title: "Estoque de Veículos Premium | Carrera Imports",
+    title: "Estoque Premium | Veículos Selecionados pela Carrera Imports",
     description:
-      "Veículos de alto padrão com procedência garantida. Curadoria premium em São Paulo.",
+      "Confira veículos premium selecionados com análise de procedência, histórico, conservação e margem de negociação pela Carrera Imports.",
   },
 };
 

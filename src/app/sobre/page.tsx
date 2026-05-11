@@ -7,13 +7,13 @@ import { AboutCinematicBanner } from "@/components/premium/about-cinematic-banne
 import { AboutPillars } from "@/components/premium/about-pillars";
 
 export const metadata: Metadata = {
-  title: "Sobre",
+  title: "Sobre a Carrera Imports | Consultoria Automotiva de Alto Padrão",
   description:
-    "Conheça a Carrera Imports: consultoria automotiva premium em São Paulo especializada em intermediação e curadoria de veículos de alto padrão com procedência garantida.",
+    "Conheça a Carrera Imports, boutique automotiva especializada em curadoria, negociação e intermediação de veículos premium com discrição, método e segurança.",
   openGraph: {
-    title: "Sobre a Carrera Imports | Consultoria Automotiva Premium",
+    title: "Sobre a Carrera Imports | Consultoria Automotiva de Alto Padrão",
     description:
-      "Consultoria estratégica para compra e venda de veículos premium. Atendimento personalizado, procedência e eficácia em São Paulo.",
+      "Conheça a Carrera Imports, boutique automotiva especializada em curadoria, negociação e intermediação de veículos premium com discrição, método e segurança.",
   },
 };
 

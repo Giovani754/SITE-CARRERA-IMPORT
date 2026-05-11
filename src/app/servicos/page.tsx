@@ -6,13 +6,13 @@ import { DetailedServicesGrid } from "@/components/premium/detailed-services-gri
 import { ComplementaryServicesGrid } from "@/components/premium/complementary-services-grid";
 
 export const metadata: Metadata = {
-  title: "Serviços",
+  title: "Serviços | Consultoria, Curadoria e Intermediação de Veículos Premium",
   description:
-    "Consultoria automotiva premium, intermediação de venda, curadoria de veículos e apoio estratégico comercial. Conheça os serviços da Carrera Imports em São Paulo.",
+    "Consultoria automotiva, intermediação de venda, curadoria de veículos premium e apoio estratégico para comprar ou vender carros de alto padrão com segurança.",
   openGraph: {
-    title: "Serviços | Carrera Imports",
+    title: "Serviços | Consultoria, Curadoria e Intermediação de Veículos Premium",
     description:
-      "Consultoria automotiva, intermediação, curadoria de veículos premium e apoio estratégico em São Paulo.",
+      "Consultoria automotiva, intermediação de venda, curadoria de veículos premium e apoio estratégico para comprar ou vender carros de alto padrão com segurança.",
   },
 };
 

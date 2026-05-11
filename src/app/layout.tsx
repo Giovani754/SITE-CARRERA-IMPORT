@@ -21,11 +21,11 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_CONFIG.domain),
   title: {
-    default: "Carrera Imports | Consultoria Automotiva Premium em São Paulo",
+    default: "Carrera Imports | Curadoria e Consultoria Automotiva Premium em São Paulo",
     template: "%s | Carrera Imports — São Paulo",
   },
   description:
-    "Intermediação estratégica e consultoria de veículos de alto padrão em São Paulo, SP. Procedência garantida, atendimento personalizado e eficácia na compra e venda de carros premium.",
+    "Compre ou venda veículos premium com estratégia, procedência e segurança. A Carrera Imports atua com curadoria, consultoria e intermediação automotiva de alto padrão em São Paulo.",
   alternates: {
     canonical: SITE_CONFIG.domain,
   },
@@ -43,9 +43,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "pt_BR",
     siteName: "Carrera Imports",
-    title: "Carrera Imports | Consultoria Automotiva Premium",
+    title: "Carrera Imports | Curadoria e Consultoria Automotiva Premium em São Paulo",
     description:
-      "Intermediação estratégica e consultoria de veículos de alto padrão em São Paulo. Procedência, atendimento personalizado e eficácia.",
+      "Compre ou venda veículos premium com estratégia, procedência e segurança. A Carrera Imports atua com curadoria, consultoria e intermediação automotiva de alto padrão em São Paulo.",
     images: [
       {
         url: "/logo-carrera-imports.png",
@@ -57,9 +57,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Carrera Imports | Consultoria Automotiva Premium",
+    title: "Carrera Imports | Curadoria e Consultoria Automotiva Premium em São Paulo",
     description:
-      "Intermediação estratégica e consultoria de veículos de alto padrão em São Paulo.",
+      "Compre ou venda veículos premium com estratégia, procedência e segurança. A Carrera Imports atua com curadoria, consultoria e intermediação automotiva de alto padrão em São Paulo.",
     images: ["/logo-carrera-imports.png"],
   },
   robots: {

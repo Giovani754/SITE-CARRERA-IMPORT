@@ -4,13 +4,13 @@ import { LocalBusinessJsonLd } from "@/components/seo/json-ld";
 import { ContactContent } from "@/components/premium/contact-content";
 
 export const metadata: Metadata = {
-  title: "Contato",
+  title: "Contato | Fale com a Carrera Imports",
   description:
-    "Entre em contato com a Carrera Imports. Consultoria automotiva premium em São Paulo. WhatsApp, e-mail e atendimento personalizado para compra e venda de veículos de alto padrão.",
+    "Fale com a Carrera Imports para comprar, vender ou avaliar veículos premium com atendimento consultivo, discreto e estratégico em São Paulo.",
   openGraph: {
-    title: "Contato | Carrera Imports",
+    title: "Contato | Fale com a Carrera Imports",
     description:
-      "Fale com a Carrera Imports. Atendimento personalizado para compra e venda de veículos premium em São Paulo.",
+      "Fale com a Carrera Imports para comprar, vender ou avaliar veículos premium com atendimento consultivo, discreto e estratégico em São Paulo.",
   },
 };
 

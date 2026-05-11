@@ -42,11 +42,11 @@ export async function generateMetadata({
   const mainImage = vehicle.images?.[0] || "";
 
   return {
-    title: `${vehicle.brand} ${vehicle.model} ${vehicle.year}`,
-    description: `${vehicle.brand} ${vehicle.model} ${vehicle.year} — ${formatMileage(vehicle.mileage)}, ${vehicle.transmission}. Consultoria automotiva premium em São Paulo.`,
+    title: `${vehicle.brand} ${vehicle.model} ${vehicle.year} | Carrera Imports`,
+    description: `Conheça o ${vehicle.brand} ${vehicle.model} ${vehicle.year} selecionado pela Carrera Imports, com análise de procedência, conservação e atendimento consultivo para negociação premium.`,
     openGraph: {
       title: `${vehicle.brand} ${vehicle.model} ${vehicle.year} | Carrera Imports`,
-      description: vehicle.description?.substring(0, 160),
+      description: `Conheça o ${vehicle.brand} ${vehicle.model} ${vehicle.year} selecionado pela Carrera Imports, com análise de procedência, conservação e atendimento consultivo para negociação premium.`,
       images: [{ url: mainImage, alt: vehicle.model }],
     },
   };
