@@ -50,10 +50,11 @@ export function ContactContent() {
                     href={SITE_CONFIG.whatsapp.url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="Falar com a Carrera Imports via WhatsApp"
                     className="flex items-center gap-5 group w-fit"
                   >
                     <div className="w-12 h-12 border border-white/[0.08] bg-[#080808] rounded-sm flex items-center justify-center text-brand-gold/60 group-hover:border-brand-gold/30 group-hover:text-brand-gold transition-all duration-500">
-                      <MessageCircle size={18} />
+                      <MessageCircle size={18} aria-hidden="true" />
                     </div>
                     <div>
                       <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/25 block mb-0.5">
@@ -75,15 +76,15 @@ export function ContactContent() {
                   className="flex items-center gap-5 group"
                 >
                   <div className="w-12 h-12 border border-white/[0.08] bg-[#080808] rounded-sm flex items-center justify-center text-brand-gold/60">
-                    <Mail size={18} />
+                    <Mail size={18} aria-hidden="true" />
                   </div>
                   <div>
                     <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/25 block mb-0.5">
                       E-MAIL
                     </span>
-                    <span className="text-sm font-medium text-white/70">
+                    <a href={`mailto:${SITE_CONFIG.contact.email}`} className="text-sm font-medium text-white/70 hover:text-white transition-colors">
                       {SITE_CONFIG.contact.email}
-                    </span>
+                    </a>
                   </div>
                 </motion.div>
 
@@ -96,16 +97,16 @@ export function ContactContent() {
                   className="flex items-center gap-5 group"
                 >
                   <div className="w-12 h-12 border border-white/[0.08] bg-[#080808] rounded-sm flex items-center justify-center text-brand-gold/60">
-                    <MapPin size={18} />
+                    <MapPin size={18} aria-hidden="true" />
                   </div>
-                  <div>
+                  <address className="not-italic">
                     <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/25 block mb-0.5">
                       LOCALIZAÇÃO
                     </span>
                     <span className="text-sm font-medium text-white/70">
                       {SITE_CONFIG.location.full}
                     </span>
-                  </div>
+                  </address>
                 </motion.div>
               </div>
             </div>
@@ -205,9 +206,10 @@ export function ContactContent() {
                 href={SITE_CONFIG.whatsapp.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Solicitar via WhatsApp"
                 className="w-full bg-brand-gold text-black py-5 text-[10px] uppercase tracking-[0.4em] font-bold flex items-center justify-center gap-3 hover:bg-[#C5A030] transition-all hover:scale-[1.01] active:scale-[0.99] rounded-sm mt-10"
               >
-                <MessageCircle size={16} />
+                <MessageCircle size={16} aria-hidden="true" />
                 SOLICITAR VIA WHATSAPP
               </Link>
 

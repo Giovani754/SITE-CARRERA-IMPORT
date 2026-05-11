@@ -32,7 +32,7 @@ export function PremiumFooter() {
                 aria-label="Instagram da Carrera Imports"
                 className="w-10 h-10 rounded-sm border border-white/10 flex items-center justify-center text-white/30 hover:text-brand-gold hover:border-brand-gold/50 transition-all duration-500"
               >
-                <Instagram size={16} />
+                <Instagram size={16} aria-hidden="true" />
               </Link>
             </div>
           </div>
@@ -85,6 +85,7 @@ export function PremiumFooter() {
                 <MessageCircle
                   size={16}
                   className="text-brand-gold/50 shrink-0 mt-0.5"
+                  aria-hidden="true"
                 />
                 <Link
                   href={SITE_CONFIG.whatsapp.url}
@@ -99,19 +100,21 @@ export function PremiumFooter() {
                 <Mail
                   size={16}
                   className="text-brand-gold/50 shrink-0 mt-0.5"
+                  aria-hidden="true"
                 />
-                <span className="text-sm text-white/35">
+                <a href={`mailto:${SITE_CONFIG.contact.email}`} className="text-sm text-white/35 hover:text-white/80 transition-colors">
                   {SITE_CONFIG.contact.email}
-                </span>
+                </a>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin
                   size={16}
                   className="text-brand-gold/50 shrink-0 mt-0.5"
+                  aria-hidden="true"
                 />
-                <span className="text-sm text-white/35">
+                <address className="not-italic text-sm text-white/35">
                   {SITE_CONFIG.location.full}
-                </span>
+                </address>
               </li>
             </ul>
           </div>

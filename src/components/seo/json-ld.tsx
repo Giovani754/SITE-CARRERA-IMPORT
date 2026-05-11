@@ -38,10 +38,11 @@ export function OrganizationJsonLd() {
         contactPoint: {
           "@type": "ContactPoint",
           contactType: "sales",
-          email: "carrera.imports9@gmail.com",
+          email: SITE_CONFIG.contact.email,
+          telephone: `+${SITE_CONFIG.whatsapp.number}`,
         },
         sameAs: [
-          "https://www.instagram.com/carreraimports_/",
+          SITE_CONFIG.social.instagram,
         ],
       }}
     />
@@ -97,8 +98,8 @@ export function LocalBusinessJsonLd() {
         contactPoint: {
           "@type": "ContactPoint",
           contactType: "sales",
-          email: "carrera.imports9@gmail.com",
-          telephone: "+55-11-98918-9050",
+          email: SITE_CONFIG.contact.email,
+          telephone: `+${SITE_CONFIG.whatsapp.number}`,
         },
         priceRange: "$$$",
       }}
