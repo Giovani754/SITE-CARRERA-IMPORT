@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { SITE_CONFIG } from "@/data/constants";
 
 interface JsonLdProps {
   data: Record<string, unknown>;
@@ -24,8 +25,8 @@ export function OrganizationJsonLd() {
         "@context": "https://schema.org",
         "@type": "Organization",
         name: "Carrera Imports",
-        url: "https://carreraimports.com.br",
-        logo: "https://carreraimports.com.br/logo-carrera-imports.png",
+        url: SITE_CONFIG.domain,
+        logo: `${SITE_CONFIG.domain}/logo-carrera-imports.png`,
         description:
           "Consultoria automotiva premium e intermediação de veículos de alto padrão em São Paulo.",
         address: {
@@ -57,9 +58,9 @@ export function LocalBusinessJsonLd() {
         name: "Carrera Imports",
         description:
           "Intermediação estratégica e consultoria de veículos de alto padrão. Boutique automotiva premium em São Paulo.",
-        url: "https://carreraimports.com.br",
-        logo: "https://carreraimports.com.br/logo-carrera-imports.png",
-        image: "https://carreraimports.com.br/logo-carrera-imports.png",
+        url: SITE_CONFIG.domain,
+        logo: `${SITE_CONFIG.domain}/logo-carrera-imports.png`,
+        image: `${SITE_CONFIG.domain}/logo-carrera-imports.png`,
         address: {
           "@type": "PostalAddress",
           streetAddress: "Av. Europa",
@@ -113,7 +114,7 @@ export function WebSiteJsonLd() {
         "@context": "https://schema.org",
         "@type": "WebSite",
         name: "Carrera Imports",
-        url: "https://carreraimports.com.br",
+        url: SITE_CONFIG.domain,
         description:
           "Consultoria automotiva premium e intermediação de veículos de alto padrão em São Paulo.",
         publisher: {
@@ -140,7 +141,7 @@ export function BreadcrumbJsonLd({
           "@type": "ListItem",
           position: index + 1,
           name: item.name,
-          item: `https://carreraimports.com.br${item.href}`,
+          item: `${SITE_CONFIG.domain}${item.href}`,
         })),
       }}
     />
@@ -189,7 +190,7 @@ export function VehicleJsonLd({
         itemCondition: "https://schema.org/UsedCondition",
         image: vehicle.image,
         description: vehicle.description,
-        url: `https://carreraimports.com.br/estoque/${vehicle.slug}`,
+        url: `${SITE_CONFIG.domain}/estoque/${vehicle.slug}`,
         offers: {
           "@type": "Offer",
           priceCurrency: "BRL",

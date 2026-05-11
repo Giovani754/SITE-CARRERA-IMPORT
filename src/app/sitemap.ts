@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
 import { getAllVehicles } from "@/lib/vehicles";
+import { SITE_CONFIG } from "@/data/constants";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://carreraimports.com.br";
+  const baseUrl = SITE_CONFIG.domain;
 
   const staticPages: MetadataRoute.Sitemap = [
     {

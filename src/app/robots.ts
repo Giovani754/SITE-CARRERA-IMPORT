@@ -1,12 +1,13 @@
 import type { MetadataRoute } from "next";
+import { SITE_CONFIG } from "@/data/constants";
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/_next/"],
+      disallow: ["/api/", "/adm", "/adm/", "/debug", "/debug/"],
     },
-    sitemap: "https://carreraimports.com.br/sitemap.xml",
+    sitemap: `${SITE_CONFIG.domain}/sitemap.xml`,
   };
 }

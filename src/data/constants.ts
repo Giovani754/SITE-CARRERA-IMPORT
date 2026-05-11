@@ -9,8 +9,8 @@ export const SITE_CONFIG = {
   description:
     "Intermediação estratégica e consultoria de veículos de alto padrão em São Paulo. Procedência, atendimento personalizado e eficácia.",
 
-  // Domínio — substituir quando adquirido
-  domain: "https://carreraimports.com.br",
+  // Domínio — fallback seguro para Netlify até domínio oficial
+  domain: process.env.NEXT_PUBLIC_SITE_URL || "https://carreraimports.netlify.app",
 
   // WhatsApp — official number
   whatsapp: {

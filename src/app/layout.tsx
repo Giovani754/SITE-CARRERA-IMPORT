@@ -6,6 +6,7 @@ import {
   OrganizationJsonLd,
   WebSiteJsonLd,
 } from "@/components/seo/json-ld";
+import { SITE_CONFIG } from "@/data/constants";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -18,7 +19,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://carreraimports.com.br"),
+  metadataBase: new URL(SITE_CONFIG.domain),
   title: {
     default: "Carrera Imports | Consultoria Automotiva Premium em São Paulo",
     template: "%s | Carrera Imports — São Paulo",
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
   description:
     "Intermediação estratégica e consultoria de veículos de alto padrão em São Paulo, SP. Procedência garantida, atendimento personalizado e eficácia na compra e venda de carros premium.",
   alternates: {
-    canonical: "https://carreraimports.com.br",
+    canonical: SITE_CONFIG.domain,
   },
   keywords: [
     "consultoria automotiva São Paulo",
